@@ -54,11 +54,13 @@ public class PlayerMovement : MonoBehaviour
     [Header("Abilites Settings")]
     [SerializeField] private bool canDoubleJump;
     [SerializeField] private bool canDash;
+    [SerializeField] private bool canMultiDirectionDash;
     [SerializeField] private bool canWallJump;
     [SerializeField] private bool canStickToWalls;
 
     private Vector3 playerVelocity;
     private Vector3 horizontalVelocity;
+    private Vector3 dashDirection;
     private Vector3 slideMomentum;
     private Vector3 edgeSlideVelocity;
     private int playerDirection = 1;
@@ -417,6 +419,22 @@ public class PlayerMovement : MonoBehaviour
 
             transform.right = new Vector3(playerDirection, 0, 0);
         }
+
+        if (canMultiDirectionDash)
+        {
+            if (input.x == 0)
+            {
+                dashDirection = new Vector3(playerDirection, 0, 0);
+            } else
+            {
+                dashDirection = new Vector3(input.x, input.y, 0);
+                dashDirection.Normalize();
+            }
+        }
+        else
+        {
+            dashDirection = new Vector3(playerDirection, 0, 0);
+        }
     }
 
     private void HandleDash()
@@ -429,7 +447,7 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        Vector3 dashMove = new Vector3(playerDirection, 0, 0) * dashSpeed;
+        Vector3 dashMove = dashDirection * dashSpeed;
         characterController.Move(dashMove * Time.deltaTime);
     }
 

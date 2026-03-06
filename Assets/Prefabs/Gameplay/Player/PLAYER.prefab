@@ -846,10 +846,10 @@ MonoBehaviour:
   playerSpeed: 10
   acceleration: 55
   deceleration: 55
-  slopeForce: 8
-  slopeForceRayLength: 1.5
-  slideSpeed: 15
-  slideMomentumDuration: 0.2
+  slopeForce: 0
+  slopeForceRayLength: 0
+  slideSpeed: 0
+  slideMomentumDuration: 0
   edgeSlipStrength: 20
   edgeFriction: 0.95
   playerJumpHeight: 4
@@ -859,8 +859,8 @@ MonoBehaviour:
   maxFallSpeed: -50
   coyoteDuration: 0.2
   jumpBufferDuration: 0.2
-  dashSpeed: 25
-  dashDuration: 0.25
+  dashSpeed: 30
+  dashDuration: 0.3
   dashCooldown: 1
   wallCheckDistance: 0.6
   wallSlideSpeed: -5
@@ -871,8 +871,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   canDoubleJump: 0
-  canDash: 0
+  canDash: 1
+  canMultiDirectionDash: 0
   canWallJump: 0
+  canStickToWalls: 0
 --- !u!1 &8039529963171410227
 GameObject:
   m_ObjectHideFlags: 0
