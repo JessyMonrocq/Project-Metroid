@@ -120,7 +120,7 @@ public class PlayerMovement : MonoBehaviour
 
         Vector2 input = IA_PlayerMove.action.ReadValue<Vector2>();
 
-        if (canDash && IA_PlayerDash.action.WasPerformedThisFrame() && dashCooldownTimer <= 0 && !isOnWall)
+        if (canDash && IA_PlayerDash.action.WasPerformedThisFrame() && dashCooldownTimer <= 0 && !isOnWall && !isSliding)
         {
             StartDash(input);
             return;
