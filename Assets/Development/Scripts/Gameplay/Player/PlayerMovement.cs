@@ -55,6 +55,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool canDoubleJump;
     [SerializeField] private bool canDash;
     [SerializeField] private bool canWallJump;
+    [SerializeField] private bool canStickToWalls;
 
     private Vector3 playerVelocity;
     private Vector3 horizontalVelocity;
@@ -67,15 +68,17 @@ public class PlayerMovement : MonoBehaviour
     private bool isPlayerJumping;
     private bool isPlayerDashing;
     private bool isOnWall;
+    private bool isOnSlipperyWall;
     private bool isSliding;
     private float coyoteTimer;
     private float jumpBufferTimer;
     private float dashDurationTimer;
     private float dashCooldownTimer;
     private float wallJumpInputLockTimer;
+    private float wallSlideMultiplier;
     private float groundCheckTimer;
     private float slideMomentumTimer;
-    
+
 
     public int PlayerDirection => playerDirection;
     #endregion
@@ -110,7 +113,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         isPlayerGrounded = characterController.isGrounded;
-        
+
         if (canWallJump)
         {
             CheckForWall();
@@ -137,7 +140,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 horizontalVelocity = slideMomentum;
                 slideMomentumTimer -= Time.deltaTime;
-                
+
                 if (slideMomentumTimer <= 0)
                 {
                     slideMomentum = Vector3.zero;
@@ -182,7 +185,6 @@ public class PlayerMovement : MonoBehaviour
     }
     #endregion
 
-    // Added a way to force the player remains in the same z axis position
     private void LateUpdate()
     {
         if (Mathf.Abs(transform.position.z) > 0.001f)
@@ -321,7 +323,14 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isOnWall && playerVelocity.y < 0)
         {
-            playerVelocity.y = wallSlideSpeed;
+            if (canStickToWalls)
+            {
+                playerVelocity.y = 0;
+            }
+            else
+            {
+                playerVelocity.y = wallSlideSpeed * wallSlideMultiplier;
+            }
         }
         else
         {
@@ -343,6 +352,8 @@ public class PlayerMovement : MonoBehaviour
         if (isPlayerGrounded)
         {
             isOnWall = false;
+            wallSlideMultiplier = 1f;
+            isOnSlipperyWall = false;
             return;
         }
 
@@ -368,6 +379,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void PerformWallJump()
     {
+        if (isOnSlipperyWall)
+        {
+            return;
+        }
+
         playerVelocity.y = Mathf.Sqrt(wallJumpHeight * -2f * gravity);
 
         horizontalVelocity = new Vector3(-wallDirection * wallJumpHorizontalForce, 0, 0);
@@ -376,6 +392,8 @@ public class PlayerMovement : MonoBehaviour
 
         isPlayerJumping = true;
         isOnWall = false;
+        wallSlideMultiplier = 1f;
+        isOnSlipperyWall = false;
         jumpBufferTimer = 0;
         jumpsRemaining = canDoubleJump ? 1 : 0;
     }
@@ -420,7 +438,7 @@ public class PlayerMovement : MonoBehaviour
         if (Physics.SphereCast(transform.position, characterController.radius, Vector3.down, out RaycastHit hit, slopeForceRayLength))
         {
             float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
-            
+
             if (slopeAngle < characterController.slopeLimit)
             {
                 Vector3 slopeDirection = Vector3.ProjectOnPlane(Vector3.down, hit.normal);
@@ -453,6 +471,17 @@ public class PlayerMovement : MonoBehaviour
     public void PushPlayer(Vector3 direction, float force)
     {
         horizontalVelocity += direction.normalized * force;
+    }
+
+    public void IncreaseWallSlideIntensity(bool state)
+    {
+        if (canStickToWalls)
+        {
+            return;
+        }
+
+        wallSlideMultiplier = state ? 3f : 1f;
+        isOnSlipperyWall = state;
     }
     #endregion
 }
