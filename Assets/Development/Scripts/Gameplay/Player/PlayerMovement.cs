@@ -137,6 +137,11 @@ public class PlayerMovement : MonoBehaviour
             {
                 horizontalVelocity = slideMomentum;
                 slideMomentumTimer -= Time.deltaTime;
+                
+                if (slideMomentumTimer <= 0)
+                {
+                    slideMomentum = Vector3.zero;
+                }
             }
             else
             {
@@ -148,6 +153,11 @@ public class PlayerMovement : MonoBehaviour
         else if (isSliding)
         {
             horizontalVelocity = Vector3.zero;
+        }
+        else
+        {
+            slideMomentumTimer = 0;
+            slideMomentum = Vector3.zero;
         }
 
         UpdatePlayerDirection();
@@ -162,6 +172,10 @@ public class PlayerMovement : MonoBehaviour
         {
             finalMove += ApplySlopeForce();
             ApplyEdgeSliding();
+        }
+        else
+        {
+            edgeSlideVelocity = Vector3.zero;
         }
 
         characterController.Move(finalMove * Time.deltaTime);
@@ -238,6 +252,8 @@ public class PlayerMovement : MonoBehaviour
             else if (hit.normal != Vector3.up)
             {
                 isSliding = false;
+                slideMomentumTimer = 0;
+                slideMomentum = Vector3.zero;
                 return Vector3.down * slopeForce;
             }
         }
@@ -405,7 +421,6 @@ public class PlayerMovement : MonoBehaviour
         {
             float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
             
-            // Seulement appliquer le glissement sur les bords si ce n'est pas une pente raide
             if (slopeAngle < characterController.slopeLimit)
             {
                 Vector3 slopeDirection = Vector3.ProjectOnPlane(Vector3.down, hit.normal);
