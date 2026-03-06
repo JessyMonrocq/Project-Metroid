@@ -27,13 +27,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 63317483495789372}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.2, y: -1.25, z: -0.5}
+  m_LocalRotation: {x: 0, y: 0, z: -0.21643952, w: 0.97629607}
+  m_LocalPosition: {x: 0, y: -1.25, z: -0.5}
   m_LocalScale: {x: 0.66, y: 0.66, z: 0.66}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7295569542664123922}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -25}
 --- !u!33 &5419553726960642639
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -434,13 +434,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5301334039581791789}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.2, y: -1.25, z: 0.5}
+  m_LocalRotation: {x: 0, y: 0, z: -0.21643952, w: 0.97629607}
+  m_LocalPosition: {x: -0.25, y: -1.25, z: 0.5}
   m_LocalScale: {x: 0.66, y: 0.66, z: 0.66}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7295569542664123922}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -25}
 --- !u!33 &2275231764149667357
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -846,8 +846,8 @@ MonoBehaviour:
   playerSpeed: 10
   acceleration: 55
   deceleration: 55
-  slopeForce: 0
-  slopeForceRayLength: 0
+  slopeForce: 8
+  slopeForceRayLength: 1
   slideSpeed: 0
   slideMomentumDuration: 0
   edgeSlipStrength: 20
@@ -855,7 +855,7 @@ MonoBehaviour:
   playerJumpHeight: 4
   jumpCutMultiplier: 0.66
   gravity: -50
-  fallGravityMultiplier: 2.5
+  fallGravityMultiplier: 1.5
   maxFallSpeed: -50
   coyoteDuration: 0.2
   jumpBufferDuration: 0.2
@@ -871,7 +871,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   canDoubleJump: 0
-  canDash: 1
+  canDash: 0
   canMultiDirectionDash: 0
   canWallJump: 0
   canStickToWalls: 0

@@ -3897,6 +3897,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5861224757007061791, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5861224757007061791, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.97629607
+      objectReference: {fileID: 0}
+    - target: {fileID: 5861224757007061791, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.21643952
+      objectReference: {fileID: 0}
+    - target: {fileID: 5861224757007061791, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -25
+      objectReference: {fileID: 0}
     - target: {fileID: 6926954907127275536, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3
@@ -3937,9 +3953,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7168081471616766902, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7168081471616766902, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.97629607
+      objectReference: {fileID: 0}
+    - target: {fileID: 7168081471616766902, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.21643952
+      objectReference: {fileID: 0}
+    - target: {fileID: 7168081471616766902, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -25
+      objectReference: {fileID: 0}
     - target: {fileID: 7621746287067575563, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
       propertyPath: m_Name
       value: PLAYER
+      objectReference: {fileID: 0}
+    - target: {fileID: 8569470164356123035, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
+      propertyPath: canDash
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8569470164356123035, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
+      propertyPath: slopeForce
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8569470164356123035, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
+      propertyPath: slopeForceRayLength
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8569470164356123035, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
+      propertyPath: fallGravityMultiplier
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -49,6 +49,12 @@ public class PlayerWeapon : MonoBehaviour
     private void Update()
     {
         Vector2 input = IA_PlayerLook.action.ReadValue<Vector2>();
+
+        if (Mathf.Abs(input.magnitude) < 0.2f)
+        {
+            input = Vector2.zero;
+        }
+
         float angle = Vector2.Angle(playerWeaponDefaultRotation, input);
 
         if (input.x == 0 && input.y == 0)

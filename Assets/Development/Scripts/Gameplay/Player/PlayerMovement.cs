@@ -124,6 +124,10 @@ public class PlayerMovement : MonoBehaviour
         HandleCoyoteTiming();
 
         Vector2 input = IA_PlayerMove.action.ReadValue<Vector2>();
+        if (Mathf.Abs(input.x) < 0.2f)
+        {
+            input = new Vector2(0, input.y);
+        }
 
         if (canDash && IA_PlayerDash.action.WasPerformedThisFrame() && dashCooldownTimer <= 0 && !isOnWall && !isSliding)
         {
