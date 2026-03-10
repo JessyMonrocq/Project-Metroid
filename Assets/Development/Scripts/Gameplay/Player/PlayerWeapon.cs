@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Pool;
@@ -10,6 +11,8 @@ public class PlayerWeapon : MonoBehaviour
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform projectileSpawnPoint;
     [SerializeField] private float projectileSpeed = 10;
+    [SerializeField] private float rotationOffset = 0.25f;
+    private bool enableInput = true;
 
     private IObjectPool<Projectile> projectilePool;
     private int poolDefaultCapacity = 10;
@@ -36,7 +39,6 @@ public class PlayerWeapon : MonoBehaviour
     {
         IA_PlayerLook.action.Disable();
         IA_PlayerShoot.action.performed -= (ctx) => Shoot();
-
     }
 
     private void Start()
@@ -50,12 +52,17 @@ public class PlayerWeapon : MonoBehaviour
     {
         Vector2 input = IA_PlayerLook.action.ReadValue<Vector2>();
 
-        if (Mathf.Abs(input.magnitude) < 0.2f)
+        if (Mathf.Abs(input.magnitude) < rotationOffset)
         {
             input = Vector2.zero;
         }
 
         float angle = Vector2.Angle(playerWeaponDefaultRotation, input);
+
+        if (!enableInput)
+        {
+            return;
+        }
 
         if (input.x == 0 && input.y == 0)
         {
@@ -70,8 +77,18 @@ public class PlayerWeapon : MonoBehaviour
     #endregion
 
     #region Custom Methods
+    public void EnableInput(bool state)
+    {
+        enableInput = state;
+    }
+
     private void Shoot()
     {
+        if (!enableInput)
+        {
+            return;
+        }
+
         Projectile projectile = projectilePool.Get();
 
         Vector3 spawnPosition = new Vector3(projectileSpawnPoint.transform.position.x, projectileSpawnPoint.transform.position.y, 0);

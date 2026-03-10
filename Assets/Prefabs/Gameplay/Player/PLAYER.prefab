@@ -752,6 +752,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 2030448479837522891, guid: bf7435234a1107f4b8ed21b01ed92c35, type: 3}
   projectileSpawnPoint: {fileID: 2870595551755681813}
   projectileSpeed: 33
+  rotationOffset: 0.25
 --- !u!1 &7621746287067575563
 GameObject:
   m_ObjectHideFlags: 0
@@ -779,7 +780,7 @@ Transform:
   m_GameObject: {fileID: 7621746287067575563}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -843,9 +844,11 @@ MonoBehaviour:
   IA_PlayerMove: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   IA_PlayerJump: {fileID: -2099379676528639254, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   IA_PlayerDash: {fileID: 1028943572358652848, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  playerSpeed: 10
+  IA_PlayerGrapple: {fileID: -4754453282654523504, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  playerSpeed: 8
   acceleration: 55
   deceleration: 55
+  movementOffset: 0.25
   slopeForce: 8
   slopeForceRayLength: 1
   slideSpeed: 0
@@ -862,6 +865,12 @@ MonoBehaviour:
   dashSpeed: 30
   dashDuration: 0.3
   dashCooldown: 1
+  grappleHoldDuration: 0.2
+  grapplePullSpeed: 25
+  grappleAcceleration: 40
+  grappleMaxSpeed: 35
+  grapplePassDistance: 0.15
+  grappleMomentumMultiplier: 0.8
   wallCheckDistance: 0.6
   wallSlideSpeed: -5
   wallJumpHeight: 4
@@ -875,6 +884,7 @@ MonoBehaviour:
   canMultiDirectionDash: 0
   canWallJump: 0
   canStickToWalls: 0
+  canGrapple: 0
 --- !u!1 &8039529963171410227
 GameObject:
   m_ObjectHideFlags: 0

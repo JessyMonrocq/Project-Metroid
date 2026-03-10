@@ -13,11 +13,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private InputActionReference IA_PlayerMove;
     [SerializeField] private InputActionReference IA_PlayerJump;
     [SerializeField] private InputActionReference IA_PlayerDash;
+    [SerializeField] private InputActionReference IA_PlayerGrapple;
+    private bool enableInput = true;
 
     [Header("Movement Settings")]
     [SerializeField] private float playerSpeed = 10f;
     [SerializeField] private float acceleration = 50f;
     [SerializeField] private float deceleration = 50f;
+    [SerializeField] private float movementOffset = 0.25f;
 
     [Header("Slope Settings")]
     [SerializeField] private float slopeForce = 8f;
@@ -43,6 +46,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 1f;
 
+    [Header("Grapple Settings")]
+    [SerializeField] private float grappleHoldDuration = 0.3f;
+    [SerializeField] private float grapplePullSpeed = 25f;
+    [SerializeField] private float grappleAcceleration = 40f;
+    [SerializeField] private float grappleMaxSpeed = 35f;
+    [SerializeField] private float grapplePassDistance = 2f;
+    [SerializeField] private float grappleMomentumMultiplier = 0.6f;
+
     [Header("Wall Jump Settings")]
     [SerializeField] private float wallCheckDistance = 0.6f;
     [SerializeField] private float wallSlideSpeed = -2f;
@@ -57,12 +68,16 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool canMultiDirectionDash;
     [SerializeField] private bool canWallJump;
     [SerializeField] private bool canStickToWalls;
+    [SerializeField] private bool canGrapple;
 
     private Vector3 playerVelocity;
     private Vector3 horizontalVelocity;
     private Vector3 dashDirection;
     private Vector3 slideMomentum;
     private Vector3 edgeSlideVelocity;
+    private Vector3 grappleVelocity;
+    private Vector3 grappleDirection;
+    private Transform currentGrapplePoint;
     private int playerDirection = 1;
     private int jumpsRemaining;
     private int wallDirection;
@@ -72,6 +87,9 @@ public class PlayerMovement : MonoBehaviour
     private bool isOnWall;
     private bool isOnSlipperyWall;
     private bool isSliding;
+    private bool isGrappling;
+    private bool isGrappleHolding;
+    private bool hasPassedGrapplePoint;
     private float coyoteTimer;
     private float jumpBufferTimer;
     private float dashDurationTimer;
@@ -80,9 +98,13 @@ public class PlayerMovement : MonoBehaviour
     private float wallSlideMultiplier;
     private float groundCheckTimer;
     private float slideMomentumTimer;
+    private float currentGrappleSpeed;
+    private float grappleHoldTimer;
 
 
     public int PlayerDirection => playerDirection;
+
+    public bool IsPlayerGrounded => isPlayerGrounded;
     #endregion
 
     #region Unity Methods
@@ -91,6 +113,7 @@ public class PlayerMovement : MonoBehaviour
         IA_PlayerMove.action.Enable();
         IA_PlayerJump.action.Enable();
         IA_PlayerDash.action.Enable();
+        IA_PlayerGrapple.action.Enable();
     }
 
     private void OnDisable()
@@ -98,12 +121,18 @@ public class PlayerMovement : MonoBehaviour
         IA_PlayerMove.action.Disable();
         IA_PlayerJump.action.Disable();
         IA_PlayerDash.action.Disable();
+        IA_PlayerGrapple.action.Disable();
     }
     #endregion
 
     #region Update Method
     private void Update()
     {
+        if (!enableInput)
+        {
+            return;
+        }
+
         HandleDashCooldown();
 
         HandleWallJumpInputLock();
@@ -111,6 +140,12 @@ public class PlayerMovement : MonoBehaviour
         if (isPlayerDashing)
         {
             HandleDash();
+            return;
+        }
+
+        if (isGrappling)
+        {
+            HandleGrappling();
             return;
         }
 
@@ -124,14 +159,20 @@ public class PlayerMovement : MonoBehaviour
         HandleCoyoteTiming();
 
         Vector2 input = IA_PlayerMove.action.ReadValue<Vector2>();
-        if (Mathf.Abs(input.x) < 0.2f)
+        if (Mathf.Abs(input.x) < movementOffset)
         {
             input = new Vector2(0, input.y);
         }
 
-        if (canDash && IA_PlayerDash.action.WasPerformedThisFrame() && dashCooldownTimer <= 0 && !isOnWall && !isSliding)
+        if (canDash && IA_PlayerDash.action.WasPerformedThisFrame() && dashCooldownTimer <= 0 && !isOnWall && !isSliding && !isGrappling)
         {
             StartDash(input);
+            return;
+        }
+
+        if (canGrapple && currentGrapplePoint != null && IA_PlayerGrapple.action.WasPerformedThisFrame() && !isGrappling)
+        {
+            StartGrappling();
             return;
         }
 
@@ -238,6 +279,85 @@ public class PlayerMovement : MonoBehaviour
                 coyoteTimer = 0;
             }
         }
+    }
+
+    private void StartGrappling()
+    {
+        isGrappling = true;
+        isGrappleHolding = true;
+        hasPassedGrapplePoint = false;
+        grappleHoldTimer = grappleHoldDuration;
+        currentGrappleSpeed = 0;
+        
+        playerVelocity = Vector3.zero;
+        horizontalVelocity = Vector3.zero;
+        grappleVelocity = Vector3.zero;
+        
+        grappleDirection = (currentGrapplePoint.position - transform.position).normalized;
+        
+        int newDirection = grappleDirection.x > 0 ? 1 : -1;
+        if (newDirection != playerDirection)
+        {
+            playerDirection = newDirection;
+            OnPlayerDirectionChanged?.Invoke(playerDirection);
+        }
+        transform.right = new Vector3(playerDirection, 0, 0);
+    }
+
+    private void HandleGrappling()
+    {
+        if (currentGrapplePoint == null)
+        {
+            EndGrapple();
+            return;
+        }
+
+        if (isGrappleHolding)
+        {
+            grappleHoldTimer -= Time.deltaTime;
+            
+            if (grappleHoldTimer <= 0)
+            {
+                isGrappleHolding = false;
+                currentGrappleSpeed = grapplePullSpeed;
+                grappleDirection = (currentGrapplePoint.position - transform.position).normalized;
+            }
+            
+            return;
+        }
+
+        Vector3 directionToGrapple = (currentGrapplePoint.position - transform.position).normalized;
+        float distanceToGrapple = Vector3.Distance(transform.position, currentGrapplePoint.position);
+
+        if (!hasPassedGrapplePoint)
+        {
+            currentGrappleSpeed += grappleAcceleration * Time.deltaTime;
+            currentGrappleSpeed = Mathf.Min(currentGrappleSpeed, grappleMaxSpeed);
+
+            grappleVelocity = directionToGrapple * currentGrappleSpeed;
+
+            characterController.Move(grappleVelocity * Time.deltaTime);
+
+            if (distanceToGrapple <= grapplePassDistance)
+            {
+                hasPassedGrapplePoint = true;
+                
+                horizontalVelocity = new Vector3(grappleVelocity.x, 0, 0) * grappleMomentumMultiplier;
+                playerVelocity.y = grappleVelocity.y * grappleMomentumMultiplier;
+                
+                EndGrapple();
+            }
+        }
+    }
+
+    private void EndGrapple()
+    {
+        isGrappling = false;
+        isGrappleHolding = false;
+        hasPassedGrapplePoint = false;
+        grappleVelocity = Vector3.zero;
+        currentGrappleSpeed = 0;
+        grappleHoldTimer = 0;
     }
 
     private Vector3 ApplySlopeForce()
@@ -351,7 +471,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // Checks for a wall to climb/jump from if player is off the ground
     // WallDirection determines which way the player is facing : 1 is right / -1 is left
     private void CheckForWall()
     {
@@ -476,6 +595,11 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Public Methods
+    public void EnableInput(bool state)
+    {
+        enableInput = state;
+    }
+
     public void ForceJump()
     {
         if (isPlayerDashing)
@@ -504,6 +628,11 @@ public class PlayerMovement : MonoBehaviour
 
         wallSlideMultiplier = state ? 3f : 1f;
         isOnSlipperyWall = state;
+    }
+
+    public void SetGrapplePoint(Transform grapplePoint)
+    {
+        currentGrapplePoint = grapplePoint;
     }
     #endregion
 }
