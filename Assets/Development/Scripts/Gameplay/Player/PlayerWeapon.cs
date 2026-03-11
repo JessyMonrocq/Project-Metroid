@@ -11,7 +11,6 @@ public class PlayerWeapon : MonoBehaviour
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform projectileSpawnPoint;
     [SerializeField] private float projectileSpeed = 10;
-    [SerializeField] private float rotationOffset = 0.25f;
     private bool enableInput = true;
 
     private IObjectPool<Projectile> projectilePool;
@@ -51,11 +50,6 @@ public class PlayerWeapon : MonoBehaviour
     private void Update()
     {
         Vector2 input = IA_PlayerLook.action.ReadValue<Vector2>();
-
-        if (Mathf.Abs(input.magnitude) < rotationOffset)
-        {
-            input = Vector2.zero;
-        }
 
         float angle = Vector2.Angle(playerWeaponDefaultRotation, input);
 

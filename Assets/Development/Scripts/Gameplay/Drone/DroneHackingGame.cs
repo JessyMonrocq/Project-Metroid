@@ -44,10 +44,12 @@ public class DroneHackingGame : MonoBehaviour
 
     private HackingInput randomInput;
     private Vector2 input;
+
     private float gameTimer;
     private float randomAngle;
     private float lastGeneratedAngle;
     private float currentSelectorAngle;
+
     private int sequencesSucceeded;
     private bool registerInput;
     #endregion
@@ -218,7 +220,7 @@ public class DroneHackingGame : MonoBehaviour
     private IEnumerator WaitForInput()
     {
         registerInput = false;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.25f);
         registerInput = true;
     }
     #endregion

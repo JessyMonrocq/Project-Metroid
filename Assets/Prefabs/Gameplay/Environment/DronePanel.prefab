@@ -367,7 +367,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-  hackingGame: {fileID: 7337941497793417980}
+  droneHackingGame: {fileID: 7337941497793417980}
   requiresHacking: 1
   dronePresenceIndicator: {fileID: 7259327567699311528}
   panelActivatedIndicator: {fileID: 4863914258492782033}

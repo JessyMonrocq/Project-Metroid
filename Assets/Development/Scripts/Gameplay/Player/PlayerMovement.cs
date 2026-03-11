@@ -7,6 +7,8 @@ public class PlayerMovement : MonoBehaviour
     #region Inspector Fields
     public UnityEvent<int> OnPlayerDirectionChanged;
 
+    public static PlayerMovement Instance;
+
     [SerializeField] private CharacterController characterController;
 
     [Header("Input Action References")]
@@ -20,7 +22,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float playerSpeed = 10f;
     [SerializeField] private float acceleration = 50f;
     [SerializeField] private float deceleration = 50f;
-    [SerializeField] private float movementOffset = 0.25f;
 
     [Header("Slope Settings")]
     [SerializeField] private float slopeForce = 8f;
@@ -108,6 +109,18 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Unity Methods
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void OnEnable()
     {
         IA_PlayerMove.action.Enable();
@@ -159,10 +172,6 @@ public class PlayerMovement : MonoBehaviour
         HandleCoyoteTiming();
 
         Vector2 input = IA_PlayerMove.action.ReadValue<Vector2>();
-        if (Mathf.Abs(input.x) < movementOffset)
-        {
-            input = new Vector2(0, input.y);
-        }
 
         if (canDash && IA_PlayerDash.action.WasPerformedThisFrame() && dashCooldownTimer <= 0 && !isOnWall && !isSliding && !isGrappling)
         {
@@ -364,6 +373,12 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, slopeForceRayLength))
         {
+            // IF layer is Drone, ignore (TO DO : Modify to take all undesirable layers later)
+            if (hit.collider.gameObject.layer == 13)
+            {
+                return Vector3.zero;
+            }
+
             float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
 
             if (slopeAngle >= characterController.slopeLimit)
@@ -578,6 +593,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Physics.SphereCast(transform.position, characterController.radius, Vector3.down, out RaycastHit hit, slopeForceRayLength))
         {
+            if (hit.collider.gameObject.layer == 13)
+            {
+                return;
+            }
+
             float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
 
             if (slopeAngle < characterController.slopeLimit)

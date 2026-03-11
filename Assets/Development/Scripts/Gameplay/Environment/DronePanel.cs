@@ -6,7 +6,7 @@ public class DronePanel : MonoBehaviour
 {
     public UnityEvent OnActivate;
 
-    [SerializeField] private DroneHackingGame hackingGame;
+    [SerializeField] private DroneHackingGame droneHackingGame;
     [SerializeField] private bool requiresHacking;
     [SerializeField] private GameObject dronePresenceIndicator;
     [SerializeField] private GameObject panelActivatedIndicator;
@@ -24,8 +24,8 @@ public class DronePanel : MonoBehaviour
 
         if (requiresHacking)
         {
-            hackingGame.gameObject.SetActive(false);
-            hackingGame.OnHackingComplete.AddListener(HackingComplete);
+            droneHackingGame.gameObject.SetActive(false);
+            droneHackingGame.OnHackingComplete.AddListener(HackingComplete);
         }
     }
 
@@ -73,7 +73,7 @@ public class DronePanel : MonoBehaviour
         {
             if (requiresHacking && !hackingComplete)
             {
-                hackingGame.gameObject.SetActive(true);
+                droneHackingGame.gameObject.SetActive(true);
             }
             else
             {

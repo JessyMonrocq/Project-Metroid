@@ -175,7 +175,7 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
+  m_ReverseArrangement: 1
 --- !u!1 &1496705107929457016
 GameObject:
   m_ObjectHideFlags: 0
@@ -885,9 +885,9 @@ MonoBehaviour:
   inputSpriteB: {fileID: 21300000, guid: 7fcf65230d6d67d418bd27f48532a891, type: 3}
   inputSpriteC: {fileID: 21300000, guid: d9a121d212fef3545b71a9d2c1849434, type: 3}
   timerSlider: {fileID: 282505350367225402}
-  sequenceCompleteToggle1: {fileID: 6631191755124762178}
+  sequenceCompleteToggle1: {fileID: 1432587499923649281}
   sequenceCompleteToggle2: {fileID: 3719657265705238505}
-  sequenceCompleteToggle3: {fileID: 1432587499923649281}
+  sequenceCompleteToggle3: {fileID: 6631191755124762178}
 --- !u!1 &3867240726901566325
 GameObject:
   m_ObjectHideFlags: 0
@@ -1469,7 +1469,7 @@ GameObject:
   - component: {fileID: 811103161113089741}
   - component: {fileID: 1432587499923649281}
   m_Layer: 5
-  m_Name: Toggle 3
+  m_Name: Toggle 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1554,7 +1554,7 @@ GameObject:
   - component: {fileID: 1350924916487616922}
   - component: {fileID: 6631191755124762178}
   m_Layer: 5
-  m_Name: Toggle 1
+  m_Name: Toggle 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
