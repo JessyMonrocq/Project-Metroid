@@ -9,6 +9,8 @@ public class HackingGame : MonoBehaviour
     #region Inspector Fields
     [HideInInspector]
     public UnityEvent OnHackingComplete;
+    [HideInInspector]
+    public UnityEvent OnHackingFailed;
 
     [Header("Hacking Game Settings")]
     [SerializeField][Range(1, 3)] private int numberOfSequences;
@@ -27,6 +29,12 @@ public class HackingGame : MonoBehaviour
     [SerializeField] private Toggle sequenceCompleteToggle2;
     [SerializeField] private Toggle sequenceCompleteToggle3;
 
+    [Header("Animation References")]
+    [SerializeField] private GameObject background;
+    [SerializeField] private CanvasGroup inputSequenceCG;
+    [SerializeField] private CanvasGroup sequenceCompletionCG;
+    [SerializeField] private CanvasGroup sliderCG;
+
     public enum DirectionalInput
     {
         Up,
@@ -44,11 +52,17 @@ public class HackingGame : MonoBehaviour
 
     private int sequencesSucceeded;
     private bool registerInput;
+    private bool gameStarted;
     #endregion
 
     #region Unity Methods
     private void Update()
     {
+        if (!gameStarted)
+        {
+            return;
+        }
+
         gameTimer += Time.deltaTime;
         timerSlider.value = (gameDuration - gameTimer) / gameDuration;
         if (gameTimer > gameDuration)
@@ -59,10 +73,25 @@ public class HackingGame : MonoBehaviour
 
     private void OnEnable()
     {
+        StartCoroutine(OpeningCoroutine());
+    }
+
+    private void OnDisable()
+    {
+        IA_HackingMove.action.started -= (ctx) => RegisterInput();
+        IA_HackingCancel.action.performed -= (ctx) => CancelGame();
+    }
+    #endregion
+
+    #region Custom Methods
+    private void SetupHackingGame()
+    {
         InputSystemManager.Instance.SetPlayerInputState(false);
         InputSystemManager.Instance.SetHackingInputState(true);
 
-        StartCoroutine(WaitForInput());
+        registerInput = false;
+        gameStarted = false;
+
         gameTimer = 0;
         sequencesSucceeded = 0;
 
@@ -89,23 +118,9 @@ public class HackingGame : MonoBehaviour
         sequenceCompleteToggle1.isOn = false;
         sequenceCompleteToggle2.isOn = false;
         sequenceCompleteToggle3.isOn = false;
-
-
-        SetupHackingGame();
-
-        IA_HackingMove.action.started += (ctx) => RegisterInput();
-        IA_HackingCancel.action.performed += (ctx) => CancelGame();
     }
 
-    private void OnDisable()
-    {
-        IA_HackingMove.action.started -= (ctx) => RegisterInput();
-        IA_HackingCancel.action.performed -= (ctx) => CancelGame();
-    }
-    #endregion
-
-    #region Custom Methods
-    private void SetupHackingGame()
+    private void SetupHackingSequence()
     {
         currentInput = 0;
         randomInputSequence = new DirectionalInput[4];
@@ -194,11 +209,9 @@ public class HackingGame : MonoBehaviour
     private void CancelGame()
     {
         registerInput = false;
+        gameStarted = false;
 
-        InputSystemManager.Instance.SetPlayerInputState(true);
-        InputSystemManager.Instance.SetHackingInputState(false);
-
-        this.gameObject.SetActive(false);
+        StartCoroutine(ClosingCoroutine());
     }
     #endregion
 
@@ -213,7 +226,113 @@ public class HackingGame : MonoBehaviour
     private IEnumerator WaitForNewSequence()
     {
         yield return new WaitForSeconds(0.2f);
+        SetupHackingSequence();
+    }
+
+    private IEnumerator OpeningCoroutine()
+    {
+        background.transform.localScale = new Vector3(0, 1, 1);
+        inputSequenceCG.alpha = 0;
+        sequenceCompletionCG.alpha = 0;
+        sliderCG.alpha = 0;
+
         SetupHackingGame();
+
+        SetupHackingSequence();
+
+        yield return OpeningAnimationCoroutine();
+
+        gameStarted = true;
+        registerInput = true;
+
+        IA_HackingMove.action.started += (ctx) => RegisterInput();
+        IA_HackingCancel.action.performed += (ctx) => CancelGame();
+    }
+
+    private IEnumerator OpeningAnimationCoroutine()
+    {
+        yield return new WaitForSeconds(0.2f);
+        float elapsedTime = 0;
+        float scaleDuration = 0.33f;
+        while (elapsedTime < scaleDuration)
+        {
+            float scaleX = Mathf.Lerp(0, 1, elapsedTime / scaleDuration);
+            background.transform.localScale = new Vector3(scaleX, 1, 1);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        background.transform.localScale = Vector3.one;
+        yield return new WaitForSeconds(0.2f);
+
+        float fadeDuration = 0.25f;
+        elapsedTime = 0;
+        while (elapsedTime < fadeDuration)
+        {
+            float alpha = Mathf.Lerp(0, 1, elapsedTime / fadeDuration);
+            sequenceCompletionCG.alpha = alpha;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        sequenceCompletionCG.alpha = 1;
+        elapsedTime = 0;
+        while (elapsedTime < fadeDuration)
+        {
+            float alpha = Mathf.Lerp(0, 1, elapsedTime / fadeDuration);
+            sliderCG.alpha = alpha;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        sliderCG.alpha = 1;
+        elapsedTime = 0;
+        while (elapsedTime < fadeDuration)
+        {
+            float alpha = Mathf.Lerp(0, 1, elapsedTime / fadeDuration);
+            inputSequenceCG.alpha = alpha;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        inputSequenceCG.alpha = 1;
+        yield return new WaitForSeconds(0.2f);
+    }
+
+    private IEnumerator ClosingCoroutine()
+    {
+        yield return ClosingAnimationCoroutine();
+
+        InputSystemManager.Instance.SetPlayerInputState(true);
+        InputSystemManager.Instance.SetHackingInputState(false);
+
+        this.gameObject.SetActive(false);
+    }
+
+    private IEnumerator ClosingAnimationCoroutine()
+    {
+        float fadeDuration = 0.25f;
+        float elapsedTime = 0;
+        while (elapsedTime < fadeDuration)
+        {
+            float alpha = Mathf.Lerp(1, 0, elapsedTime / fadeDuration);
+            inputSequenceCG.alpha = alpha;
+            sliderCG.alpha = alpha;
+            sequenceCompletionCG.alpha = alpha;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        inputSequenceCG.alpha = 0;
+        sliderCG.alpha = 0;
+        sequenceCompletionCG.alpha = 0;
+        yield return new WaitForSeconds(0.2f);
+
+        elapsedTime = 0;
+        float scaleDuration = 0.33f;
+        while (elapsedTime < scaleDuration)
+        {
+            float scaleX = Mathf.Lerp(1, 0, elapsedTime / scaleDuration);
+            background.transform.localScale = new Vector3(scaleX, 1, 1);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        background.transform.localScale = new Vector3(0, 1, 1);
     }
     #endregion
 
