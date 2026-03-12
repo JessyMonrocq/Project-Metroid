@@ -593,6 +593,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Physics.SphereCast(transform.position, characterController.radius, Vector3.down, out RaycastHit hit, slopeForceRayLength))
         {
+            // IF layer is Drone, ignore (TO DO : Modify to take all undesirable layers later)
             if (hit.collider.gameObject.layer == 13)
             {
                 return;

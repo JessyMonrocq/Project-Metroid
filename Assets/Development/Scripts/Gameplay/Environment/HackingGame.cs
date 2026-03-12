@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -51,8 +52,10 @@ public class HackingGame : MonoBehaviour
     private int currentInput;
 
     private int sequencesSucceeded;
-    private bool registerInput;
+    private bool canRegisterInput;
+    private bool inputRegistered;
     private bool gameStarted;
+    private bool gameFailed;
     #endregion
 
     #region Unity Methods
@@ -67,6 +70,7 @@ public class HackingGame : MonoBehaviour
         timerSlider.value = (gameDuration - gameTimer) / gameDuration;
         if (gameTimer > gameDuration)
         {
+            gameFailed = true;
             CancelGame();
         }
     }
@@ -75,22 +79,15 @@ public class HackingGame : MonoBehaviour
     {
         StartCoroutine(OpeningCoroutine());
     }
-
-    private void OnDisable()
-    {
-        IA_HackingMove.action.started -= (ctx) => RegisterInput();
-        IA_HackingCancel.action.performed -= (ctx) => CancelGame();
-    }
     #endregion
 
     #region Custom Methods
     private void SetupHackingGame()
     {
-        InputSystemManager.Instance.SetPlayerInputState(false);
-        InputSystemManager.Instance.SetHackingInputState(true);
-
-        registerInput = false;
+        canRegisterInput = false;
+        inputRegistered = false;
         gameStarted = false;
+        gameFailed = false;
 
         gameTimer = 0;
         sequencesSucceeded = 0;
@@ -149,13 +146,35 @@ public class HackingGame : MonoBehaviour
 
     private void RegisterInput()
     {
-        if (!registerInput)
+        if (!canRegisterInput)
         {
             return;
         }
 
         input = IA_HackingMove.action.ReadValue<Vector2>();
         input.Normalize();
+
+        float magnitude = input.magnitude;
+        if (magnitude == 0)
+        {
+            if (inputRegistered)
+            {
+                inputRegistered = false;
+            }
+            return;
+        }
+
+        if (magnitude != 0)
+        {
+            if (inputRegistered)
+            {
+                return;
+            }
+            else
+            {
+                inputRegistered = true;
+            }
+        }
 
         DirectionalInput directionalInput;
 
@@ -208,7 +227,7 @@ public class HackingGame : MonoBehaviour
 
     private void CancelGame()
     {
-        registerInput = false;
+        canRegisterInput = false;
         gameStarted = false;
 
         StartCoroutine(ClosingCoroutine());
@@ -218,9 +237,9 @@ public class HackingGame : MonoBehaviour
     #region Coroutine Methods
     private IEnumerator WaitForInput()
     {
-        registerInput = false;
+        canRegisterInput = false;
         yield return new WaitForSeconds(0.25f);
-        registerInput = true;
+        canRegisterInput = true;
     }
 
     private IEnumerator WaitForNewSequence()
@@ -231,6 +250,8 @@ public class HackingGame : MonoBehaviour
 
     private IEnumerator OpeningCoroutine()
     {
+        InputSystemManager.Instance.SetPlayerInputState(false);
+
         background.transform.localScale = new Vector3(0, 1, 1);
         inputSequenceCG.alpha = 0;
         sequenceCompletionCG.alpha = 0;
@@ -243,96 +264,56 @@ public class HackingGame : MonoBehaviour
         yield return OpeningAnimationCoroutine();
 
         gameStarted = true;
-        registerInput = true;
+        canRegisterInput = true;
 
-        IA_HackingMove.action.started += (ctx) => RegisterInput();
+        InputSystemManager.Instance.SetHackingInputState(true);
+
+        IA_HackingMove.action.performed += (ctx) => RegisterInput();
         IA_HackingCancel.action.performed += (ctx) => CancelGame();
+        IA_HackingCancel.action.performed += (ctx) => gameFailed = true;
     }
 
     private IEnumerator OpeningAnimationCoroutine()
     {
         yield return new WaitForSeconds(0.2f);
-        float elapsedTime = 0;
-        float scaleDuration = 0.33f;
-        while (elapsedTime < scaleDuration)
-        {
-            float scaleX = Mathf.Lerp(0, 1, elapsedTime / scaleDuration);
-            background.transform.localScale = new Vector3(scaleX, 1, 1);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        background.transform.localScale = Vector3.one;
+
+        yield return background.transform.DOScaleX(1f, 0.33f).From(0f).WaitForCompletion();
         yield return new WaitForSeconds(0.2f);
 
-        float fadeDuration = 0.25f;
-        elapsedTime = 0;
-        while (elapsedTime < fadeDuration)
-        {
-            float alpha = Mathf.Lerp(0, 1, elapsedTime / fadeDuration);
-            sequenceCompletionCG.alpha = alpha;
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        sequenceCompletionCG.alpha = 1;
-        elapsedTime = 0;
-        while (elapsedTime < fadeDuration)
-        {
-            float alpha = Mathf.Lerp(0, 1, elapsedTime / fadeDuration);
-            sliderCG.alpha = alpha;
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        sliderCG.alpha = 1;
-        elapsedTime = 0;
-        while (elapsedTime < fadeDuration)
-        {
-            float alpha = Mathf.Lerp(0, 1, elapsedTime / fadeDuration);
-            inputSequenceCG.alpha = alpha;
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        inputSequenceCG.alpha = 1;
-        yield return new WaitForSeconds(0.2f);
+        yield return sequenceCompletionCG.DOFade(1f, 0.25f).WaitForCompletion();
+        yield return sliderCG.DOFade(1f, 0.25f).WaitForCompletion();
+        yield return inputSequenceCG.DOFade(1f, 0.25f).WaitForCompletion();
     }
 
     private IEnumerator ClosingCoroutine()
     {
+        InputSystemManager.Instance.SetHackingInputState(false);
+
         yield return ClosingAnimationCoroutine();
 
+        if (gameFailed)
+        {
+            OnHackingFailed?.Invoke();
+        }
+
+        IA_HackingMove.action.performed -= (ctx) => RegisterInput();
+        IA_HackingCancel.action.performed -= (ctx) => CancelGame();
+        IA_HackingCancel.action.performed -= (ctx) => gameFailed = true;
+
         InputSystemManager.Instance.SetPlayerInputState(true);
-        InputSystemManager.Instance.SetHackingInputState(false);
 
         this.gameObject.SetActive(false);
     }
 
     private IEnumerator ClosingAnimationCoroutine()
     {
-        float fadeDuration = 0.25f;
-        float elapsedTime = 0;
-        while (elapsedTime < fadeDuration)
-        {
-            float alpha = Mathf.Lerp(1, 0, elapsedTime / fadeDuration);
-            inputSequenceCG.alpha = alpha;
-            sliderCG.alpha = alpha;
-            sequenceCompletionCG.alpha = alpha;
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        inputSequenceCG.alpha = 0;
-        sliderCG.alpha = 0;
-        sequenceCompletionCG.alpha = 0;
-        yield return new WaitForSeconds(0.2f);
+        sequenceCompletionCG.DOFade(0f, 0.25f);
+        sliderCG.DOFade(0f, 0.25f);
+        inputSequenceCG.DOFade(0f, 0.25f);
 
-        elapsedTime = 0;
-        float scaleDuration = 0.33f;
-        while (elapsedTime < scaleDuration)
-        {
-            float scaleX = Mathf.Lerp(1, 0, elapsedTime / scaleDuration);
-            background.transform.localScale = new Vector3(scaleX, 1, 1);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        background.transform.localScale = new Vector3(0, 1, 1);
+        yield return new WaitForSeconds(0.5f);
+
+        yield return background.transform.DOScaleX(0f, 0.33f).WaitForCompletion();
     }
     #endregion
 

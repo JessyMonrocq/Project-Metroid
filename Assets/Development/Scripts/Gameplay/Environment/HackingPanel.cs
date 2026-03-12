@@ -79,6 +79,7 @@ public class HackingPanel : MonoBehaviour
         {
             if (!hackingComplete && !panelCooldown)
             {
+                panelInteractionIndicator.SetActive(false);
                 hackingGame.gameObject.SetActive(true);
             }
         }

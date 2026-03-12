@@ -78,7 +78,7 @@ public class DroneHackingGame : MonoBehaviour
         selectorImage.color = defaultSelectorColor;
         timerSlider.value = 1;
 
-        switch(numberOfSequences)
+        switch (numberOfSequences)
         {
             case 1:
                 sequenceCompleteToggle1.gameObject.SetActive(true);
@@ -154,6 +154,12 @@ public class DroneHackingGame : MonoBehaviour
         }
 
         input = IA_HackingMove.action.ReadValue<Vector2>();
+        if (input.magnitude == 0)
+        {
+            return;
+        }
+
+
         float angle = Mathf.Atan2(input.y, input.x) * Mathf.Rad2Deg;
         float snappedAngle = Mathf.Round(angle / 45) * 45;
 

@@ -635,7 +635,7 @@
                     "id": "9b995766-6eb4-4e7f-8ad7-e123644557f6",
                     "path": "<Gamepad>/leftStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "StickDeadzone(min=0.5)",
                     "groups": ";Gamepad",
                     "action": "Move",
                     "isComposite": false,
