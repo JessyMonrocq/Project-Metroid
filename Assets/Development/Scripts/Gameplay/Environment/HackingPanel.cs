@@ -1,7 +1,9 @@
+using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class HackingPanel : MonoBehaviour
 {
@@ -11,7 +13,7 @@ public class HackingPanel : MonoBehaviour
     [SerializeField] private HackingGame hackingGame;
     [SerializeField] private GameObject panelDeactivatedIndicator;
     [SerializeField] private GameObject panelActivatedIndicator;
-    [SerializeField] private GameObject panelInteractionIndicator;
+    [SerializeField] private Image panelInteractionIndicator;
     [SerializeField] private InputActionReference IA_PlayerInteract;
     [SerializeField] private float failureCooldownDuration = 1;
 
@@ -30,15 +32,15 @@ public class HackingPanel : MonoBehaviour
         {
             panelDeactivatedIndicator.SetActive(true);
             panelActivatedIndicator.SetActive(false);
-            panelInteractionIndicator.SetActive(false);
-            
+            panelInteractionIndicator.DOFade(0f, 0f);
+
             hackingGame.OnHackingComplete.AddListener(HackingComplete);
             hackingGame.OnHackingFailed.AddListener(PanelCooldown);
         } else
         {
             panelDeactivatedIndicator.SetActive(false);
             panelActivatedIndicator.SetActive(true);
-            panelInteractionIndicator.SetActive(false);
+            panelInteractionIndicator.DOFade(0f, 0f);
         }
 
         playerDetected = false;
@@ -68,7 +70,8 @@ public class HackingPanel : MonoBehaviour
 
             if (!hackingComplete && !panelActivated && !panelCooldown)
             {
-                panelInteractionIndicator.SetActive(true);
+                panelInteractionIndicator.DOKill();
+                panelInteractionIndicator.DOFade(1f, 0.2f);
             }
         }
     }
@@ -83,7 +86,8 @@ public class HackingPanel : MonoBehaviour
         if (other.gameObject.GetComponent<PlayerMovement>())
         {
             playerDetected = false;
-            panelInteractionIndicator.SetActive(false);
+            panelInteractionIndicator.DOKill();
+            panelInteractionIndicator.DOFade(0f, 0.2f);
         }
     }
     #endregion
@@ -102,7 +106,8 @@ public class HackingPanel : MonoBehaviour
         {
             if (!hackingComplete && !panelCooldown)
             {
-                panelInteractionIndicator.SetActive(false);
+                panelInteractionIndicator.DOKill();
+                panelInteractionIndicator.DOFade(0f, 0.2f);
                 hackingGame.gameObject.SetActive(true);
             }
         }
@@ -134,7 +139,8 @@ public class HackingPanel : MonoBehaviour
 
         if (playerDetected)
         {
-            panelInteractionIndicator.SetActive(true);
+            panelInteractionIndicator.DOKill();
+            panelInteractionIndicator.DOFade(1f, 0.2f);
         }
     }
     #endregion

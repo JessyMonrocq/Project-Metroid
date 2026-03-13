@@ -411,7 +411,7 @@ MonoBehaviour:
   hackingGame: {fileID: 4387201175322156139}
   panelDeactivatedIndicator: {fileID: 391206844544915624}
   panelActivatedIndicator: {fileID: 5949282166593515864}
-  panelInteractionIndicator: {fileID: 3957022140577518552}
+  panelInteractionIndicator: {fileID: 6431886327435336340}
   IA_PlayerInteract: {fileID: 2501866947901617391, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   failureCooldownDuration: 1
 --- !u!65 &9072123872328454731

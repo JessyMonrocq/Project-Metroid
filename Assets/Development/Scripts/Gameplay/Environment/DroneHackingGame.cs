@@ -193,7 +193,7 @@ public class DroneHackingGame : MonoBehaviour
             snappedAngle = -snappedAngle;
         }
 
-        wheelCursor.transform.rotation = Quaternion.Euler(0, 0, snappedAngle); //Rotate with DOTween ?
+        wheelCursor.transform.DORotate(new Vector3(0, 0, snappedAngle), 0.1f).SetEase(Ease.OutQuad);
         currentCursorAngle = snappedAngle;
 
         if (currentCursorAngle == randomAngle)

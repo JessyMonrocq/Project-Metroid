@@ -1,7 +1,9 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class DronePanel : MonoBehaviour
 {
@@ -11,7 +13,7 @@ public class DronePanel : MonoBehaviour
     [SerializeField] private DroneHackingGame droneHackingGame;
     [SerializeField] private GameObject panelDeactivatedIndicator;
     [SerializeField] private GameObject panelActivatedIndicator;
-    [SerializeField] private GameObject panelInteractionIndicator;
+    [SerializeField] private Image panelInteractionIndicator;
     [SerializeField] private InputActionReference IA_DroneInteract;
     [SerializeField] private float failureCooldownDuration = 1;
     [SerializeField] private bool requiresHacking;
@@ -32,7 +34,7 @@ public class DronePanel : MonoBehaviour
         {
             panelDeactivatedIndicator.SetActive(true);
             panelActivatedIndicator.SetActive(false);
-            panelInteractionIndicator.SetActive(false);
+            panelInteractionIndicator.DOFade(0f, 0f);
             if (requiresHacking)
             {
                 droneHackingGame.gameObject.SetActive(false);
@@ -44,7 +46,7 @@ public class DronePanel : MonoBehaviour
         {
             panelDeactivatedIndicator.SetActive(false);
             panelActivatedIndicator.SetActive(true);
-            panelInteractionIndicator.SetActive(false);
+            panelInteractionIndicator.DOFade(0f, 0f);
         }
 
         droneDetected = false;
@@ -69,7 +71,8 @@ public class DronePanel : MonoBehaviour
         }
         if (droneDetected && detectedDrone == null)
         {
-            panelInteractionIndicator.SetActive(false);
+            panelInteractionIndicator.DOKill();
+            panelInteractionIndicator.DOFade(0f, 0.2f);
             droneDetected = false;
         }
     }
@@ -88,7 +91,8 @@ public class DronePanel : MonoBehaviour
 
             if (!hackingComplete && !panelActivated && !panelCooldown)
             {
-                panelInteractionIndicator.SetActive(true);
+                panelInteractionIndicator.DOKill();
+                panelInteractionIndicator.DOFade(1f, 0.2f);
             }
         }
     }
@@ -102,7 +106,8 @@ public class DronePanel : MonoBehaviour
 
         if (other.gameObject.GetComponent<DroneMovement>())
         {
-            panelInteractionIndicator.SetActive(false);
+            panelInteractionIndicator.DOKill();
+            panelInteractionIndicator.DOFade(0f, 0.2f);
             droneDetected = false;
             detectedDrone = null;
         }
@@ -123,7 +128,8 @@ public class DronePanel : MonoBehaviour
         {
             if (requiresHacking && !hackingComplete)
             {
-                panelInteractionIndicator.SetActive(false);
+                panelInteractionIndicator.DOKill();
+                panelInteractionIndicator.DOFade(0f, 0.2f);
                 droneHackingGame.gameObject.SetActive(true);
             }
             else
@@ -138,7 +144,8 @@ public class DronePanel : MonoBehaviour
     {
         hackingComplete = true;
         panelActivatedIndicator.SetActive(true);
-        panelInteractionIndicator.SetActive(false);
+        panelInteractionIndicator.DOKill();
+        panelInteractionIndicator.DOFade(0f, 0.2f);
         droneHackingGame.OnHackingComplete.RemoveListener(HackingComplete);
         droneHackingGame.OnHackingFailed.RemoveListener(PanelCooldown);
 
@@ -160,7 +167,8 @@ public class DronePanel : MonoBehaviour
 
         if (droneDetected)
         {
-            panelInteractionIndicator.SetActive(true);
+            panelInteractionIndicator.DOKill();
+            panelInteractionIndicator.DOFade(1f, 0.2f);
         }
     }
     #endregion

@@ -536,7 +536,7 @@ MonoBehaviour:
   droneHackingGame: {fileID: 7337941497793417980}
   panelDeactivatedIndicator: {fileID: 7259327567699311528}
   panelActivatedIndicator: {fileID: 4863914258492782033}
-  panelInteractionIndicator: {fileID: 4845717190685516618}
+  panelInteractionIndicator: {fileID: 3511502620367042837}
   IA_DroneInteract: {fileID: 1413050193454926329, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   failureCooldownDuration: 1
   requiresHacking: 1
