@@ -128,6 +128,7 @@ public class HackingGame : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
+            inputImages[i].DOKill();
             inputImages[i].color = Color.white;
             inputImages[i].transform.localScale = Vector3.one;
 
@@ -189,11 +190,11 @@ public class HackingGame : MonoBehaviour
 
         if (directionalInput == randomInputSequence[currentInput])
         {
-            inputImages[currentInput].transform.localScale = Vector3.one;
-            inputImages[currentInput].color = Color.green;
+            inputImages[currentInput].transform.DOScale(1f, 0.2f).From(1.1f).SetEase(Ease.OutBack);
+            inputImages[currentInput].DOColor(Color.green, 0.2f);
             if (currentInput < randomInputSequence.Length - 1)
             {
-                inputImages[currentInput + 1].transform.localScale *= 1.1f;
+                inputImages[currentInput + 1].transform.DOScale(1.1f, 0.2f).SetEase(Ease.OutBack);
             }
 
             currentInput++;
@@ -201,9 +202,7 @@ public class HackingGame : MonoBehaviour
             if (currentInput >= randomInputSequence.Length)
             {
                 sequencesSucceeded++;
-                sequenceCompleteToggle1.isOn = sequencesSucceeded >= 1;
-                sequenceCompleteToggle2.isOn = sequencesSucceeded >= 2;
-                sequenceCompleteToggle3.isOn = sequencesSucceeded >= 3;
+                StartCoroutine(CompletionToggleAnimationCoroutine(sequencesSucceeded));
                 if (sequencesSucceeded >= numberOfSequences)
                 {
                     gameTimer = 0;
@@ -213,15 +212,14 @@ public class HackingGame : MonoBehaviour
                 }
                 else
                 {
-                    StartCoroutine(WaitForNewSequence());
-                    StartCoroutine(WaitForInput());
+                    StartCoroutine(WaitForNewSequenceCoroutine());
                 }
             }
         }
         else
         {
             gameTimer += 0.5f;
-            StartCoroutine(WaitForInput());
+            StartCoroutine(WrongInputDelayCoroutine());
         }
     }
 
@@ -235,17 +233,40 @@ public class HackingGame : MonoBehaviour
     #endregion
 
     #region Coroutine Methods
-    private IEnumerator WaitForInput()
+    private IEnumerator WrongInputDelayCoroutine()
     {
         canRegisterInput = false;
-        yield return new WaitForSeconds(0.25f);
+        background.transform.DOShakePosition(0.3f, new Vector3(10, 0, 0), 20, 90).SetEase(Ease.OutQuad);
+        inputImages[currentInput].DOColor(Color.red, 0.1f).WaitForCompletion();
+        yield return inputImages[currentInput].transform.DOScale(0.9f, 0.1f).SetEase(Ease.OutBack).WaitForCompletion();
+        yield return new WaitForSeconds(0.1f);
+        inputImages[currentInput].DOColor(Color.white, 0.1f).WaitForCompletion();
+        yield return inputImages[currentInput].transform.DOScale(1f, 0.1f).SetEase(Ease.OutBack).WaitForCompletion();
         canRegisterInput = true;
     }
 
-    private IEnumerator WaitForNewSequence()
+    private IEnumerator WaitForNewSequenceCoroutine()
     {
-        yield return new WaitForSeconds(0.2f);
+        canRegisterInput = false;
+        yield return inputSequenceCG.DOFade(0f, 0.1f).WaitForCompletion();
+        yield return new WaitForSeconds(0.1f);
         SetupHackingSequence();
+        yield return new WaitForSeconds(0.1f);
+        yield return inputSequenceCG.DOFade(1f, 0.1f).WaitForCompletion();
+        canRegisterInput = true;
+    }
+
+    private IEnumerator CompletionToggleAnimationCoroutine(int sequence)
+    {
+        Toggle toggle = sequence switch
+        {
+            1 => sequenceCompleteToggle1,
+            2 => sequenceCompleteToggle2,
+            3 => sequenceCompleteToggle3,
+            _ => null
+        };
+        yield return toggle.transform.DORotate(new Vector3(0, 0, 360), 0.33f, RotateMode.LocalAxisAdd).WaitForCompletion();
+        toggle.isOn = true;
     }
 
     private IEnumerator OpeningCoroutine()
@@ -269,8 +290,8 @@ public class HackingGame : MonoBehaviour
         InputSystemManager.Instance.SetHackingInputState(true);
 
         IA_HackingMove.action.performed += (ctx) => RegisterInput();
-        IA_HackingCancel.action.performed += (ctx) => CancelGame();
         IA_HackingCancel.action.performed += (ctx) => gameFailed = true;
+        IA_HackingCancel.action.performed += (ctx) => CancelGame();
     }
 
     private IEnumerator OpeningAnimationCoroutine()
@@ -297,8 +318,8 @@ public class HackingGame : MonoBehaviour
         }
 
         IA_HackingMove.action.performed -= (ctx) => RegisterInput();
-        IA_HackingCancel.action.performed -= (ctx) => CancelGame();
         IA_HackingCancel.action.performed -= (ctx) => gameFailed = true;
+        IA_HackingCancel.action.performed -= (ctx) => CancelGame();
 
         InputSystemManager.Instance.SetPlayerInputState(true);
 
@@ -307,6 +328,13 @@ public class HackingGame : MonoBehaviour
 
     private IEnumerator ClosingAnimationCoroutine()
     {
+        if (gameFailed)
+        {
+            background.transform.DOShakePosition(0.5f, new Vector3(20, 0, 0), 30, 90).SetEase(Ease.OutQuad);
+        }
+
+        yield return new WaitForSeconds(0.5f);
+
         sequenceCompletionCG.DOFade(0f, 0.25f);
         sliderCG.DOFade(0f, 0.25f);
         inputSequenceCG.DOFade(0f, 0.25f);
