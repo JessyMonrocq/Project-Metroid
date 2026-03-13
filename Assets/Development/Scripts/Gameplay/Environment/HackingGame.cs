@@ -197,6 +197,8 @@ public class HackingGame : MonoBehaviour
                 inputImages[currentInput + 1].transform.DOScale(1.1f, 0.2f).SetEase(Ease.OutBack);
             }
 
+            RumbleManager.Instance.RumblePulse(0.75f, 0.75f, 0.1f);
+
             currentInput++;
 
             if (currentInput >= randomInputSequence.Length)
@@ -236,6 +238,7 @@ public class HackingGame : MonoBehaviour
     private IEnumerator WrongInputDelayCoroutine()
     {
         canRegisterInput = false;
+        RumbleManager.Instance.RumblePulse(1f, 1f, 0.3f);
         background.transform.DOShakePosition(0.3f, new Vector3(10, 0, 0), 20, 90).SetEase(Ease.OutQuad);
         inputImages[currentInput].DOColor(Color.red, 0.1f).WaitForCompletion();
         yield return inputImages[currentInput].transform.DOScale(0.9f, 0.1f).SetEase(Ease.OutBack).WaitForCompletion();
