@@ -3455,12 +3455,44 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6326346830600375591, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
+      propertyPath: OnActivate.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6326346830600375591, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
+      propertyPath: OnActivate.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6326346830600375591, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
       propertyPath: OnActivate.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 97048435}
+    - target: {fileID: 6326346830600375591, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
+      propertyPath: OnActivate.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6326346830600375591, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
+      propertyPath: OnActivate.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: set_IsPowered
+      objectReference: {fileID: 0}
+    - target: {fileID: 6326346830600375591, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
+      propertyPath: OnActivate.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GrapplePoint, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6326346830600375591, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
+      propertyPath: OnActivate.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6326346830600375591, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
+      propertyPath: OnActivate.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 7337941497793417980, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
+      propertyPath: DEBUG_MODE
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7337941497793417980, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
       propertyPath: gameDuration
-      value: 6
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7337941497793417980, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
       propertyPath: numberOfSequences
@@ -3642,7 +3674,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4387201175322156139, guid: dd032b5e40fe49146a84eea6c9a60650, type: 3}
       propertyPath: DEBUG_MODE
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4387201175322156139, guid: dd032b5e40fe49146a84eea6c9a60650, type: 3}
       propertyPath: backgroundColorComplete.b

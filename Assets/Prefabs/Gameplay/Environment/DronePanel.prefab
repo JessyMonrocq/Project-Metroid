@@ -93,7 +93,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2554096391993731115
 RectTransform:
   m_ObjectHideFlags: 0
@@ -423,7 +423,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 42f01578a2dc66f4080e7353b70cc20c, type: 2}
+  - {fileID: 2100000, guid: a37e90a722ff13b4281acd1103c69154, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -532,24 +532,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DronePanel
   OnActivate:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: GrapplePoint, Assembly-CSharp
-        m_MethodName: set_IsPowered
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
   droneHackingGame: {fileID: 7337941497793417980}
-  requiresHacking: 1
-  dronePresenceIndicator: {fileID: 7259327567699311528}
+  panelDeactivatedIndicator: {fileID: 7259327567699311528}
   panelActivatedIndicator: {fileID: 4863914258492782033}
+  panelInteractionIndicator: {fileID: 4845717190685516618}
   IA_DroneInteract: {fileID: 1413050193454926329, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  failureCooldownDuration: 1
+  requiresHacking: 1
 --- !u!65 &4977888065359286546
 BoxCollider:
   m_ObjectHideFlags: 0

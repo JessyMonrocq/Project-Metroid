@@ -27,24 +27,24 @@ public class PlayerWeapon : MonoBehaviour
     {
         projectilePool = new ObjectPool<Projectile>(CreateProjectile, OnGetFromPool, OnReleaseFromPool, OnDestroyPooledObject, false, poolDefaultCapacity, poolMaxCapacity);
     }
-
-    private void OnEnable()
-    {
-        IA_PlayerLook.action.Enable();
-        IA_PlayerShoot.action.performed += (ctx) => Shoot();
-    }
-
-    private void OnDisable()
-    {
-        IA_PlayerLook.action.Disable();
-        IA_PlayerShoot.action.performed -= (ctx) => Shoot();
-    }
-
+    
     private void Start()
     {
         playerWeaponTransform = GetComponent<Transform>();
         playerWeaponTransform.localPosition = Vector3.zero;
         playerWeaponTransform.localRotation = Quaternion.identity;
+    }
+
+    private void OnEnable()
+    {
+        IA_PlayerLook.action.Enable();
+        IA_PlayerShoot.action.performed += OnPlayerShoot;
+    }
+
+    private void OnDisable()
+    {
+        IA_PlayerLook.action.Disable();
+        IA_PlayerShoot.action.performed -= OnPlayerShoot;
     }
 
     private void Update()
@@ -67,6 +67,13 @@ public class PlayerWeapon : MonoBehaviour
             bool isAnglePositive = input.y > 0;
             playerWeaponTransform.localRotation = Quaternion.Euler(0, 0, isAnglePositive ? angle : -angle);
         }
+    }
+    #endregion
+
+    #region Input Callbacks
+    private void OnPlayerShoot(InputAction.CallbackContext context)
+    {
+        Shoot();
     }
     #endregion
 

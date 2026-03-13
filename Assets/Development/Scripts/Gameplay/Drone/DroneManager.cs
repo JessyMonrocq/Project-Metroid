@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 public class DroneManager : MonoBehaviour
 {
+    #region Inspector Fields
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private PlayerWeapon playerWeapon;
     [SerializeField] private GameObject dronePrefab;
@@ -17,7 +18,9 @@ public class DroneManager : MonoBehaviour
     private bool registerInput = true;
     private float inputDelayDuration = 0.5f;
     private float inputDelayTimer = 0f;
+    #endregion
 
+    #region Unity Methods
     private void Start()
     {
         drone = null;
@@ -27,14 +30,14 @@ public class DroneManager : MonoBehaviour
 
     private void OnEnable()
     {
-        IA_SpawnDrone.action.performed += (ctx) => SpawnDrone();
-        IA_DestroyDrone.action.performed += (ctx) => DestroyDrone();
+        IA_SpawnDrone.action.performed += OnSpawnDrone;
+        IA_DestroyDrone.action.performed += OnDestroyDrone;
     }
 
     private void OnDisable()
     {
-        IA_SpawnDrone.action.performed -= (ctx) => SpawnDrone();
-        IA_DestroyDrone.action.performed -= (ctx) => DestroyDrone();
+        IA_SpawnDrone.action.performed -= OnSpawnDrone;
+        IA_DestroyDrone.action.performed -= OnDestroyDrone;
     }
 
     private void Update()
@@ -49,7 +52,21 @@ public class DroneManager : MonoBehaviour
             }
         }
     }
+    #endregion
 
+    #region Input Callbacks
+    private void OnSpawnDrone(InputAction.CallbackContext context)
+    {
+        SpawnDrone();
+    }
+
+    private void OnDestroyDrone(InputAction.CallbackContext context)
+    {
+        DestroyDrone();
+    }
+    #endregion
+
+    #region Custom Methods
     private void SpawnDrone()
     {
         if (!registerInput)
@@ -91,4 +108,5 @@ public class DroneManager : MonoBehaviour
 
         registerInput = false;
     }
+    #endregion
 }

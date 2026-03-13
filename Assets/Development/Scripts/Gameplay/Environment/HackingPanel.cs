@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 public class HackingPanel : MonoBehaviour
 {
+    #region Inspector Fields
     public UnityEvent OnActivate;
 
     [SerializeField] private HackingGame hackingGame;
@@ -12,33 +13,46 @@ public class HackingPanel : MonoBehaviour
     [SerializeField] private GameObject panelActivatedIndicator;
     [SerializeField] private GameObject panelInteractionIndicator;
     [SerializeField] private InputActionReference IA_PlayerInteract;
-    [SerializeField] private float failureCooldownDuration = 3;
+    [SerializeField] private float failureCooldownDuration = 1;
 
     private bool playerDetected;
     private bool hackingComplete = false;
     private bool panelActivated = false;
     private bool panelCooldown = false;
 
+    public bool IsPanelActivated => panelActivated;
+    #endregion
+
+    #region Unity Methods
     private void Start()
     {
-        panelDeactivatedIndicator.SetActive(true);
-        panelActivatedIndicator.SetActive(false);
-        panelInteractionIndicator.SetActive(false);
-        playerDetected = false;
+        if (!panelActivated)
+        {
+            panelDeactivatedIndicator.SetActive(true);
+            panelActivatedIndicator.SetActive(false);
+            panelInteractionIndicator.SetActive(false);
+            
+            hackingGame.OnHackingComplete.AddListener(HackingComplete);
+            hackingGame.OnHackingFailed.AddListener(PanelCooldown);
+        } else
+        {
+            panelDeactivatedIndicator.SetActive(false);
+            panelActivatedIndicator.SetActive(true);
+            panelInteractionIndicator.SetActive(false);
+        }
 
+        playerDetected = false;
         hackingGame.gameObject.SetActive(false);
-        hackingGame.OnHackingComplete.AddListener(HackingComplete);
-        hackingGame.OnHackingFailed.AddListener(PanelCooldown);
     }
 
     private void OnEnable()
     {
-        IA_PlayerInteract.action.performed += (ctx) => ActivatePanel();
+        IA_PlayerInteract.action.performed += OnPlayerInteract;
     }
 
     private void OnDisable()
     {
-        IA_PlayerInteract.action.performed -= (ctx) => ActivatePanel();
+        IA_PlayerInteract.action.performed -= OnPlayerInteract;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -72,7 +86,16 @@ public class HackingPanel : MonoBehaviour
             panelInteractionIndicator.SetActive(false);
         }
     }
+    #endregion
 
+    #region Input Callbacks
+    private void OnPlayerInteract(InputAction.CallbackContext context)
+    {
+        ActivatePanel();
+    }
+    #endregion
+
+    #region Custom Methods
     private void ActivatePanel()
     {
         if (playerDetected && PlayerMovement.Instance.IsPlayerGrounded)
@@ -88,16 +111,21 @@ public class HackingPanel : MonoBehaviour
     private void HackingComplete()
     {
         hackingComplete = true;
-        OnActivate?.Invoke();
         panelDeactivatedIndicator.SetActive(false);
         panelActivatedIndicator.SetActive(true);
+        hackingGame.OnHackingComplete.RemoveListener(HackingComplete);
+        hackingGame.OnHackingFailed.RemoveListener(PanelCooldown);
+
+        OnActivate?.Invoke();
     }
 
     private void PanelCooldown()
     {
         StartCoroutine(WaitForCooldown());
     }
+    #endregion
 
+    #region Coroutine Methods
     private IEnumerator WaitForCooldown()
     {
         panelCooldown = true;
@@ -109,4 +137,5 @@ public class HackingPanel : MonoBehaviour
             panelInteractionIndicator.SetActive(true);
         }
     }
+    #endregion
 }

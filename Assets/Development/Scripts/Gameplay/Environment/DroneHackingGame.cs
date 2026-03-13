@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class HackingGame : MonoBehaviour
+public class DroneHackingGame : MonoBehaviour
 {
     #region Inspector Fields
     [HideInInspector]
@@ -21,9 +21,17 @@ public class HackingGame : MonoBehaviour
     [Header("Input Action References")]
     [SerializeField] private InputActionReference IA_HackingMove;
     [SerializeField] private InputActionReference IA_HackingCancel;
+    [SerializeField] private InputActionReference IA_HackingInputA;
+    [SerializeField] private InputActionReference IA_HackingInputB;
+    [SerializeField] private InputActionReference IA_HackingInputC;
 
-    [Header("Input Images References")]
-    [SerializeField] private Image[] inputImages;
+    [Header("Hacking Wheel References")]
+    [SerializeField] private GameObject wheelCursor;
+    [SerializeField] private Image cursorImage;
+    [SerializeField] private Image inputImage;
+    [SerializeField] private Sprite inputSpriteA;
+    [SerializeField] private Sprite inputSpriteB;
+    [SerializeField] private Sprite inputSpriteC;
 
     [Header("Hacking Completion References")]
     [SerializeField] private Slider timerSlider;
@@ -33,38 +41,37 @@ public class HackingGame : MonoBehaviour
 
     [Header("Animation References")]
     [SerializeField] private GameObject gameUI;
-    [SerializeField] private CanvasGroup inputSequenceCG;
+    [SerializeField] private CanvasGroup wheelCG;
     [SerializeField] private CanvasGroup sequenceCompletionCG;
     [SerializeField] private CanvasGroup sliderCG;
     [SerializeField] private Image backgroundImage;
     [SerializeField] private Image sliderImage;
 
     [Header("Animation Colors")]
-    [SerializeField] private Color correctInputColor = Color.blue;
-    [SerializeField] private Color wrongInputColor = Color.red;
-    [SerializeField] private Color defaultInputColor = Color.white;
+    [SerializeField] private Color defaultCursorColor;
+    [SerializeField] private Color correctCursorColor;
+    [SerializeField] private Color wrongCursorColor;
     [SerializeField] private Color backgroundColorDefault;
     [SerializeField] private Color backgroundColorComplete;
     [SerializeField] private Color backgroundColorFailure;
 
-    public enum DirectionalInput
+    private enum HackingInput
     {
-        Up,
-        Down,
-        Left,
-        Right
+        A,
+        B,
+        C
     }
 
-    private DirectionalInput[] randomInputSequence;
-
+    private HackingInput randomInput;
     private Vector2 input;
-    private float gameTimer;
 
-    private int currentInput;
+    private float gameTimer;
+    private float randomAngle;
+    private float lastGeneratedAngle;
+    private float currentCursorAngle;
 
     private int sequencesSucceeded;
     private bool canRegisterInput;
-    private bool inputRegistered;
     private bool gameStarted;
     private bool gameFailed;
     #endregion
@@ -91,6 +98,9 @@ public class HackingGame : MonoBehaviour
     private void OnEnable()
     {
         IA_HackingMove.action.performed += OnHackingMove;
+        IA_HackingInputA.action.performed += OnHackingInputA;
+        IA_HackingInputB.action.performed += OnHackingInputB;
+        IA_HackingInputC.action.performed += OnHackingInputC;
         IA_HackingCancel.action.performed += OnHackingCancel;
 
         StartCoroutine(OpeningCoroutine());
@@ -98,7 +108,11 @@ public class HackingGame : MonoBehaviour
 
     private void OnDisable()
     {
+
         IA_HackingMove.action.performed -= OnHackingMove;
+        IA_HackingInputA.action.performed -= OnHackingInputA;
+        IA_HackingInputB.action.performed -= OnHackingInputB;
+        IA_HackingInputC.action.performed -= OnHackingInputC;
         IA_HackingCancel.action.performed -= OnHackingCancel;
     }
     #endregion
@@ -107,7 +121,6 @@ public class HackingGame : MonoBehaviour
     private void SetupHackingGame()
     {
         canRegisterInput = false;
-        inputRegistered = false;
         gameStarted = false;
         gameFailed = false;
 
@@ -141,33 +154,29 @@ public class HackingGame : MonoBehaviour
 
     private void SetupHackingSequence()
     {
-        currentInput = 0;
-        randomInputSequence = new DirectionalInput[4];
-        for (int i = 0; i < 4; i++)
+        cursorImage.DOKill();
+        inputImage.DOKill();
+        cursorImage.DOColor(defaultCursorColor, 0.1f);
+        inputImage.DOFade(0f, 0.1f);
+
+        randomInput = (HackingInput)Random.Range(0, 2);
+        do
         {
-            randomInputSequence[i] = (DirectionalInput)Random.Range(0, 3);
-        }
+            randomAngle = Random.Range(-135, 180);
+            randomAngle = Mathf.Round(randomAngle / 45) * 45;
+        } while (randomAngle == lastGeneratedAngle);
+        lastGeneratedAngle = randomAngle;
 
-        for (int i = 0; i < 4; i++)
+        inputImage.sprite = randomInput switch
         {
-            inputImages[i].DOKill();
-            inputImages[i].color = defaultInputColor;
-            inputImages[i].transform.localScale = Vector3.one;
-
-            inputImages[i].gameObject.transform.rotation = randomInputSequence[i] switch
-            {
-                DirectionalInput.Up => Quaternion.Euler(0, 0, 0),
-                DirectionalInput.Down => Quaternion.Euler(0, 0, 180),
-                DirectionalInput.Left => Quaternion.Euler(0, 0, 90),
-                DirectionalInput.Right => Quaternion.Euler(0, 0, -90),
-                _ => Quaternion.Euler(0, 0, 0)
-            };
-        }
-
-        inputImages[0].transform.localScale *= 1.1f;
+            HackingInput.A => inputSpriteA,
+            HackingInput.B => inputSpriteB,
+            HackingInput.C => inputSpriteC,
+            _ => inputSpriteA
+        };
     }
 
-    private void RegisterInput()
+    private void MoveCursor()
     {
         if (!canRegisterInput)
         {
@@ -175,73 +184,67 @@ public class HackingGame : MonoBehaviour
         }
 
         input = IA_HackingMove.action.ReadValue<Vector2>();
-        input.Normalize();
-
-        float magnitude = input.magnitude;
-        if (magnitude == 0)
+        if (input.magnitude == 0)
         {
-            if (inputRegistered)
-            {
-                inputRegistered = false;
-            }
             return;
         }
 
-        if (magnitude != 0)
+
+        float angle = Mathf.Atan2(input.y, input.x) * Mathf.Rad2Deg;
+        float snappedAngle = Mathf.Round(angle / 45) * 45;
+
+        if (snappedAngle == -180)
         {
-            if (inputRegistered)
-            {
-                return;
-            }
-            else
-            {
-                inputRegistered = true;
-            }
+            snappedAngle = -snappedAngle;
         }
 
-        DirectionalInput directionalInput;
+        wheelCursor.transform.rotation = Quaternion.Euler(0, 0, snappedAngle); //Rotate with DOTween ?
+        currentCursorAngle = snappedAngle;
 
-        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+        if (currentCursorAngle == randomAngle)
         {
-            directionalInput = input.x > 0 ? DirectionalInput.Right : DirectionalInput.Left;
+            cursorImage.DOKill();
+            inputImage.DOKill();
+            cursorImage.DOColor(correctCursorColor, 0.2f);
+            inputImage.DOFade(1f, 0.2f);
         }
         else
         {
-            directionalInput = input.y > 0 ? DirectionalInput.Up : DirectionalInput.Down;
+            cursorImage.DOKill();
+            inputImage.DOKill();
+            cursorImage.DOColor(defaultCursorColor, 0.2f);
+            inputImage.DOFade(0f, 0.2f);
+        }
+    }
+
+    private void RegisterInput(HackingInput input)
+    {
+        if (!canRegisterInput)
+        {
+            return;
         }
 
-        if (directionalInput == randomInputSequence[currentInput])
+        if (input == randomInput && currentCursorAngle == randomAngle)
         {
-            inputImages[currentInput].transform.DOScale(1f, 0.2f).From(1.1f).SetEase(Ease.OutBack);
-            inputImages[currentInput].DOColor(correctInputColor, 0.2f);
-            if (currentInput < randomInputSequence.Length - 1)
-            {
-                inputImages[currentInput + 1].transform.DOScale(1.1f, 0.2f).SetEase(Ease.OutBack);
-            }
+            sequencesSucceeded++;
 
             RumbleManager.Instance.RumblePulse(0.75f, 0.75f, 0.1f);
-
-            currentInput++;
-
-            if (currentInput >= randomInputSequence.Length)
+            
+            StartCoroutine(CompletionToggleAnimationCoroutine(sequencesSucceeded));
+            if (sequencesSucceeded == numberOfSequences)
             {
-                sequencesSucceeded++;
-                StartCoroutine(CompletionToggleAnimationCoroutine(sequencesSucceeded));
-                if (sequencesSucceeded >= numberOfSequences)
+                gameTimer = 0;
+                if (!DEBUG_MODE)
                 {
-                    gameTimer = 0;
-                    if (!DEBUG_MODE)
-                    {
-                        OnHackingComplete.Invoke();
-                    }
-                    backgroundImage.DOColor(backgroundColorComplete, 0.25f);
+                    OnHackingComplete?.Invoke();
+                }
+                backgroundImage.DOColor(backgroundColorComplete, 0.25f);
 
-                    CancelGame();
-                }
-                else
-                {
-                    StartCoroutine(WaitForNewSequenceCoroutine());
-                }
+                CancelGame();
+            }
+            else
+            {
+                StartCoroutine(WaitForNewSequenceCoroutine());
             }
         }
         else
@@ -263,7 +266,22 @@ public class HackingGame : MonoBehaviour
     #region Input Callbacks
     private void OnHackingMove(InputAction.CallbackContext context)
     {
-        RegisterInput();
+        MoveCursor();
+    }
+
+    private void OnHackingInputA(InputAction.CallbackContext context)
+    {
+        RegisterInput(HackingInput.A);
+    }
+
+    private void OnHackingInputB(InputAction.CallbackContext context)
+    {
+        RegisterInput(HackingInput.B);
+    }
+
+    private void OnHackingInputC(InputAction.CallbackContext context)
+    {
+        RegisterInput(HackingInput.C);
     }
 
     private void OnHackingCancel(InputAction.CallbackContext context)
@@ -283,25 +301,22 @@ public class HackingGame : MonoBehaviour
         sliderImage.DOColor(backgroundColorFailure, 0.1f).WaitForCompletion();
 
         gameUI.transform.DOShakePosition(0.3f, new Vector3(10, 0, 0), 20, 90).SetEase(Ease.OutQuad);
-        inputImages[currentInput].DOColor(wrongInputColor, 0.1f).WaitForCompletion();
-        yield return inputImages[currentInput].transform.DOScale(0.9f, 0.1f).SetEase(Ease.OutBack).WaitForCompletion();
+        cursorImage.DOColor(wrongCursorColor, 0.1f).WaitForCompletion();
         yield return new WaitForSeconds(0.1f);
 
         sliderImage.DOColor(sliderColor, 0.1f).WaitForCompletion();
+        cursorImage.DOColor(defaultCursorColor, 0.1f).WaitForCompletion();
+        yield return new WaitForSeconds(0.1f);
 
-        inputImages[currentInput].DOColor(defaultInputColor, 0.1f).WaitForCompletion();
-        yield return inputImages[currentInput].transform.DOScale(1f, 0.1f).SetEase(Ease.OutBack).WaitForCompletion();
         canRegisterInput = true;
     }
 
     private IEnumerator WaitForNewSequenceCoroutine()
     {
         canRegisterInput = false;
-        yield return inputSequenceCG.DOFade(0f, 0.1f).WaitForCompletion();
         yield return new WaitForSeconds(0.1f);
         SetupHackingSequence();
         yield return new WaitForSeconds(0.1f);
-        yield return inputSequenceCG.DOFade(1f, 0.1f).WaitForCompletion();
         canRegisterInput = true;
     }
 
@@ -320,11 +335,11 @@ public class HackingGame : MonoBehaviour
 
     private IEnumerator OpeningCoroutine()
     {
-        InputSystemManager.Instance.SetPlayerInputState(false);
+        InputSystemManager.Instance.SetDroneInputState(false);
 
         gameUI.transform.localScale = new Vector3(0.01f, 0.01f, 1);
         backgroundImage.color = backgroundColorDefault;
-        inputSequenceCG.alpha = 0;
+        wheelCG.alpha = 0;
         sequenceCompletionCG.alpha = 0;
         sliderCG.alpha = 0;
 
@@ -352,7 +367,7 @@ public class HackingGame : MonoBehaviour
 
         yield return sequenceCompletionCG.DOFade(1f, 0.25f).WaitForCompletion();
         yield return sliderCG.DOFade(1f, 0.25f).WaitForCompletion();
-        yield return inputSequenceCG.DOFade(1f, 0.25f).WaitForCompletion();
+        yield return wheelCG.DOFade(1f, 0.25f).WaitForCompletion();
     }
 
     private IEnumerator ClosingCoroutine()
@@ -366,7 +381,7 @@ public class HackingGame : MonoBehaviour
             OnHackingFailed?.Invoke();
         }
 
-        InputSystemManager.Instance.SetPlayerInputState(true);
+        InputSystemManager.Instance.SetDroneInputState(true);
 
         this.gameObject.SetActive(false);
     }
@@ -382,7 +397,7 @@ public class HackingGame : MonoBehaviour
 
         sequenceCompletionCG.DOFade(0f, 0.25f);
         sliderCG.DOFade(0f, 0.25f);
-        inputSequenceCG.DOFade(0f, 0.25f);
+        wheelCG.DOFade(0f, 0.25f);
 
         yield return new WaitForSeconds(0.5f);
 
@@ -392,5 +407,4 @@ public class HackingGame : MonoBehaviour
         yield return gameUI.transform.DOScaleY(0.01f, 0.2f).WaitForCompletion();
     }
     #endregion
-
 }
