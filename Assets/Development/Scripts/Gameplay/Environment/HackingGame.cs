@@ -145,7 +145,7 @@ public class HackingGame : MonoBehaviour
         randomInputSequence = new DirectionalInput[4];
         for (int i = 0; i < 4; i++)
         {
-            randomInputSequence[i] = (DirectionalInput)Random.Range(0, 3);
+            randomInputSequence[i] = (DirectionalInput)Random.Range(0, 4);
         }
 
         for (int i = 0; i < 4; i++)

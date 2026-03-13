@@ -154,12 +154,6 @@ public class DroneHackingGame : MonoBehaviour
 
     private void SetupHackingSequence()
     {
-        cursorImage.DOKill();
-        inputImage.DOKill();
-        cursorImage.DOColor(defaultCursorColor, 0.1f);
-        inputImage.DOFade(0f, 0.1f);
-
-        randomInput = (HackingInput)Random.Range(0, 2);
         do
         {
             randomAngle = Random.Range(-135, 180);
@@ -167,6 +161,7 @@ public class DroneHackingGame : MonoBehaviour
         } while (randomAngle == lastGeneratedAngle);
         lastGeneratedAngle = randomAngle;
 
+        randomInput = (HackingInput)Random.Range(0, 3);
         inputImage.sprite = randomInput switch
         {
             HackingInput.A => inputSpriteA,
@@ -315,6 +310,10 @@ public class DroneHackingGame : MonoBehaviour
     {
         canRegisterInput = false;
         yield return new WaitForSeconds(0.1f);
+        cursorImage.DOKill();
+        inputImage.DOKill();
+        cursorImage.DOColor(defaultCursorColor, 0.1f);
+        yield return inputImage.DOFade(0f, 0.1f).WaitForCompletion();
         SetupHackingSequence();
         yield return new WaitForSeconds(0.1f);
         canRegisterInput = true;
@@ -342,6 +341,8 @@ public class DroneHackingGame : MonoBehaviour
         wheelCG.alpha = 0;
         sequenceCompletionCG.alpha = 0;
         sliderCG.alpha = 0;
+        inputImage.DOFade(0f, 0f);
+        cursorImage.color = defaultCursorColor;
 
         SetupHackingGame();
 
@@ -398,6 +399,7 @@ public class DroneHackingGame : MonoBehaviour
         sequenceCompletionCG.DOFade(0f, 0.25f);
         sliderCG.DOFade(0f, 0.25f);
         wheelCG.DOFade(0f, 0.25f);
+        inputImage.DOFade(0f, 0.25f);
 
         yield return new WaitForSeconds(0.5f);
 
