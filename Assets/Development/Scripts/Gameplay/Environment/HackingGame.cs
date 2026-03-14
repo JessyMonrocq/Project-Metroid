@@ -91,6 +91,7 @@ public class HackingGame : MonoBehaviour
     private void OnEnable()
     {
         IA_HackingMove.action.performed += OnHackingMove;
+        IA_HackingMove.action.canceled += OnHackingMove;
         IA_HackingCancel.action.performed += OnHackingCancel;
 
         StartCoroutine(OpeningCoroutine());
@@ -99,6 +100,7 @@ public class HackingGame : MonoBehaviour
     private void OnDisable()
     {
         IA_HackingMove.action.performed -= OnHackingMove;
+        IA_HackingMove.action.canceled -= OnHackingMove;
         IA_HackingCancel.action.performed -= OnHackingCancel;
     }
     #endregion
@@ -169,21 +171,22 @@ public class HackingGame : MonoBehaviour
 
     private void RegisterInput()
     {
-        if (!canRegisterInput)
-        {
-            return;
-        }
-
         input = IA_HackingMove.action.ReadValue<Vector2>();
         input.Normalize();
 
         float magnitude = input.magnitude;
+
         if (magnitude == 0)
         {
             if (inputRegistered)
             {
                 inputRegistered = false;
             }
+            return;
+        }
+
+        if (!canRegisterInput)
+        {
             return;
         }
 
