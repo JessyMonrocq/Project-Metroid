@@ -6,6 +6,8 @@ public class PlayerMovement : MonoBehaviour
 {
     #region Inspector Fields
     public UnityEvent<int> OnPlayerDirectionChanged;
+    [HideInInspector]
+    public UnityEvent OnPlayerCrouchJump;
 
     public static PlayerMovement Instance;
 
@@ -185,7 +187,7 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        HandleJumpBufferTiming();
+        HandleJumpBufferTiming(input);
 
         Vector3 targetVelocity = new Vector3(input.x, 0, 0) * playerSpeed;
         targetVelocity = Vector3.ClampMagnitude(targetVelocity, playerSpeed);
@@ -343,7 +345,7 @@ public class PlayerMovement : MonoBehaviour
             currentGrappleSpeed += grappleAcceleration * Time.deltaTime;
             currentGrappleSpeed = Mathf.Min(currentGrappleSpeed, grappleMaxSpeed);
 
-            grappleVelocity = directionToGrapple * currentGrappleSpeed;
+            grappleVelocity = grappleDirection * currentGrappleSpeed;
 
             characterController.Move(grappleVelocity * Time.deltaTime);
 
@@ -405,10 +407,16 @@ public class PlayerMovement : MonoBehaviour
         return Vector3.zero;
     }
 
-    private void HandleJumpBufferTiming()
+    private void HandleJumpBufferTiming(Vector2 input)
     {
         if (IA_PlayerJump.action.WasPerformedThisFrame())
         {
+            if (isPlayerGrounded && input.y < -0.5f && Mathf.Abs(input.x) < 0.4f)
+            {
+                OnPlayerCrouchJump?.Invoke();
+                return;
+            }
+
             jumpBufferTimer = jumpBufferDuration;
         }
         else if (jumpBufferTimer > 0)
@@ -452,7 +460,6 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // Handle jump force based on button pressed or hold
         if (isPlayerJumping && playerVelocity.y > 0 && IA_PlayerJump.action.WasReleasedThisFrame())
         {
             playerVelocity.y *= jumpCutMultiplier;
