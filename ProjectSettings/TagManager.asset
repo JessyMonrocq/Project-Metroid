@@ -19,10 +19,10 @@ TagManager:
   - Projectile
   - Phaze
   - Drone
-  - 
-  - 
-  - 
-  - 
+  - PlayerPhazing
+  - Obstacle
+  - Hazard
+  - Enemy
   - 
   - 
   - 

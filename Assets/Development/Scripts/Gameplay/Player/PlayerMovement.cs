@@ -68,6 +68,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Abilites Settings")]
     [SerializeField] private bool canDoubleJump;
     [SerializeField] private bool canDash;
+    [SerializeField] private bool canPhazeDash;
     [SerializeField] private bool canMultiDirectionDash;
     [SerializeField] private bool canWallJump;
     [SerializeField] private bool canStickToWalls;
@@ -553,6 +554,11 @@ public class PlayerMovement : MonoBehaviour
         playerVelocity.y = 0;
         isOnWall = false;
 
+        if (canPhazeDash)
+        {
+            this.gameObject.layer = 14;
+        }
+
         if (input.x != 0)
         {
             int newDirection = (int)Mathf.Sign(input.x);
@@ -589,6 +595,12 @@ public class PlayerMovement : MonoBehaviour
         if (dashDurationTimer <= 0)
         {
             isPlayerDashing = false;
+
+            if (canPhazeDash)
+            {
+                this.gameObject.layer = 9;
+            }
+
             return;
         }
 
