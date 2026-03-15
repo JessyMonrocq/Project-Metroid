@@ -4,6 +4,13 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public enum PlayerState
+    {
+        Normal,
+        Dashing,
+        Grappling
+    }
+
     #region Inspector Fields
     public UnityEvent<int> OnPlayerDirectionChanged;
     [HideInInspector]
@@ -74,6 +81,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool canStickToWalls;
     [SerializeField] private bool canGrapple;
 
+    // State Machine
+    private PlayerState currentState = PlayerState.Normal;
+
+    private Vector2 currentInput;
     private Vector3 playerVelocity;
     private Vector3 horizontalVelocity;
     private Vector3 dashDirection;
@@ -82,18 +93,19 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 grappleVelocity;
     private Vector3 grappleDirection;
     private Transform currentGrapplePoint;
+
     private int playerDirection = 1;
     private int jumpsRemaining;
     private int wallDirection;
+
     private bool isPlayerGrounded;
     private bool isPlayerJumping;
-    private bool isPlayerDashing;
     private bool isOnWall;
     private bool isOnSlipperyWall;
     private bool isSliding;
-    private bool isGrappling;
     private bool isGrappleHolding;
     private bool hasPassedGrapplePoint;
+
     private float coyoteTimer;
     private float jumpBufferTimer;
     private float dashDurationTimer;
@@ -105,21 +117,17 @@ public class PlayerMovement : MonoBehaviour
     private float currentGrappleSpeed;
     private float grappleHoldTimer;
 
-
     public int PlayerDirection => playerDirection;
-
     public bool IsPlayerGrounded => isPlayerGrounded;
     #endregion
 
     #region Unity Methods
     private void Awake()
     {
-        if (Instance == null)
-        {
+        if (Instance == null) {
             Instance = this;
         }
-        else
-        {
+        else {
             Destroy(gameObject);
         }
     }
@@ -130,10 +138,20 @@ public class PlayerMovement : MonoBehaviour
         IA_PlayerJump.action.Enable();
         IA_PlayerDash.action.Enable();
         IA_PlayerGrapple.action.Enable();
+
+        IA_PlayerJump.action.performed += OnJumpPerformed;
+        IA_PlayerJump.action.canceled += OnJumpCanceled;
+        IA_PlayerDash.action.performed += OnDashPerformed;
+        IA_PlayerGrapple.action.performed += OnGrapplePerformed;
     }
 
     private void OnDisable()
     {
+        IA_PlayerJump.action.performed -= OnJumpPerformed;
+        IA_PlayerJump.action.canceled -= OnJumpCanceled;
+        IA_PlayerDash.action.performed -= OnDashPerformed;
+        IA_PlayerGrapple.action.performed -= OnGrapplePerformed;
+
         IA_PlayerMove.action.Disable();
         IA_PlayerJump.action.Disable();
         IA_PlayerDash.action.Disable();
@@ -141,140 +159,155 @@ public class PlayerMovement : MonoBehaviour
     }
     #endregion
 
+    #region Input Event Handlers
+    private void OnJumpPerformed(InputAction.CallbackContext context)
+    {
+        if (!enableInput) {
+            return;
+        }
+
+        if (isPlayerGrounded && currentInput.y < -0.5f && Mathf.Abs(currentInput.x) < 0.4f) {
+            OnPlayerCrouchJump?.Invoke();
+            return;
+        }
+
+        jumpBufferTimer = jumpBufferDuration;
+    }
+
+    private void OnJumpCanceled(InputAction.CallbackContext context)
+    {
+        if (isPlayerJumping && playerVelocity.y > 0) {
+            playerVelocity.y *= jumpCutMultiplier;
+            isPlayerJumping = false;
+        }
+    }
+
+    private void OnDashPerformed(InputAction.CallbackContext context)
+    {
+        if (!enableInput || !canDash || dashCooldownTimer > 0 || isOnWall || isSliding || currentState != PlayerState.Normal) {
+            return;
+        }
+
+        StartDash(currentInput);
+    }
+
+    private void OnGrapplePerformed(InputAction.CallbackContext context)
+    {
+        if (!enableInput || !canGrapple || currentGrapplePoint == null || currentState == PlayerState.Grappling) {
+            return;
+        }
+
+        StartGrappling();
+    }
+    #endregion
+
     #region Update Method
     private void Update()
     {
-        if (!enableInput)
-        {
+        if (!enableInput) {
             return;
         }
+
+        currentInput = IA_PlayerMove.action.ReadValue<Vector2>();
 
         HandleDashCooldown();
-
         HandleWallJumpInputLock();
 
-        if (isPlayerDashing)
-        {
-            HandleDash();
-            return;
+        switch (currentState) {
+            case PlayerState.Dashing:
+                HandleDash();
+                return;
+            case PlayerState.Grappling:
+                HandleGrappling();
+                return;
+            case PlayerState.Normal:
+                HandleNormalMovement();
+                break;
         }
+    }
 
-        if (isGrappling)
-        {
-            HandleGrappling();
-            return;
-        }
-
+    private void HandleNormalMovement()
+    {
         isPlayerGrounded = characterController.isGrounded;
 
-        if (canWallJump)
-        {
+        if (canWallJump) {
             CheckForWall();
         }
 
         HandleCoyoteTiming();
+        HandleJumpBufferTiming();
 
-        Vector2 input = IA_PlayerMove.action.ReadValue<Vector2>();
-
-        if (canDash && IA_PlayerDash.action.WasPerformedThisFrame() && dashCooldownTimer <= 0 && !isOnWall && !isSliding && !isGrappling)
-        {
-            StartDash(input);
-            return;
-        }
-
-        if (canGrapple && currentGrapplePoint != null && IA_PlayerGrapple.action.WasPerformedThisFrame() && !isGrappling)
-        {
-            StartGrappling();
-            return;
-        }
-
-        HandleJumpBufferTiming(input);
-
-        Vector3 targetVelocity = new Vector3(input.x, 0, 0) * playerSpeed;
+        Vector3 targetVelocity = new Vector3(currentInput.x, 0, 0) * playerSpeed;
         targetVelocity = Vector3.ClampMagnitude(targetVelocity, playerSpeed);
 
-        if (wallJumpInputLockTimer <= 0 && !isSliding)
-        {
-            if (slideMomentumTimer > 0)
-            {
+        if (wallJumpInputLockTimer <= 0 && !isSliding) {
+            if (slideMomentumTimer > 0) {
                 horizontalVelocity = slideMomentum;
                 slideMomentumTimer -= Time.deltaTime;
-
-                if (slideMomentumTimer <= 0)
-                {
+                if (slideMomentumTimer <= 0) {
                     slideMomentum = Vector3.zero;
                 }
             }
-            else
-            {
-                float speedChange = (input.x != 0) ? acceleration : deceleration;
+            else {
+                float speedChange = (currentInput.x != 0) ? acceleration : deceleration;
                 Vector3 targetWithEdgeSlide = targetVelocity + new Vector3(edgeSlideVelocity.x, 0, 0);
                 horizontalVelocity = Vector3.MoveTowards(horizontalVelocity, targetWithEdgeSlide, speedChange * Time.deltaTime);
             }
         }
-        else if (isSliding)
-        {
+        else if (isSliding) {
             horizontalVelocity = Vector3.zero;
         }
-        else
-        {
+        else {
             slideMomentumTimer = 0;
             slideMomentum = Vector3.zero;
         }
 
         UpdatePlayerDirection();
-
         HandleJump();
-
         ApplyGravity();
 
         Vector3 finalMove = horizontalVelocity + Vector3.up * playerVelocity.y;
 
-        if (isPlayerGrounded && !isPlayerJumping)
-        {
+        if (isPlayerGrounded && !isPlayerJumping) {
             finalMove += ApplySlopeForce();
             ApplyEdgeSliding();
         }
-        else
-        {
+        else {
             edgeSlideVelocity = Vector3.zero;
         }
 
+        finalMove.z = 0;
         characterController.Move(finalMove * Time.deltaTime);
-    }
-    #endregion
 
-    private void LateUpdate()
-    {
-        if (Mathf.Abs(transform.position.z) > 0.001f)
-        {
+        if ((characterController.collisionFlags & CollisionFlags.Above) != 0) {
+            playerVelocity.y = 0;
+        }
+
+        if (Mathf.Abs(transform.position.z) > 0.001f) {
             transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         }
     }
+    #endregion
 
     #region Private Methods
     private void HandleDashCooldown()
     {
-        if (dashCooldownTimer > 0)
-        {
+        if (dashCooldownTimer > 0) {
             dashCooldownTimer -= Time.deltaTime;
         }
     }
 
     private void HandleWallJumpInputLock()
     {
-        if (wallJumpInputLockTimer > 0)
-        {
+        if (wallJumpInputLockTimer > 0) {
             wallJumpInputLockTimer -= Time.deltaTime;
         }
     }
 
     private void HandleCoyoteTiming()
     {
-        if (isPlayerGrounded)
-        {
-            if (playerVelocity.y < -2f)
-            {
+        if (isPlayerGrounded) {
+            if (playerVelocity.y < -2f) {
                 playerVelocity.y = -2f;
             }
             isPlayerJumping = false;
@@ -282,11 +315,9 @@ public class PlayerMovement : MonoBehaviour
             coyoteTimer = coyoteDuration;
             jumpsRemaining = canDoubleJump ? 2 : 1;
         }
-        else if (coyoteTimer > 0)
-        {
+        else if (coyoteTimer > 0) {
             coyoteTimer -= Time.deltaTime;
-            if (coyoteTimer <= 0)
-            {
+            if (coyoteTimer <= 0) {
                 jumpsRemaining--;
                 coyoteTimer = 0;
             }
@@ -295,68 +326,59 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartGrappling()
     {
-        isGrappling = true;
+        currentState = PlayerState.Grappling;
         isGrappleHolding = true;
         hasPassedGrapplePoint = false;
         grappleHoldTimer = grappleHoldDuration;
         currentGrappleSpeed = 0;
-        
+
         playerVelocity = Vector3.zero;
         horizontalVelocity = Vector3.zero;
         grappleVelocity = Vector3.zero;
-        
+
         grappleDirection = (currentGrapplePoint.position - transform.position).normalized;
-        
+
         int newDirection = grappleDirection.x > 0 ? 1 : -1;
-        if (newDirection != playerDirection)
-        {
+        if (newDirection != playerDirection) {
             playerDirection = newDirection;
             OnPlayerDirectionChanged?.Invoke(playerDirection);
         }
+
         transform.right = new Vector3(playerDirection, 0, 0);
     }
 
     private void HandleGrappling()
     {
-        if (currentGrapplePoint == null)
-        {
+        if (currentGrapplePoint == null) {
             EndGrapple();
             return;
         }
 
-        if (isGrappleHolding)
-        {
+        if (isGrappleHolding) {
             grappleHoldTimer -= Time.deltaTime;
-            
-            if (grappleHoldTimer <= 0)
-            {
+            if (grappleHoldTimer <= 0) {
                 isGrappleHolding = false;
                 currentGrappleSpeed = grapplePullSpeed;
                 grappleDirection = (currentGrapplePoint.position - transform.position).normalized;
             }
-            
             return;
         }
 
-        Vector3 directionToGrapple = (currentGrapplePoint.position - transform.position).normalized;
         float distanceToGrapple = Vector3.Distance(transform.position, currentGrapplePoint.position);
 
-        if (!hasPassedGrapplePoint)
-        {
+        if (!hasPassedGrapplePoint) {
             currentGrappleSpeed += grappleAcceleration * Time.deltaTime;
             currentGrappleSpeed = Mathf.Min(currentGrappleSpeed, grappleMaxSpeed);
 
             grappleVelocity = grappleDirection * currentGrappleSpeed;
+            grappleVelocity.z = 0;
 
             characterController.Move(grappleVelocity * Time.deltaTime);
 
-            if (distanceToGrapple <= grapplePassDistance)
-            {
+            if (distanceToGrapple <= grapplePassDistance) {
                 hasPassedGrapplePoint = true;
-                
                 horizontalVelocity = new Vector3(grappleVelocity.x, 0, 0) * grappleMomentumMultiplier;
                 playerVelocity.y = grappleVelocity.y * grappleMomentumMultiplier;
-                
                 EndGrapple();
             }
         }
@@ -364,7 +386,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void EndGrapple()
     {
-        isGrappling = false;
+        currentState = PlayerState.Normal;
         isGrappleHolding = false;
         hasPassedGrapplePoint = false;
         grappleVelocity = Vector3.zero;
@@ -374,18 +396,14 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 ApplySlopeForce()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, slopeForceRayLength))
-        {
-            // IF layer is Drone, ignore (TO DO : Modify to take all undesirable layers later)
-            if (hit.collider.gameObject.layer == 13)
-            {
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, slopeForceRayLength)) {
+            if (hit.collider.gameObject.layer == 13) {
                 return Vector3.zero;
             }
 
             float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
 
-            if (slopeAngle >= characterController.slopeLimit)
-            {
+            if (slopeAngle >= characterController.slopeLimit) {
                 isSliding = true;
                 Vector3 slideDirection = new Vector3(hit.normal.x, -hit.normal.y, hit.normal.z);
                 Vector3 slideForce = slideDirection.normalized * slideSpeed;
@@ -395,8 +413,7 @@ public class PlayerMovement : MonoBehaviour
 
                 return slideForce;
             }
-            else if (hit.normal != Vector3.up)
-            {
+            else if (hit.normal != Vector3.up) {
                 isSliding = false;
                 slideMomentumTimer = 0;
                 slideMomentum = Vector3.zero;
@@ -408,51 +425,34 @@ public class PlayerMovement : MonoBehaviour
         return Vector3.zero;
     }
 
-    private void HandleJumpBufferTiming(Vector2 input)
+    private void HandleJumpBufferTiming()
     {
-        if (IA_PlayerJump.action.WasPerformedThisFrame())
-        {
-            if (isPlayerGrounded && input.y < -0.5f && Mathf.Abs(input.x) < 0.4f)
-            {
-                OnPlayerCrouchJump?.Invoke();
-                return;
-            }
-
-            jumpBufferTimer = jumpBufferDuration;
-        }
-        else if (jumpBufferTimer > 0)
-        {
+        if (jumpBufferTimer > 0) {
             jumpBufferTimer -= Time.deltaTime;
         }
     }
 
     private void UpdatePlayerDirection()
     {
-        if (horizontalVelocity.x != 0)
-        {
+        if (horizontalVelocity.x != 0) {
             int newDirection = (int)Mathf.Sign(horizontalVelocity.x);
-            if (newDirection != playerDirection)
-            {
+            if (newDirection != playerDirection) {
                 playerDirection = newDirection;
                 OnPlayerDirectionChanged?.Invoke(playerDirection);
             }
-
             transform.right = horizontalVelocity.normalized;
         }
     }
 
     private void HandleJump()
     {
-        if (isOnWall && jumpBufferTimer > 0)
-        {
+        if (isOnWall && jumpBufferTimer > 0) {
             PerformWallJump();
         }
-        else
-        {
+        else {
             bool canJump = (coyoteTimer > 0 || jumpsRemaining > 0) && jumpBufferTimer > 0 && !isSliding;
 
-            if (canJump)
-            {
+            if (canJump) {
                 playerVelocity.y = Mathf.Sqrt(playerJumpHeight * -2f * gravity);
                 isPlayerJumping = true;
                 coyoteTimer = 0;
@@ -460,32 +460,21 @@ public class PlayerMovement : MonoBehaviour
                 jumpsRemaining--;
             }
         }
-
-        if (isPlayerJumping && playerVelocity.y > 0 && IA_PlayerJump.action.WasReleasedThisFrame())
-        {
-            playerVelocity.y *= jumpCutMultiplier;
-            isPlayerJumping = false;
-        }
     }
 
     private void ApplyGravity()
     {
-        if (isOnWall && playerVelocity.y < 0)
-        {
-            if (canStickToWalls)
-            {
+        if (isOnWall && playerVelocity.y <= 0) {
+            if (canStickToWalls) {
                 playerVelocity.y = 0;
             }
-            else
-            {
+            else {
                 playerVelocity.y = wallSlideSpeed * wallSlideMultiplier;
             }
         }
-        else
-        {
+        else {
             float appliedGravity = gravity;
-            if (playerVelocity.y < 0)
-            {
+            if (playerVelocity.y < 0) {
                 appliedGravity *= fallGravityMultiplier;
             }
 
@@ -494,11 +483,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // WallDirection determines which way the player is facing : 1 is right / -1 is left
     private void CheckForWall()
     {
-        if (isPlayerGrounded)
-        {
+        if (isPlayerGrounded) {
             isOnWall = false;
             wallSlideMultiplier = 1f;
             isOnSlipperyWall = false;
@@ -508,18 +495,15 @@ public class PlayerMovement : MonoBehaviour
         bool rightWall = Physics.Raycast(transform.position, Vector3.right, wallCheckDistance, wallLayer);
         bool leftWall = Physics.Raycast(transform.position, Vector3.left, wallCheckDistance, wallLayer);
 
-        if (rightWall)
-        {
+        if (rightWall) {
             isOnWall = true;
             wallDirection = 1;
         }
-        else if (leftWall)
-        {
+        else if (leftWall) {
             isOnWall = true;
             wallDirection = -1;
         }
-        else
-        {
+        else {
             isOnWall = false;
             wallDirection = 0;
         }
@@ -527,15 +511,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void PerformWallJump()
     {
-        if (isOnSlipperyWall)
-        {
+        if (isOnSlipperyWall) {
             return;
         }
 
         playerVelocity.y = Mathf.Sqrt(wallJumpHeight * -2f * gravity);
-
         horizontalVelocity = new Vector3(-wallDirection * wallJumpHorizontalForce, 0, 0);
-
         wallJumpInputLockTimer = wallJumpInputLockDuration;
 
         isPlayerJumping = true;
@@ -548,42 +529,34 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartDash(Vector2 input)
     {
-        isPlayerDashing = true;
+        currentState = PlayerState.Dashing;
         dashDurationTimer = dashDuration;
         dashCooldownTimer = dashCooldown;
         playerVelocity.y = 0;
         isOnWall = false;
 
-        if (canPhazeDash)
-        {
+        if (canPhazeDash) {
             this.gameObject.layer = 14;
         }
 
-        if (input.x != 0)
-        {
+        if (input.x != 0) {
             int newDirection = (int)Mathf.Sign(input.x);
-            if (newDirection != playerDirection)
-            {
+            if (newDirection != playerDirection) {
                 playerDirection = newDirection;
                 OnPlayerDirectionChanged?.Invoke(playerDirection);
             }
-
             transform.right = new Vector3(playerDirection, 0, 0);
         }
 
-        if (canMultiDirectionDash)
-        {
-            if (input.x == 0)
-            {
+        if (canMultiDirectionDash) {
+            if (input.x == 0) {
                 dashDirection = new Vector3(playerDirection, 0, 0);
-            } else
-            {
-                dashDirection = new Vector3(input.x, input.y, 0);
-                dashDirection.Normalize();
+            }
+            else {
+                dashDirection = new Vector3(input.x, input.y, 0).normalized;
             }
         }
-        else
-        {
+        else {
             dashDirection = new Vector3(playerDirection, 0, 0);
         }
     }
@@ -592,43 +565,35 @@ public class PlayerMovement : MonoBehaviour
     {
         dashDurationTimer -= Time.deltaTime;
 
-        if (dashDurationTimer <= 0)
-        {
-            isPlayerDashing = false;
-
-            if (canPhazeDash)
-            {
+        if (dashDurationTimer <= 0) {
+            currentState = PlayerState.Normal;
+            if (canPhazeDash) {
                 this.gameObject.layer = 9;
             }
-
             return;
         }
 
         Vector3 dashMove = dashDirection * dashSpeed;
+        dashMove.z = 0;
         characterController.Move(dashMove * Time.deltaTime);
     }
 
     private void ApplyEdgeSliding()
     {
-        if (Physics.SphereCast(transform.position, characterController.radius, Vector3.down, out RaycastHit hit, slopeForceRayLength))
-        {
-            // IF layer is Drone, ignore (TO DO : Modify to take all undesirable layers later)
-            if (hit.collider.gameObject.layer == 13)
-            {
+        if (Physics.SphereCast(transform.position, characterController.radius, Vector3.down, out RaycastHit hit, slopeForceRayLength)) {
+            if (hit.collider.gameObject.layer == 13) {
                 return;
             }
 
             float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
 
-            if (slopeAngle < characterController.slopeLimit)
-            {
+            if (slopeAngle < characterController.slopeLimit) {
                 Vector3 slopeDirection = Vector3.ProjectOnPlane(Vector3.down, hit.normal);
                 edgeSlideVelocity += slopeDirection * Vector3.Dot(Vector3.down, slopeDirection) * Mathf.Abs(gravity) * edgeSlipStrength * Time.deltaTime;
                 edgeSlideVelocity *= edgeFriction;
             }
         }
-        else
-        {
+        else {
             edgeSlideVelocity = Vector3.zero;
         }
     }
@@ -642,8 +607,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void ForceJump()
     {
-        if (isPlayerDashing)
-        {
+        if (currentState == PlayerState.Dashing) {
             return;
         }
 
@@ -661,8 +625,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void IncreaseWallSlideIntensity(bool state)
     {
-        if (canStickToWalls)
-        {
+        if (canStickToWalls) {
             return;
         }
 

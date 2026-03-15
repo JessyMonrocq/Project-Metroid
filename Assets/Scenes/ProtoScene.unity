@@ -4345,6 +4345,10 @@ PrefabInstance:
       value: PLAYER
       objectReference: {fileID: 0}
     - target: {fileID: 8569470164356123035, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8569470164356123035, guid: 91eb8a1ff12a7724ab6bec3961063572, type: 3}
       propertyPath: canGrapple
       value: 0
       objectReference: {fileID: 0}
