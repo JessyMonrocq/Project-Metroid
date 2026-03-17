@@ -15,6 +15,8 @@ public class PlayerMovement : MonoBehaviour
     public UnityEvent<int> OnPlayerDirectionChanged;
     [HideInInspector]
     public UnityEvent OnPlayerCrouchJump;
+    [HideInInspector]
+    public UnityEvent<bool> OnPlayerAiming;
 
     public static PlayerMovement Instance;
 
@@ -22,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Input Action References")]
     [SerializeField] private InputActionReference IA_PlayerMove;
+    [SerializeField] private InputActionReference IA_PlayerAim;
     [SerializeField] private InputActionReference IA_PlayerJump;
     [SerializeField] private InputActionReference IA_PlayerDash;
     [SerializeField] private InputActionReference IA_PlayerGrapple;
@@ -81,7 +84,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool canStickToWalls;
     [SerializeField] private bool canGrapple;
 
-    // State Machine
     private PlayerState currentState = PlayerState.Normal;
 
     private Vector2 currentInput;
@@ -99,6 +101,7 @@ public class PlayerMovement : MonoBehaviour
     private int wallDirection;
 
     private bool isPlayerGrounded;
+    private bool isPlayerAiming;
     private bool isPlayerJumping;
     private bool isOnWall;
     private bool isOnSlipperyWall;
@@ -124,21 +127,38 @@ public class PlayerMovement : MonoBehaviour
     #region Unity Methods
     private void Awake()
     {
-        if (Instance == null) {
+        if (Instance == null)
+        {
             Instance = this;
         }
-        else {
+        else
+        {
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        isPlayerGrounded = false;
+        isPlayerAiming = false;
+        isPlayerJumping = false;
+        isOnWall = false;
+        isOnSlipperyWall = false;
+        isSliding = false;
+        isGrappleHolding = false;
+        hasPassedGrapplePoint = false;
     }
 
     private void OnEnable()
     {
         IA_PlayerMove.action.Enable();
+        IA_PlayerAim.action.Enable();
         IA_PlayerJump.action.Enable();
         IA_PlayerDash.action.Enable();
         IA_PlayerGrapple.action.Enable();
 
+        IA_PlayerAim.action.performed += OnAimingPerformed;
+        IA_PlayerAim.action.canceled += OnAimingCanceled;
         IA_PlayerJump.action.performed += OnJumpPerformed;
         IA_PlayerJump.action.canceled += OnJumpCanceled;
         IA_PlayerDash.action.performed += OnDashPerformed;
@@ -147,12 +167,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnDisable()
     {
+        IA_PlayerAim.action.performed -= OnAimingPerformed;
+        IA_PlayerAim.action.canceled -= OnAimingCanceled;
         IA_PlayerJump.action.performed -= OnJumpPerformed;
         IA_PlayerJump.action.canceled -= OnJumpCanceled;
         IA_PlayerDash.action.performed -= OnDashPerformed;
         IA_PlayerGrapple.action.performed -= OnGrapplePerformed;
 
         IA_PlayerMove.action.Disable();
+        IA_PlayerAim.action.Disable();
         IA_PlayerJump.action.Disable();
         IA_PlayerDash.action.Disable();
         IA_PlayerGrapple.action.Disable();
@@ -160,13 +183,32 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Input Event Handlers
-    private void OnJumpPerformed(InputAction.CallbackContext context)
+    private void OnAimingPerformed(InputAction.CallbackContext context)
     {
-        if (!enableInput) {
+        if (!isPlayerGrounded && !isOnWall)
+        {
             return;
         }
 
-        if (isPlayerGrounded && currentInput.y < -0.5f && Mathf.Abs(currentInput.x) < 0.4f) {
+        isPlayerAiming = true;
+        OnPlayerAiming?.Invoke(isPlayerAiming);
+    }
+
+    private void OnAimingCanceled(InputAction.CallbackContext context)
+    {
+        isPlayerAiming = false;
+        OnPlayerAiming?.Invoke(isPlayerAiming);
+    }
+
+    private void OnJumpPerformed(InputAction.CallbackContext context)
+    {
+        if (!enableInput)
+        {
+            return;
+        }
+
+        if (isPlayerGrounded && currentInput.y < -0.5f && Mathf.Abs(currentInput.x) < 0.4f)
+        {
             OnPlayerCrouchJump?.Invoke();
             return;
         }
@@ -176,7 +218,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnJumpCanceled(InputAction.CallbackContext context)
     {
-        if (isPlayerJumping && playerVelocity.y > 0) {
+        if (isPlayerJumping && playerVelocity.y > 0)
+        {
             playerVelocity.y *= jumpCutMultiplier;
             isPlayerJumping = false;
         }
@@ -184,7 +227,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnDashPerformed(InputAction.CallbackContext context)
     {
-        if (!enableInput || !canDash || dashCooldownTimer > 0 || isOnWall || isSliding || currentState != PlayerState.Normal) {
+        if (!enableInput || !canDash || dashCooldownTimer > 0 || isOnWall || isSliding || currentState != PlayerState.Normal)
+        {
             return;
         }
 
@@ -193,7 +237,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnGrapplePerformed(InputAction.CallbackContext context)
     {
-        if (!enableInput || !canGrapple || currentGrapplePoint == null || currentState == PlayerState.Grappling) {
+        if (!enableInput || !canGrapple || currentGrapplePoint == null || currentState == PlayerState.Grappling)
+        {
             return;
         }
 
@@ -204,7 +249,8 @@ public class PlayerMovement : MonoBehaviour
     #region Update Method
     private void Update()
     {
-        if (!enableInput) {
+        if (!enableInput)
+        {
             return;
         }
 
@@ -213,7 +259,8 @@ public class PlayerMovement : MonoBehaviour
         HandleDashCooldown();
         HandleWallJumpInputLock();
 
-        switch (currentState) {
+        switch (currentState)
+        {
             case PlayerState.Dashing:
                 HandleDash();
                 return;
@@ -230,34 +277,43 @@ public class PlayerMovement : MonoBehaviour
     {
         isPlayerGrounded = characterController.isGrounded;
 
-        if (canWallJump) {
+        if (canWallJump)
+        {
             CheckForWall();
         }
 
         HandleCoyoteTiming();
         HandleJumpBufferTiming();
 
-        Vector3 targetVelocity = new Vector3(currentInput.x, 0, 0) * playerSpeed;
+        float activeInputX = isPlayerAiming ? 0 : currentInput.x;
+
+        Vector3 targetVelocity = new Vector3(activeInputX, 0, 0) * playerSpeed;
         targetVelocity = Vector3.ClampMagnitude(targetVelocity, playerSpeed);
 
-        if (wallJumpInputLockTimer <= 0 && !isSliding) {
-            if (slideMomentumTimer > 0) {
+        if (wallJumpInputLockTimer <= 0 && !isSliding)
+        {
+            if (slideMomentumTimer > 0)
+            {
                 horizontalVelocity = slideMomentum;
                 slideMomentumTimer -= Time.deltaTime;
-                if (slideMomentumTimer <= 0) {
+                if (slideMomentumTimer <= 0)
+                {
                     slideMomentum = Vector3.zero;
                 }
             }
-            else {
-                float speedChange = (currentInput.x != 0) ? acceleration : deceleration;
+            else
+            {
+                float speedChange = (activeInputX != 0) ? acceleration : deceleration;
                 Vector3 targetWithEdgeSlide = targetVelocity + new Vector3(edgeSlideVelocity.x, 0, 0);
                 horizontalVelocity = Vector3.MoveTowards(horizontalVelocity, targetWithEdgeSlide, speedChange * Time.deltaTime);
             }
         }
-        else if (isSliding) {
+        else if (isSliding)
+        {
             horizontalVelocity = Vector3.zero;
         }
-        else {
+        else
+        {
             slideMomentumTimer = 0;
             slideMomentum = Vector3.zero;
         }
@@ -268,22 +324,26 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 finalMove = horizontalVelocity + Vector3.up * playerVelocity.y;
 
-        if (isPlayerGrounded && !isPlayerJumping) {
+        if (isPlayerGrounded && !isPlayerJumping)
+        {
             finalMove += ApplySlopeForce();
             ApplyEdgeSliding();
         }
-        else {
+        else
+        {
             edgeSlideVelocity = Vector3.zero;
         }
 
         finalMove.z = 0;
         characterController.Move(finalMove * Time.deltaTime);
 
-        if ((characterController.collisionFlags & CollisionFlags.Above) != 0) {
+        if ((characterController.collisionFlags & CollisionFlags.Above) != 0)
+        {
             playerVelocity.y = 0;
         }
 
-        if (Mathf.Abs(transform.position.z) > 0.001f) {
+        if (Mathf.Abs(transform.position.z) > 0.001f)
+        {
             transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         }
     }
@@ -292,22 +352,26 @@ public class PlayerMovement : MonoBehaviour
     #region Private Methods
     private void HandleDashCooldown()
     {
-        if (dashCooldownTimer > 0) {
+        if (dashCooldownTimer > 0)
+        {
             dashCooldownTimer -= Time.deltaTime;
         }
     }
 
     private void HandleWallJumpInputLock()
     {
-        if (wallJumpInputLockTimer > 0) {
+        if (wallJumpInputLockTimer > 0)
+        {
             wallJumpInputLockTimer -= Time.deltaTime;
         }
     }
 
     private void HandleCoyoteTiming()
     {
-        if (isPlayerGrounded) {
-            if (playerVelocity.y < -2f) {
+        if (isPlayerGrounded)
+        {
+            if (playerVelocity.y < -2f)
+            {
                 playerVelocity.y = -2f;
             }
             isPlayerJumping = false;
@@ -315,9 +379,11 @@ public class PlayerMovement : MonoBehaviour
             coyoteTimer = coyoteDuration;
             jumpsRemaining = canDoubleJump ? 2 : 1;
         }
-        else if (coyoteTimer > 0) {
+        else if (coyoteTimer > 0)
+        {
             coyoteTimer -= Time.deltaTime;
-            if (coyoteTimer <= 0) {
+            if (coyoteTimer <= 0)
+            {
                 jumpsRemaining--;
                 coyoteTimer = 0;
             }
@@ -339,7 +405,8 @@ public class PlayerMovement : MonoBehaviour
         grappleDirection = (currentGrapplePoint.position - transform.position).normalized;
 
         int newDirection = grappleDirection.x > 0 ? 1 : -1;
-        if (newDirection != playerDirection) {
+        if (newDirection != playerDirection)
+        {
             playerDirection = newDirection;
             OnPlayerDirectionChanged?.Invoke(playerDirection);
         }
@@ -349,14 +416,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleGrappling()
     {
-        if (currentGrapplePoint == null) {
+        if (currentGrapplePoint == null)
+        {
             EndGrapple();
             return;
         }
 
-        if (isGrappleHolding) {
+        if (isGrappleHolding)
+        {
             grappleHoldTimer -= Time.deltaTime;
-            if (grappleHoldTimer <= 0) {
+            if (grappleHoldTimer <= 0)
+            {
                 isGrappleHolding = false;
                 currentGrappleSpeed = grapplePullSpeed;
                 grappleDirection = (currentGrapplePoint.position - transform.position).normalized;
@@ -366,7 +436,8 @@ public class PlayerMovement : MonoBehaviour
 
         float distanceToGrapple = Vector3.Distance(transform.position, currentGrapplePoint.position);
 
-        if (!hasPassedGrapplePoint) {
+        if (!hasPassedGrapplePoint)
+        {
             currentGrappleSpeed += grappleAcceleration * Time.deltaTime;
             currentGrappleSpeed = Mathf.Min(currentGrappleSpeed, grappleMaxSpeed);
 
@@ -375,7 +446,8 @@ public class PlayerMovement : MonoBehaviour
 
             characterController.Move(grappleVelocity * Time.deltaTime);
 
-            if (distanceToGrapple <= grapplePassDistance) {
+            if (distanceToGrapple <= grapplePassDistance)
+            {
                 hasPassedGrapplePoint = true;
                 horizontalVelocity = new Vector3(grappleVelocity.x, 0, 0) * grappleMomentumMultiplier;
                 playerVelocity.y = grappleVelocity.y * grappleMomentumMultiplier;
@@ -396,14 +468,17 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 ApplySlopeForce()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, slopeForceRayLength)) {
-            if (hit.collider.gameObject.layer == 13) {
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, slopeForceRayLength))
+        {
+            if (hit.collider.gameObject.layer == 13)
+            {
                 return Vector3.zero;
             }
 
             float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
 
-            if (slopeAngle >= characterController.slopeLimit) {
+            if (slopeAngle >= characterController.slopeLimit)
+            {
                 isSliding = true;
                 Vector3 slideDirection = new Vector3(hit.normal.x, -hit.normal.y, hit.normal.z);
                 Vector3 slideForce = slideDirection.normalized * slideSpeed;
@@ -413,7 +488,8 @@ public class PlayerMovement : MonoBehaviour
 
                 return slideForce;
             }
-            else if (hit.normal != Vector3.up) {
+            else if (hit.normal != Vector3.up)
+            {
                 isSliding = false;
                 slideMomentumTimer = 0;
                 slideMomentum = Vector3.zero;
@@ -427,32 +503,41 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleJumpBufferTiming()
     {
-        if (jumpBufferTimer > 0) {
+        if (jumpBufferTimer > 0)
+        {
             jumpBufferTimer -= Time.deltaTime;
         }
     }
 
     private void UpdatePlayerDirection()
     {
-        if (horizontalVelocity.x != 0) {
-            int newDirection = (int)Mathf.Sign(horizontalVelocity.x);
-            if (newDirection != playerDirection) {
+        float directionCheck = isPlayerAiming ? currentInput.x : horizontalVelocity.x;
+
+        if (directionCheck != 0)
+        {
+            int newDirection = (int)Mathf.Sign(directionCheck);
+            if (newDirection != playerDirection)
+            {
                 playerDirection = newDirection;
                 OnPlayerDirectionChanged?.Invoke(playerDirection);
             }
-            transform.right = horizontalVelocity.normalized;
+
+            transform.right = new Vector3(playerDirection, 0, 0);
         }
     }
 
     private void HandleJump()
     {
-        if (isOnWall && jumpBufferTimer > 0) {
+        if (isOnWall && jumpBufferTimer > 0)
+        {
             PerformWallJump();
         }
-        else {
+        else
+        {
             bool canJump = (coyoteTimer > 0 || jumpsRemaining > 0) && jumpBufferTimer > 0 && !isSliding;
 
-            if (canJump) {
+            if (canJump)
+            {
                 playerVelocity.y = Mathf.Sqrt(playerJumpHeight * -2f * gravity);
                 isPlayerJumping = true;
                 coyoteTimer = 0;
@@ -464,17 +549,22 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyGravity()
     {
-        if (isOnWall && playerVelocity.y <= 0) {
-            if (canStickToWalls) {
+        if (isOnWall && playerVelocity.y <= 0)
+        {
+            if (canStickToWalls)
+            {
                 playerVelocity.y = 0;
             }
-            else {
+            else
+            {
                 playerVelocity.y = wallSlideSpeed * wallSlideMultiplier;
             }
         }
-        else {
+        else
+        {
             float appliedGravity = gravity;
-            if (playerVelocity.y < 0) {
+            if (playerVelocity.y < 0)
+            {
                 appliedGravity *= fallGravityMultiplier;
             }
 
@@ -485,7 +575,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void CheckForWall()
     {
-        if (isPlayerGrounded) {
+        if (isPlayerGrounded)
+        {
             isOnWall = false;
             wallSlideMultiplier = 1f;
             isOnSlipperyWall = false;
@@ -495,15 +586,18 @@ public class PlayerMovement : MonoBehaviour
         bool rightWall = Physics.Raycast(transform.position, Vector3.right, wallCheckDistance, wallLayer);
         bool leftWall = Physics.Raycast(transform.position, Vector3.left, wallCheckDistance, wallLayer);
 
-        if (rightWall) {
+        if (rightWall)
+        {
             isOnWall = true;
             wallDirection = 1;
         }
-        else if (leftWall) {
+        else if (leftWall)
+        {
             isOnWall = true;
             wallDirection = -1;
         }
-        else {
+        else
+        {
             isOnWall = false;
             wallDirection = 0;
         }
@@ -511,7 +605,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void PerformWallJump()
     {
-        if (isOnSlipperyWall) {
+        if (isOnSlipperyWall)
+        {
             return;
         }
 
@@ -535,28 +630,35 @@ public class PlayerMovement : MonoBehaviour
         playerVelocity.y = 0;
         isOnWall = false;
 
-        if (canPhazeDash) {
+        if (canPhazeDash)
+        {
             this.gameObject.layer = 14;
         }
 
-        if (input.x != 0) {
+        if (input.x != 0)
+        {
             int newDirection = (int)Mathf.Sign(input.x);
-            if (newDirection != playerDirection) {
+            if (newDirection != playerDirection)
+            {
                 playerDirection = newDirection;
                 OnPlayerDirectionChanged?.Invoke(playerDirection);
             }
             transform.right = new Vector3(playerDirection, 0, 0);
         }
 
-        if (canMultiDirectionDash) {
-            if (input.x == 0) {
+        if (canMultiDirectionDash)
+        {
+            if (input.x == 0)
+            {
                 dashDirection = new Vector3(playerDirection, 0, 0);
             }
-            else {
+            else
+            {
                 dashDirection = new Vector3(input.x, input.y, 0).normalized;
             }
         }
-        else {
+        else
+        {
             dashDirection = new Vector3(playerDirection, 0, 0);
         }
     }
@@ -565,9 +667,11 @@ public class PlayerMovement : MonoBehaviour
     {
         dashDurationTimer -= Time.deltaTime;
 
-        if (dashDurationTimer <= 0) {
+        if (dashDurationTimer <= 0)
+        {
             currentState = PlayerState.Normal;
-            if (canPhazeDash) {
+            if (canPhazeDash)
+            {
                 this.gameObject.layer = 9;
             }
             return;
@@ -580,20 +684,24 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyEdgeSliding()
     {
-        if (Physics.SphereCast(transform.position, characterController.radius, Vector3.down, out RaycastHit hit, slopeForceRayLength)) {
-            if (hit.collider.gameObject.layer == 13) {
+        if (Physics.SphereCast(transform.position, characterController.radius, Vector3.down, out RaycastHit hit, slopeForceRayLength))
+        {
+            if (hit.collider.gameObject.layer == 13)
+            {
                 return;
             }
 
             float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
 
-            if (slopeAngle < characterController.slopeLimit) {
+            if (slopeAngle < characterController.slopeLimit)
+            {
                 Vector3 slopeDirection = Vector3.ProjectOnPlane(Vector3.down, hit.normal);
                 edgeSlideVelocity += slopeDirection * Vector3.Dot(Vector3.down, slopeDirection) * Mathf.Abs(gravity) * edgeSlipStrength * Time.deltaTime;
                 edgeSlideVelocity *= edgeFriction;
             }
         }
-        else {
+        else
+        {
             edgeSlideVelocity = Vector3.zero;
         }
     }
@@ -607,7 +715,8 @@ public class PlayerMovement : MonoBehaviour
 
     public void ForceJump()
     {
-        if (currentState == PlayerState.Dashing) {
+        if (currentState == PlayerState.Dashing)
+        {
             return;
         }
 
@@ -625,7 +734,8 @@ public class PlayerMovement : MonoBehaviour
 
     public void IncreaseWallSlideIntensity(bool state)
     {
-        if (canStickToWalls) {
+        if (canStickToWalls)
+        {
             return;
         }
 

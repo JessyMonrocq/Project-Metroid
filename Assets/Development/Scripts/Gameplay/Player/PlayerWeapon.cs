@@ -6,20 +6,28 @@ using UnityEngine.Pool;
 public class PlayerWeapon : MonoBehaviour
 {
     #region Inspector Fields
+    [Header("Input Actions References")]
     [SerializeField] private InputActionReference IA_PlayerLook;
     [SerializeField] private InputActionReference IA_PlayerShoot;
+
+    [Header("Player Weapon Settings")]
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform projectileSpawnPoint;
     [SerializeField] private float projectileSpeed = 10;
+    
+    [Header("Visuals")]
+    [SerializeField] private LineRenderer laserLineRenderer;
+
     private bool enableInput = true;
 
     private IObjectPool<Projectile> projectilePool;
     private int poolDefaultCapacity = 10;
     private int poolMaxCapacity = 20;
     
-    private int playerDirection = 1;
     private Transform playerWeaponTransform;
     private Vector2 playerWeaponDefaultRotation = new Vector2(1, 0);
+    private int playerDirection = 1;
+    private bool isPlayerAiming;
     #endregion
 
     #region Unity Methods
@@ -33,18 +41,33 @@ public class PlayerWeapon : MonoBehaviour
         playerWeaponTransform = GetComponent<Transform>();
         playerWeaponTransform.localPosition = Vector3.zero;
         playerWeaponTransform.localRotation = Quaternion.identity;
+        isPlayerAiming = false;
+
+        PlayerMovement.Instance.OnPlayerAiming.AddListener((aimingState) => {
+            isPlayerAiming = aimingState;
+        });
+
+        if (laserLineRenderer != null)
+        {
+            laserLineRenderer.enabled = false;
+        }
     }
 
     private void OnEnable()
     {
         IA_PlayerLook.action.Enable();
+        IA_PlayerShoot.action.Enable();
+
         IA_PlayerShoot.action.performed += OnPlayerShoot;
     }
 
     private void OnDisable()
     {
         IA_PlayerLook.action.Disable();
+        IA_PlayerShoot.action.Disable();
+
         IA_PlayerShoot.action.performed -= OnPlayerShoot;
+        PlayerMovement.Instance.OnPlayerAiming.RemoveAllListeners();
     }
 
     private void Update()
@@ -66,6 +89,35 @@ public class PlayerWeapon : MonoBehaviour
         {
             bool isAnglePositive = input.y > 0;
             playerWeaponTransform.localRotation = Quaternion.Euler(0, 0, isAnglePositive ? angle : -angle);
+        }
+
+        if (isPlayerAiming)
+        {
+            Vector3 rayOrigin = new Vector3(projectileSpawnPoint.transform.position.x, projectileSpawnPoint.transform.position.y, 0);
+            Vector3 rayDirection = -projectileSpawnPoint.up;
+            float maxDistance = 100f;
+
+            if (laserLineRenderer != null)
+            {
+                laserLineRenderer.enabled = true;
+                laserLineRenderer.SetPosition(0, rayOrigin);
+
+                if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hitInfo, maxDistance))
+                {
+                    laserLineRenderer.SetPosition(1, hitInfo.point);
+                }
+                else
+                {
+                    laserLineRenderer.SetPosition(1, rayOrigin + rayDirection * maxDistance);
+                }
+            }
+        }
+        else
+        {
+            if (laserLineRenderer != null)
+            {
+                laserLineRenderer.enabled = false;
+            }
         }
     }
     #endregion
