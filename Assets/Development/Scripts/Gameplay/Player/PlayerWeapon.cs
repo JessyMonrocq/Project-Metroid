@@ -17,6 +17,7 @@ public class PlayerWeapon : MonoBehaviour
     
     [Header("Visuals")]
     [SerializeField] private LineRenderer laserLineRenderer;
+    [SerializeField] private Transform laserStartingPoint;
 
     private bool enableInput = true;
 
@@ -93,8 +94,8 @@ public class PlayerWeapon : MonoBehaviour
 
         if (isPlayerAiming)
         {
-            Vector3 rayOrigin = new Vector3(projectileSpawnPoint.transform.position.x, projectileSpawnPoint.transform.position.y, 0);
-            Vector3 rayDirection = -projectileSpawnPoint.up;
+            Vector3 rayOrigin = new Vector3(laserStartingPoint.transform.position.x, laserStartingPoint.transform.position.y, 0);
+            Vector3 rayDirection = -laserStartingPoint.up;
             float maxDistance = 100f;
 
             if (laserLineRenderer != null)

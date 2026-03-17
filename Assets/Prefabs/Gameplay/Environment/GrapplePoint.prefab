@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 7654942711663756477}
   - component: {fileID: 5184370559486413089}
   - component: {fileID: 8804418881581870407}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: GrapplePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}

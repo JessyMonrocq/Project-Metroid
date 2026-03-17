@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector]
     public UnityEvent<bool> OnPlayerAiming;
 
-    public static PlayerMovement Instance;
+    public static PlayerMovement Instance { get; private set; }
 
     [SerializeField] private CharacterController characterController;
 
@@ -207,6 +207,9 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        isPlayerAiming = false;
+        OnPlayerAiming?.Invoke(isPlayerAiming);
+
         if (isPlayerGrounded && currentInput.y < -0.5f && Mathf.Abs(currentInput.x) < 0.4f)
         {
             OnPlayerCrouchJump?.Invoke();
@@ -232,12 +235,15 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        isPlayerAiming = false;
+        OnPlayerAiming?.Invoke(isPlayerAiming);
+
         StartDash(currentInput);
     }
 
     private void OnGrapplePerformed(InputAction.CallbackContext context)
     {
-        if (!enableInput || !canGrapple || currentGrapplePoint == null || currentState == PlayerState.Grappling)
+        if (!enableInput || isPlayerAiming || !canGrapple || currentGrapplePoint == null || currentState == PlayerState.Grappling)
         {
             return;
         }
