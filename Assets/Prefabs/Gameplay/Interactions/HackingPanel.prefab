@@ -369,7 +369,7 @@ GameObject:
   - component: {fileID: 1243705438893855805}
   - component: {fileID: 9072123872328454731}
   - component: {fileID: 360696209883333483}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: HackingPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}

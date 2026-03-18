@@ -14,6 +14,7 @@ public class DroneManager : MonoBehaviour
 
     private GameObject drone;
     private CinemachineCamera cinemachineCamera;
+    private Collider2D playerLastBoundArea;
 
     private bool registerInput = true;
     private float inputDelayDuration = 0.5f;
@@ -84,6 +85,7 @@ public class DroneManager : MonoBehaviour
         InputSystemManager.Instance.SetPlayerInputState(false);
         InputSystemManager.Instance.SetDroneInputState(true);
         cinemachineCamera.Follow = drone.transform;
+        playerLastBoundArea = cinemachineCamera.GetComponent<CinemachineConfiner2D>().BoundingShape2D;
 
         registerInput = false;
     }
@@ -105,6 +107,7 @@ public class DroneManager : MonoBehaviour
         InputSystemManager.Instance.SetPlayerInputState(true);
         InputSystemManager.Instance.SetDroneInputState(false);
         cinemachineCamera.Follow = playerMovement.transform;
+        cinemachineCamera.GetComponent<CinemachineConfiner2D>().BoundingShape2D = playerLastBoundArea;
 
         registerInput = false;
     }

@@ -18,6 +18,7 @@ public class PlayerWeapon : MonoBehaviour
     [Header("Visuals")]
     [SerializeField] private LineRenderer laserLineRenderer;
     [SerializeField] private Transform laserStartingPoint;
+    [SerializeField] private LayerMask laserCollisionLayers;
 
     private bool enableInput = true;
 
@@ -43,6 +44,12 @@ public class PlayerWeapon : MonoBehaviour
         playerWeaponTransform.localPosition = Vector3.zero;
         playerWeaponTransform.localRotation = Quaternion.identity;
         isPlayerAiming = false;
+
+        for (int i = 0; i < poolDefaultCapacity; i++)
+        {
+            Projectile projectile = CreateProjectile();
+            projectilePool.Release(projectile);
+        }
 
         PlayerMovement.Instance.OnPlayerAiming.AddListener((aimingState) => {
             isPlayerAiming = aimingState;
@@ -103,7 +110,7 @@ public class PlayerWeapon : MonoBehaviour
                 laserLineRenderer.enabled = true;
                 laserLineRenderer.SetPosition(0, rayOrigin);
 
-                if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hitInfo, maxDistance))
+                if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hitInfo, maxDistance, laserCollisionLayers))
                 {
                     laserLineRenderer.SetPosition(1, hitInfo.point);
                 }
