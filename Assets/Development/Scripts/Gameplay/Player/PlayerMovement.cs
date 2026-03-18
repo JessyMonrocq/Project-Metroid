@@ -474,32 +474,39 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 ApplySlopeForce()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, slopeForceRayLength))
+        Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
+        float checkLength = slopeForceRayLength + 0.1f;
+
+        bool sphereHits = Physics.SphereCast(rayOrigin, characterController.radius, Vector3.down, out RaycastHit sphereHit, checkLength);
+        bool centerHits = Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit centerHit, checkLength);
+        if (sphereHits && sphereHit.collider.gameObject.layer != 13)
         {
-            if (hit.collider.gameObject.layer == 13)
+            float sphereAngle = Vector3.Angle(sphereHit.normal, Vector3.up);
+            float centerAngle = centerHits ? Vector3.Angle(centerHit.normal, Vector3.up) : 0f;
+
+            bool isGenuineSlope = centerHits && Mathf.Abs(sphereAngle - centerAngle) < 2f;
+
+            if (isGenuineSlope)
             {
-                return Vector3.zero;
-            }
+                if (centerAngle >= characterController.slopeLimit)
+                {
+                    isSliding = true;
 
-            float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+                    Vector3 slideDirection = Vector3.ProjectOnPlane(Vector3.down, centerHit.normal).normalized;
+                    Vector3 slideForce = (slideDirection + Vector3.down * 0.1f) * slideSpeed;
 
-            if (slopeAngle >= characterController.slopeLimit)
-            {
-                isSliding = true;
-                Vector3 slideDirection = new Vector3(hit.normal.x, -hit.normal.y, hit.normal.z);
-                Vector3 slideForce = slideDirection.normalized * slideSpeed;
+                    slideMomentum = new Vector3(slideForce.x, 0, 0);
+                    slideMomentumTimer = slideMomentumDuration;
 
-                slideMomentum = new Vector3(slideForce.x, 0, 0);
-                slideMomentumTimer = slideMomentumDuration;
-
-                return slideForce;
-            }
-            else if (hit.normal != Vector3.up)
-            {
-                isSliding = false;
-                slideMomentumTimer = 0;
-                slideMomentum = Vector3.zero;
-                return Vector3.down * slopeForce;
+                    return slideForce;
+                }
+                else if (centerAngle > 0.1f)
+                {
+                    isSliding = false;
+                    slideMomentumTimer = 0;
+                    slideMomentum = Vector3.zero;
+                    return Vector3.down * slopeForce;
+                }
             }
         }
 
@@ -690,26 +697,36 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyEdgeSliding()
     {
-        if (Physics.SphereCast(transform.position, characterController.radius, Vector3.down, out RaycastHit hit, slopeForceRayLength))
-        {
-            if (hit.collider.gameObject.layer == 13)
-            {
-                return;
-            }
-
-            float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
-
-            if (slopeAngle < characterController.slopeLimit)
-            {
-                Vector3 slopeDirection = Vector3.ProjectOnPlane(Vector3.down, hit.normal);
-                edgeSlideVelocity += slopeDirection * Vector3.Dot(Vector3.down, slopeDirection) * Mathf.Abs(gravity) * edgeSlipStrength * Time.deltaTime;
-                edgeSlideVelocity *= edgeFriction;
-            }
-        }
-        else
+        if (isSliding)
         {
             edgeSlideVelocity = Vector3.zero;
+            return;
         }
+
+        Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
+        float checkLength = slopeForceRayLength + 0.1f;
+
+        bool sphereHits = Physics.SphereCast(rayOrigin, characterController.radius, Vector3.down, out RaycastHit sphereHit, checkLength);
+        bool centerHits = Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit centerHit, checkLength);
+
+        if (sphereHits && sphereHit.collider.gameObject.layer != 13)
+        {
+            float sphereAngle = Vector3.Angle(sphereHit.normal, Vector3.up);
+            float centerAngle = centerHits ? Vector3.Angle(centerHit.normal, Vector3.up) : 0f;
+
+            bool isGenuineSlope = centerHits && Mathf.Abs(sphereAngle - centerAngle) < 2f;
+
+            if (!isGenuineSlope && sphereAngle > 0.1f)
+            {
+                Vector3 slideDirection = Vector3.ProjectOnPlane(Vector3.down, sphereHit.normal);
+
+                edgeSlideVelocity += slideDirection * Vector3.Dot(Vector3.down, slideDirection) * Mathf.Abs(gravity) * edgeSlipStrength * Time.deltaTime;
+                edgeSlideVelocity *= edgeFriction;
+                return;
+            }
+        }
+
+        edgeSlideVelocity = Vector3.zero;
     }
     #endregion
 
