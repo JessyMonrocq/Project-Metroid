@@ -18,6 +18,7 @@ public class PlayerWeapon : MonoBehaviour
     [Header("Visuals")]
     [SerializeField] private LineRenderer laserLineRenderer;
     [SerializeField] private Transform laserStartingPoint;
+    [SerializeField] private float laserOffsetDistance = 0.25f;
     [SerializeField] private LayerMask laserCollisionLayers;
 
     private bool enableInput = true;
@@ -112,7 +113,8 @@ public class PlayerWeapon : MonoBehaviour
 
                 if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hitInfo, maxDistance, laserCollisionLayers))
                 {
-                    laserLineRenderer.SetPosition(1, hitInfo.point);
+                    Vector3 offset = hitInfo.point + hitInfo.normal * laserOffsetDistance;
+                    laserLineRenderer.SetPosition(1, offset);
                 }
                 else
                 {

@@ -3,6 +3,8 @@ using UnityEngine.Pool;
 
 public class Projectile : MonoBehaviour
 {
+    [SerializeField] private int damage = 1;
+
     private float projectileLifeTime = 5f;
     private float projectileLifeTimer;
 
@@ -30,6 +32,11 @@ public class Projectile : MonoBehaviour
         {
             Deactivate();
         }
+    }
+
+    public int GetDamage()
+    {
+        return damage;
     }
 
     public void Deactivate()

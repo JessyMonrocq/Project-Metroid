@@ -13,8 +13,8 @@ public class DroneManager : MonoBehaviour
     [SerializeField] private bool canSpawnDrone;
 
     private GameObject drone;
-    private CinemachineCamera cinemachineCamera;
-    private Collider2D playerLastBoundArea;
+    private CinemachineBrain cinemachineBrain;
+    private CinemachineCamera playerLastCinemachineCamera;
 
     private bool registerInput = true;
     private float inputDelayDuration = 0.5f;
@@ -25,8 +25,8 @@ public class DroneManager : MonoBehaviour
     private void Start()
     {
         drone = null;
-        cinemachineCamera = FindFirstObjectByType<CinemachineCamera>();
-        cinemachineCamera.Follow = playerMovement.gameObject.transform;
+
+        cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
     }
 
     private void OnEnable()
@@ -84,8 +84,10 @@ public class DroneManager : MonoBehaviour
 
         InputSystemManager.Instance.SetPlayerInputState(false);
         InputSystemManager.Instance.SetDroneInputState(true);
-        cinemachineCamera.Follow = drone.transform;
-        playerLastBoundArea = cinemachineCamera.GetComponent<CinemachineConfiner2D>().BoundingShape2D;
+
+        CinemachineCamera cinemachineCamera = cinemachineBrain.ActiveVirtualCamera as CinemachineCamera;
+        playerLastCinemachineCamera = cinemachineCamera;
+        playerLastCinemachineCamera.Follow = drone.transform;
 
         registerInput = false;
     }
@@ -106,8 +108,18 @@ public class DroneManager : MonoBehaviour
 
         InputSystemManager.Instance.SetPlayerInputState(true);
         InputSystemManager.Instance.SetDroneInputState(false);
-        cinemachineCamera.Follow = playerMovement.transform;
-        cinemachineCamera.GetComponent<CinemachineConfiner2D>().BoundingShape2D = playerLastBoundArea;
+        
+        CinemachineCamera cinemachineCamera = cinemachineBrain.ActiveVirtualCamera as CinemachineCamera;
+        if (cinemachineCamera != playerLastCinemachineCamera)
+        {
+            cinemachineCamera.Priority = 0;
+            playerLastCinemachineCamera.Priority = 1;
+            playerLastCinemachineCamera.Follow = playerMovement.transform;
+        }
+        else
+        {
+            cinemachineCamera.Follow = playerMovement.transform;
+        }
 
         registerInput = false;
     }
