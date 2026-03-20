@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class LockedDoor : MonoBehaviour
@@ -33,6 +34,5 @@ public class LockedDoor : MonoBehaviour
         yield return new WaitForSeconds(1f);
         upperDoor.transform.DOScaleY(0f, 0.75f).SetEase(Ease.InOutSine);
         lowerDoor.transform.DOScaleY(0f, 0.75f).SetEase(Ease.InOutSine);
-
     }
 }

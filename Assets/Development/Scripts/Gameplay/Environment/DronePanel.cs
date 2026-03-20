@@ -8,8 +8,10 @@ using UnityEngine.UI;
 public class DronePanel : MonoBehaviour
 {
     #region Inspector Fields
-    public UnityEvent OnActivate;
+    [Header("Activation Object")]
+    [SerializeField] private ActivationObject activationObject;
 
+    [Header("References")]
     [SerializeField] private DroneHackingGame droneHackingGame;
     [SerializeField] private GameObject panelDeactivatedIndicator;
     [SerializeField] private GameObject panelActivatedIndicator;
@@ -134,7 +136,7 @@ public class DronePanel : MonoBehaviour
             }
             else
             {
-                OnActivate?.Invoke();
+                activationObject.Activate(ActivationObject.Hacker.Drone);
                 panelActivatedIndicator.SetActive(true);
             }
         }
@@ -149,7 +151,7 @@ public class DronePanel : MonoBehaviour
         droneHackingGame.OnHackingComplete.RemoveListener(HackingComplete);
         droneHackingGame.OnHackingFailed.RemoveListener(PanelCooldown);
 
-        OnActivate?.Invoke();
+        activationObject.Activate(ActivationObject.Hacker.Drone);
     }
 
     private void PanelCooldown()

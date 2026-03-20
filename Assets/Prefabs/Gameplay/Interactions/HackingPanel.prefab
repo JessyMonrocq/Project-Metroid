@@ -405,15 +405,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a09b4fcb2555684db7a7cba36dd6334, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HackingPanel
-  OnActivate:
-    m_PersistentCalls:
-      m_Calls: []
+  activationObject: {fileID: 0}
   hackingGame: {fileID: 4387201175322156139}
   panelDeactivatedIndicator: {fileID: 391206844544915624}
   panelActivatedIndicator: {fileID: 5949282166593515864}
   panelInteractionIndicator: {fileID: 6431886327435336340}
   IA_PlayerInteract: {fileID: 2501866947901617391, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   failureCooldownDuration: 1
+  panelActivated: 0
 --- !u!65 &9072123872328454731
 BoxCollider:
   m_ObjectHideFlags: 0

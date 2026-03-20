@@ -325,7 +325,7 @@ Transform:
   m_GameObject: {fileID: 1763134552787654278}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.052105904, y: 2.09569, z: -12}
+  m_LocalPosition: {x: 4.947894, y: 3.09569, z: -12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1250,10 +1250,10 @@ MonoBehaviour:
   dashSpeed: 30
   dashDuration: 0.3
   dashCooldown: 1
-  grappleHoldDuration: 0.2
-  grapplePullSpeed: 25
-  grappleAcceleration: 40
-  grappleMaxSpeed: 35
+  grappleHoldDuration: 0.33
+  grapplePullSpeed: 15
+  grappleAcceleration: 75
+  grappleMaxSpeed: 50
   wallCheckDistance: 0.6
   wallSlideSpeed: -5
   wallJumpHeight: 4

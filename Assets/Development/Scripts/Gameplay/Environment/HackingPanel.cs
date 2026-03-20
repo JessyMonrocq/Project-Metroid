@@ -1,25 +1,26 @@
 using DG.Tweening;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class HackingPanel : MonoBehaviour
 {
     #region Inspector Fields
-    public UnityEvent OnActivate;
+    [Header("Activation Object")]
+    [SerializeField] private ActivationObject activationObject;
 
+    [Header("References")]
     [SerializeField] private HackingGame hackingGame;
     [SerializeField] private GameObject panelDeactivatedIndicator;
     [SerializeField] private GameObject panelActivatedIndicator;
     [SerializeField] private Image panelInteractionIndicator;
     [SerializeField] private InputActionReference IA_PlayerInteract;
     [SerializeField] private float failureCooldownDuration = 1;
+    [SerializeField] private bool panelActivated = false;
 
     private bool playerDetected;
     private bool hackingComplete = false;
-    private bool panelActivated = false;
     private bool panelCooldown = false;
 
     public bool IsPanelActivated => panelActivated;
@@ -121,17 +122,17 @@ public class HackingPanel : MonoBehaviour
         hackingGame.OnHackingComplete.RemoveListener(HackingComplete);
         hackingGame.OnHackingFailed.RemoveListener(PanelCooldown);
 
-        OnActivate?.Invoke();
+        activationObject.Activate(ActivationObject.Hacker.Player);
     }
 
     private void PanelCooldown()
     {
-        StartCoroutine(WaitForCooldown());
+        StartCoroutine(WaitForCooldownCoroutine());
     }
     #endregion
 
     #region Coroutine Methods
-    private IEnumerator WaitForCooldown()
+    private IEnumerator WaitForCooldownCoroutine()
     {
         panelCooldown = true;
         yield return new WaitForSeconds(failureCooldownDuration);
