@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : HealthComponent
 {
     #region State Machines
     public enum EnemyState
@@ -41,10 +41,21 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private AttackType attackType;
     #endregion
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         currentState = EnemyState.Idle;
         currentCombatState = CombatState.Idle;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.TryGetComponent<Projectile>(out Projectile projectile))
+        {
+            int damageTaken = projectile.GetDamage();
+            TakeDamage(damageTaken);
+        }
     }
 
     private void Update()
@@ -53,5 +64,10 @@ public class EnemyAI : MonoBehaviour
         {
             movementBehaviour.Move(transform, PlayerMovement.Instance.transform, speed);
         }
+    }
+
+    protected override void OnDeath()
+    {
+        Destroy(gameObject);
     }
 }
