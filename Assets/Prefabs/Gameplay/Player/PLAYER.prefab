@@ -325,7 +325,7 @@ Transform:
   m_GameObject: {fileID: 1763134552787654278}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.8811021, y: 1.62938, z: -11}
+  m_LocalPosition: {x: -0.052105904, y: 2.09569, z: -12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -458,7 +458,7 @@ MonoBehaviour:
     DefaultMode: 2
   DefaultBlend:
     Style: 1
-    Time: 2
+    Time: 0.8
     CustomCurve:
       serializedVersion: 2
       m_Curve: []
@@ -1007,6 +1007,7 @@ MonoBehaviour:
   projectileSpeed: 50
   laserLineRenderer: {fileID: 4687536470241413420}
   laserStartingPoint: {fileID: 4042233427549144314}
+  laserOffsetDistance: 0.25
   laserCollisionLayers:
     serializedVersion: 2
     m_Bits: 234497
@@ -1077,6 +1078,15 @@ LineRenderer:
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.35632557
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -1244,8 +1254,6 @@ MonoBehaviour:
   grapplePullSpeed: 25
   grappleAcceleration: 40
   grappleMaxSpeed: 35
-  grapplePassDistance: 0.15
-  grappleMomentumMultiplier: 1.1
   wallCheckDistance: 0.6
   wallSlideSpeed: -5
   wallJumpHeight: 4

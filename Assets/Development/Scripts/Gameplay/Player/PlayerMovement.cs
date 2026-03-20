@@ -64,8 +64,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float grapplePullSpeed = 25f;
     [SerializeField] private float grappleAcceleration = 40f;
     [SerializeField] private float grappleMaxSpeed = 35f;
-    [SerializeField] private float grapplePassDistance = 2f;
-    [SerializeField] private float grappleMomentumMultiplier = 0.6f;
 
     [Header("Wall Jump Settings")]
     [SerializeField] private float wallCheckDistance = 0.6f;
@@ -107,7 +105,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isOnSlipperyWall;
     private bool isSliding;
     private bool isGrappleHolding;
-    private bool hasPassedGrapplePoint;
+    private bool hisHookedToGrapplePoint;
 
     private float coyoteTimer;
     private float jumpBufferTimer;
@@ -119,6 +117,7 @@ public class PlayerMovement : MonoBehaviour
     private float slideMomentumTimer;
     private float currentGrappleSpeed;
     private float grappleHoldTimer;
+    private float initialGrappleDistance;
 
     public int PlayerDirection => playerDirection;
     public bool IsPlayerGrounded => isPlayerGrounded;
@@ -146,7 +145,7 @@ public class PlayerMovement : MonoBehaviour
         isOnSlipperyWall = false;
         isSliding = false;
         isGrappleHolding = false;
-        hasPassedGrapplePoint = false;
+        hisHookedToGrapplePoint = false;
     }
 
     private void OnEnable()
@@ -185,7 +184,7 @@ public class PlayerMovement : MonoBehaviour
     #region Input Event Handlers
     private void OnAimingPerformed(InputAction.CallbackContext context)
     {
-        if (!isPlayerGrounded && !isOnWall)
+        if (!isPlayerGrounded && !isOnWall && !hisHookedToGrapplePoint)
         {
             return;
         }
@@ -209,6 +208,27 @@ public class PlayerMovement : MonoBehaviour
 
         isPlayerAiming = false;
         OnPlayerAiming?.Invoke(isPlayerAiming);
+
+        if (currentState == PlayerState.Grappling && hisHookedToGrapplePoint)
+        {
+            if (currentInput.y < -0.5f && Mathf.Abs(currentInput.x) < 0.4f)
+            {
+                jumpsRemaining--;
+                EndGrapple();
+            }
+            else
+            {
+                jumpsRemaining--;
+                playerVelocity.y = Mathf.Sqrt(playerJumpHeight * -2f * gravity);
+                if (Mathf.Abs(currentInput.x) > 0.1f)
+                {
+                    horizontalVelocity = new Vector3(Mathf.Sign(currentInput.x) * playerSpeed, 0, 0);
+                }
+                isPlayerJumping = true;
+                EndGrapple();
+            }
+            return;
+        }
 
         if (isPlayerGrounded && currentInput.y < -0.5f && Mathf.Abs(currentInput.x) < 0.4f)
         {
@@ -400,7 +420,7 @@ public class PlayerMovement : MonoBehaviour
     {
         currentState = PlayerState.Grappling;
         isGrappleHolding = true;
-        hasPassedGrapplePoint = false;
+        hisHookedToGrapplePoint = false;
         grappleHoldTimer = grappleHoldDuration;
         currentGrappleSpeed = 0;
 
@@ -428,37 +448,55 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        if (hisHookedToGrapplePoint)
+        {
+            playerVelocity = Vector3.zero;
+            grappleVelocity = Vector3.zero;
+
+            UpdatePlayerDirection();
+            return;
+        }
+
         if (isGrappleHolding)
         {
             grappleHoldTimer -= Time.deltaTime;
             if (grappleHoldTimer <= 0)
             {
                 isGrappleHolding = false;
-                currentGrappleSpeed = grapplePullSpeed;
+                currentGrappleSpeed = 0f;
                 grappleDirection = (currentGrapplePoint.position - transform.position).normalized;
+                initialGrappleDistance = Vector3.Distance(transform.position, currentGrapplePoint.position);
             }
             return;
         }
 
         float distanceToGrapple = Vector3.Distance(transform.position, currentGrapplePoint.position);
 
-        if (!hasPassedGrapplePoint)
+        if (distanceToGrapple > initialGrappleDistance / 2f)
         {
             currentGrappleSpeed += grappleAcceleration * Time.deltaTime;
             currentGrappleSpeed = Mathf.Min(currentGrappleSpeed, grappleMaxSpeed);
+        }
+        else
+        {
+            currentGrappleSpeed -= grappleAcceleration * Time.deltaTime;
+            currentGrappleSpeed = Mathf.Max(currentGrappleSpeed, grapplePullSpeed / 2f);
+        }
 
-            grappleVelocity = grappleDirection * currentGrappleSpeed;
-            grappleVelocity.z = 0;
+        grappleVelocity = grappleDirection * currentGrappleSpeed;
+        grappleVelocity.z = 0;
 
-            characterController.Move(grappleVelocity * Time.deltaTime);
+        characterController.Move(grappleVelocity * Time.deltaTime);
 
-            if (distanceToGrapple <= grapplePassDistance)
-            {
-                hasPassedGrapplePoint = true;
-                horizontalVelocity = new Vector3(grappleVelocity.x, 0, 0) * grappleMomentumMultiplier;
-                playerVelocity.y = grappleVelocity.y * grappleMomentumMultiplier;
-                EndGrapple();
-            }
+        if (distanceToGrapple <= 0.5f)
+        {
+            transform.position = currentGrapplePoint.position;
+
+            hisHookedToGrapplePoint = true;
+            playerVelocity = Vector3.zero;
+            horizontalVelocity = Vector3.zero;
+
+            jumpsRemaining = canDoubleJump ? 2 : 1;
         }
     }
 
@@ -466,7 +504,7 @@ public class PlayerMovement : MonoBehaviour
     {
         currentState = PlayerState.Normal;
         isGrappleHolding = false;
-        hasPassedGrapplePoint = false;
+        hisHookedToGrapplePoint = false;
         grappleVelocity = Vector3.zero;
         currentGrappleSpeed = 0;
         grappleHoldTimer = 0;
@@ -524,7 +562,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void UpdatePlayerDirection()
     {
-        float directionCheck = isPlayerAiming ? currentInput.x : horizontalVelocity.x;
+        float directionCheck = (isPlayerAiming || hisHookedToGrapplePoint) ? currentInput.x : horizontalVelocity.x;
 
         if (directionCheck != 0)
         {
