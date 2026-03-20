@@ -325,7 +325,7 @@ Transform:
   m_GameObject: {fileID: 1763134552787654278}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.947894, y: 3.09569, z: -12}
+  m_LocalPosition: {x: -0.052105904, y: 2.09569, z: -12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1141,6 +1141,7 @@ GameObject:
   - component: {fileID: 6926954907127275536}
   - component: {fileID: 5797733657091256291}
   - component: {fileID: 8569470164356123035}
+  - component: {fileID: 156234981326712028}
   m_Layer: 9
   m_Name: PLAYER
   m_TagString: Player
@@ -1243,8 +1244,8 @@ MonoBehaviour:
   playerJumpHeight: 4
   jumpCutMultiplier: 0.66
   gravity: -50
-  fallGravityMultiplier: 1.5
-  maxFallSpeed: -50
+  fallGravityMultiplier: 1.2
+  maxFallSpeed: -25
   coyoteDuration: 0.2
   jumpBufferDuration: 0.2
   dashSpeed: 30
@@ -1269,6 +1270,21 @@ MonoBehaviour:
   canWallJump: 0
   canStickToWalls: 0
   canGrapple: 0
+--- !u!114 &156234981326712028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7621746287067575563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af7d85544075a0a4cb52715c85f8451c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraInterpolation
+  fallPanAmount: 0.33
+  fallYPanTime: 0.15
+  fallSpeedYDampingChangeThreshold: -10
 --- !u!1 &8039529963171410227
 GameObject:
   m_ObjectHideFlags: 0

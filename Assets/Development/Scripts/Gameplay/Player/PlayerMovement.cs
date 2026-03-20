@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -113,11 +114,12 @@ public class PlayerMovement : MonoBehaviour
     private float dashCooldownTimer;
     private float wallJumpInputLockTimer;
     private float wallSlideMultiplier;
-    private float groundCheckTimer;
     private float slideMomentumTimer;
     private float currentGrappleSpeed;
     private float grappleHoldTimer;
     private float initialGrappleDistance;
+
+    private float fallSpeedYDampChangeThreshold;
 
     public int PlayerDirection => playerDirection;
     public bool IsPlayerGrounded => isPlayerGrounded;
@@ -146,6 +148,14 @@ public class PlayerMovement : MonoBehaviour
         isSliding = false;
         isGrappleHolding = false;
         hisHookedToGrapplePoint = false;
+
+        coyoteTimer = 0;
+        jumpBufferTimer = 0;
+        dashDurationTimer = 0;
+        dashCooldownTimer = 0;
+        wallJumpInputLockTimer = 0;
+
+        fallSpeedYDampChangeThreshold = CameraInterpolation.Instance.fallSpeedYDampingChangeThreshold;
     }
 
     private void OnEnable()
@@ -302,6 +312,22 @@ public class PlayerMovement : MonoBehaviour
     private void HandleNormalMovement()
     {
         isPlayerGrounded = characterController.isGrounded;
+
+        if (!isPlayerGrounded)
+        {
+            if (playerVelocity.y < fallSpeedYDampChangeThreshold && !CameraInterpolation.Instance.IsLerpingYDamping && !CameraInterpolation.Instance.LerpedFromPlayerFalling)
+            {
+                CameraInterpolation.Instance.LerpYDamping(true);
+            }
+        }
+        else
+        {
+            if (!CameraInterpolation.Instance.IsLerpingYDamping && CameraInterpolation.Instance.LerpedFromPlayerFalling)
+            {
+                CameraInterpolation.Instance.LerpedFromPlayerFalling = false;
+                CameraInterpolation.Instance.LerpYDamping(false);
+            }
+        }
 
         if (canWallJump)
         {
