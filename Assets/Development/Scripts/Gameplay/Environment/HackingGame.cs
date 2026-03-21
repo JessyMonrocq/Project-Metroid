@@ -323,8 +323,6 @@ public class HackingGame : MonoBehaviour
 
     private IEnumerator OpeningCoroutine()
     {
-        InputSystemManager.Instance.SetPlayerInputState(false);
-
         gameUI.transform.localScale = new Vector3(0.01f, 0.01f, 1);
         backgroundImage.color = backgroundColorDefault;
         inputSequenceCG.alpha = 0;
@@ -368,8 +366,6 @@ public class HackingGame : MonoBehaviour
         {
             OnHackingFailed?.Invoke();
         }
-
-        InputSystemManager.Instance.SetPlayerInputState(true);
 
         this.gameObject.SetActive(false);
     }

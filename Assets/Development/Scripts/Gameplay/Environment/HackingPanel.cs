@@ -109,6 +109,9 @@ public class HackingPanel : MonoBehaviour
             {
                 panelInteractionIndicator.DOKill();
                 panelInteractionIndicator.DOFade(0f, 0.2f);
+
+                InputSystemManager.Instance.SetPlayerInputState(false);
+
                 hackingGame.gameObject.SetActive(true);
             }
         }
@@ -122,6 +125,8 @@ public class HackingPanel : MonoBehaviour
         hackingGame.OnHackingComplete.RemoveListener(HackingComplete);
         hackingGame.OnHackingFailed.RemoveListener(PanelCooldown);
 
+        InputSystemManager.Instance.SetPlayerInputState(false);
+
         activationObject.Activate(ActivationObject.Hacker.Player);
     }
 
@@ -134,6 +139,8 @@ public class HackingPanel : MonoBehaviour
     #region Coroutine Methods
     private IEnumerator WaitForCooldownCoroutine()
     {
+        InputSystemManager.Instance.SetPlayerInputState(true);
+
         panelCooldown = true;
         yield return new WaitForSeconds(failureCooldownDuration);
         panelCooldown = false;

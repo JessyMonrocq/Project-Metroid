@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,6 +11,8 @@ public class DroneManager : MonoBehaviour
     [SerializeField] private GameObject dronePrefab;
     [SerializeField] private InputActionReference IA_SpawnDrone;
     [SerializeField] private InputActionReference IA_DestroyDrone;
+    [SerializeField] private float droneCameraDistanceDifference = 2f;
+    [SerializeField] private float droneCameraZoomTime = 1f;
     [SerializeField] private bool canSpawnDrone;
 
     private GameObject drone;

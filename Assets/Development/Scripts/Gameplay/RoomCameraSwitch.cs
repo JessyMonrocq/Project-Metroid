@@ -5,6 +5,7 @@ public class RoomCameraSwitch : MonoBehaviour
 {
     [SerializeField] private CinemachineCamera roomCamera;
     [SerializeField] private LayerMask layer;
+    [SerializeField] private float zoomAmount = 3f;
 
     private void OnTriggerEnter(Collider other)
     {

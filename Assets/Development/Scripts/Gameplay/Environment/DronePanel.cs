@@ -132,6 +132,9 @@ public class DronePanel : MonoBehaviour
             {
                 panelInteractionIndicator.DOKill();
                 panelInteractionIndicator.DOFade(0f, 0.2f);
+
+                InputSystemManager.Instance.SetDroneInputState(false);
+
                 droneHackingGame.gameObject.SetActive(true);
             }
             else
@@ -151,6 +154,8 @@ public class DronePanel : MonoBehaviour
         droneHackingGame.OnHackingComplete.RemoveListener(HackingComplete);
         droneHackingGame.OnHackingFailed.RemoveListener(PanelCooldown);
 
+        InputSystemManager.Instance.SetDroneInputState(true);
+
         activationObject.Activate(ActivationObject.Hacker.Drone);
     }
 
@@ -163,6 +168,8 @@ public class DronePanel : MonoBehaviour
     #region Coroutine Methods
     private IEnumerator WaitForCooldown()
     {
+        InputSystemManager.Instance.SetDroneInputState(false);
+
         panelCooldown = true;
         yield return new WaitForSeconds(failureCooldownDuration);
         panelCooldown = false;

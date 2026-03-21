@@ -803,6 +803,7 @@ MonoBehaviour:
   dronePrefab: {fileID: 6519762377497071451, guid: e423cb3894ceafe45a15398380edcbb1, type: 3}
   IA_SpawnDrone: {fileID: -6939159788102815691, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   IA_DestroyDrone: {fileID: -3587376799075789568, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  droneCameraDistanceDifference: 3
   canSpawnDrone: 1
 --- !u!1 &6830078274084422413
 GameObject:

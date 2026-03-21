@@ -334,8 +334,6 @@ public class DroneHackingGame : MonoBehaviour
 
     private IEnumerator OpeningCoroutine()
     {
-        InputSystemManager.Instance.SetDroneInputState(false);
-
         gameUI.transform.localScale = new Vector3(0.01f, 0.01f, 1);
         backgroundImage.color = backgroundColorDefault;
         wheelCG.alpha = 0;
@@ -381,8 +379,6 @@ public class DroneHackingGame : MonoBehaviour
         {
             OnHackingFailed?.Invoke();
         }
-
-        InputSystemManager.Instance.SetDroneInputState(true);
 
         this.gameObject.SetActive(false);
     }

@@ -550,6 +550,7 @@ MonoBehaviour:
   layer:
     serializedVersion: 2
     m_Bits: 8192
+  zoomAmount: 3
 --- !u!54 &233188871
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3323,7 +3324,7 @@ MonoBehaviour:
   Damping: 0
   SlowingDistance: 0
   OversizeWindow:
-    Enabled: 1
+    Enabled: 0
     MaxWindowSize: 8
     Padding: 0
   m_LegacyMaxWindowSize: -2
@@ -3339,7 +3340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 886251e9a18ece04ea8e61686c173e1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachinePositionComposer
-  CameraDistance: 12
+  CameraDistance: 9
   DeadZoneDepth: 0
   Composition:
     ScreenPosition: {x: 0, y: 0}
@@ -3410,7 +3411,7 @@ Transform:
   m_GameObject: {fileID: 959387733}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 13, y: 0.20000005, z: -12}
+  m_LocalPosition: {x: 13, y: 0.20000005, z: -9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4080,6 +4081,7 @@ MonoBehaviour:
   layer:
     serializedVersion: 2
     m_Bits: 8192
+  zoomAmount: 3
 --- !u!1001 &1314865321
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6795,7 +6797,7 @@ MonoBehaviour:
   Damping: 0
   SlowingDistance: 1
   OversizeWindow:
-    Enabled: 1
+    Enabled: 0
     MaxWindowSize: 12
     Padding: 0
   m_LegacyMaxWindowSize: -2
