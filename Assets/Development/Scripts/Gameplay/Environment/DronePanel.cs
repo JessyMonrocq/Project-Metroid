@@ -16,7 +16,6 @@ public class DronePanel : MonoBehaviour
     [SerializeField] private GameObject panelDeactivatedIndicator;
     [SerializeField] private GameObject panelActivatedIndicator;
     [SerializeField] private Image panelInteractionIndicator;
-    [SerializeField] private InputActionReference IA_DroneInteract;
     [SerializeField] private float failureCooldownDuration = 1;
     [SerializeField] private bool requiresHacking;
 
@@ -57,12 +56,12 @@ public class DronePanel : MonoBehaviour
 
     private void OnEnable()
     {
-        IA_DroneInteract.action.performed += OnDroneInteract;
+        InputManager.Instance.DroneInteract.performed += OnDroneInteract;
     }
 
     private void OnDisable()
     {
-        IA_DroneInteract.action.performed -= OnDroneInteract;
+        InputManager.Instance.DroneInteract.performed -= OnDroneInteract;
     }
 
     private void Update()
@@ -133,7 +132,7 @@ public class DronePanel : MonoBehaviour
                 panelInteractionIndicator.DOKill();
                 panelInteractionIndicator.DOFade(0f, 0.2f);
 
-                InputSystemManager.Instance.SetDroneInputState(false);
+                InputManager.Instance.SetDroneInputState(false);
 
                 droneHackingGame.gameObject.SetActive(true);
             }
@@ -154,7 +153,7 @@ public class DronePanel : MonoBehaviour
         droneHackingGame.OnHackingComplete.RemoveListener(HackingComplete);
         droneHackingGame.OnHackingFailed.RemoveListener(PanelCooldown);
 
-        InputSystemManager.Instance.SetDroneInputState(true);
+        InputManager.Instance.SetDroneInputState(true);
 
         activationObject.Activate(ActivationObject.Hacker.Drone);
     }
@@ -168,7 +167,7 @@ public class DronePanel : MonoBehaviour
     #region Coroutine Methods
     private IEnumerator WaitForCooldown()
     {
-        InputSystemManager.Instance.SetDroneInputState(false);
+        InputManager.Instance.SetDroneInputState(false);
 
         panelCooldown = true;
         yield return new WaitForSeconds(failureCooldownDuration);

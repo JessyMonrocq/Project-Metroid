@@ -15,7 +15,6 @@ public class HackingPanel : MonoBehaviour
     [SerializeField] private GameObject panelDeactivatedIndicator;
     [SerializeField] private GameObject panelActivatedIndicator;
     [SerializeField] private Image panelInteractionIndicator;
-    [SerializeField] private InputActionReference IA_PlayerInteract;
     [SerializeField] private float failureCooldownDuration = 1;
     [SerializeField] private bool panelActivated = false;
 
@@ -50,12 +49,12 @@ public class HackingPanel : MonoBehaviour
 
     private void OnEnable()
     {
-        IA_PlayerInteract.action.performed += OnPlayerInteract;
+        InputManager.Instance.PlayerInteract.performed += OnPlayerInteract;
     }
 
     private void OnDisable()
     {
-        IA_PlayerInteract.action.performed -= OnPlayerInteract;
+        InputManager.Instance.PlayerInteract.performed -= OnPlayerInteract;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -110,7 +109,7 @@ public class HackingPanel : MonoBehaviour
                 panelInteractionIndicator.DOKill();
                 panelInteractionIndicator.DOFade(0f, 0.2f);
 
-                InputSystemManager.Instance.SetPlayerInputState(false);
+                InputManager.Instance.SetPlayerInputState(false);
 
                 hackingGame.gameObject.SetActive(true);
             }
@@ -125,7 +124,7 @@ public class HackingPanel : MonoBehaviour
         hackingGame.OnHackingComplete.RemoveListener(HackingComplete);
         hackingGame.OnHackingFailed.RemoveListener(PanelCooldown);
 
-        InputSystemManager.Instance.SetPlayerInputState(false);
+        InputManager.Instance.SetPlayerInputState(false);
 
         activationObject.Activate(ActivationObject.Hacker.Player);
     }
@@ -139,7 +138,7 @@ public class HackingPanel : MonoBehaviour
     #region Coroutine Methods
     private IEnumerator WaitForCooldownCoroutine()
     {
-        InputSystemManager.Instance.SetPlayerInputState(true);
+        InputManager.Instance.SetPlayerInputState(true);
 
         panelCooldown = true;
         yield return new WaitForSeconds(failureCooldownDuration);

@@ -18,13 +18,6 @@ public class DroneHackingGame : MonoBehaviour
     [SerializeField] private float gameDuration = 5;
     [SerializeField] private bool DEBUG_MODE = false;
 
-    [Header("Input Action References")]
-    [SerializeField] private InputActionReference IA_HackingMove;
-    [SerializeField] private InputActionReference IA_HackingCancel;
-    [SerializeField] private InputActionReference IA_HackingInputA;
-    [SerializeField] private InputActionReference IA_HackingInputB;
-    [SerializeField] private InputActionReference IA_HackingInputC;
-
     [Header("Hacking Wheel References")]
     [SerializeField] private GameObject wheelCursor;
     [SerializeField] private Image cursorImage;
@@ -97,23 +90,22 @@ public class DroneHackingGame : MonoBehaviour
 
     private void OnEnable()
     {
-        IA_HackingMove.action.performed += OnHackingMove;
-        IA_HackingInputA.action.performed += OnHackingInputA;
-        IA_HackingInputB.action.performed += OnHackingInputB;
-        IA_HackingInputC.action.performed += OnHackingInputC;
-        IA_HackingCancel.action.performed += OnHackingCancel;
+        InputManager.Instance.HackingMove.performed += OnHackingMove;
+        InputManager.Instance.HackingInputA.performed += OnHackingInputA;
+        InputManager.Instance.HackingInputB.performed += OnHackingInputB;
+        InputManager.Instance.HackingInputC.performed += OnHackingInputC;
+        InputManager.Instance.HackingCancel.performed += OnHackingCancel;
 
         StartCoroutine(OpeningCoroutine());
     }
 
     private void OnDisable()
     {
-
-        IA_HackingMove.action.performed -= OnHackingMove;
-        IA_HackingInputA.action.performed -= OnHackingInputA;
-        IA_HackingInputB.action.performed -= OnHackingInputB;
-        IA_HackingInputC.action.performed -= OnHackingInputC;
-        IA_HackingCancel.action.performed -= OnHackingCancel;
+        InputManager.Instance.HackingMove.performed -= OnHackingMove;
+        InputManager.Instance.HackingInputA.performed -= OnHackingInputA;
+        InputManager.Instance.HackingInputB.performed -= OnHackingInputB;
+        InputManager.Instance.HackingInputC.performed -= OnHackingInputC;
+        InputManager.Instance.HackingCancel.performed -= OnHackingCancel;
     }
     #endregion
 
@@ -178,7 +170,7 @@ public class DroneHackingGame : MonoBehaviour
             return;
         }
 
-        input = IA_HackingMove.action.ReadValue<Vector2>();
+        input = InputManager.Instance.HackingMove.ReadValue<Vector2>();
         if (input.magnitude == 0)
         {
             return;
@@ -351,7 +343,7 @@ public class DroneHackingGame : MonoBehaviour
         gameStarted = true;
         canRegisterInput = true;
 
-        InputSystemManager.Instance.SetHackingInputState(true);
+        InputManager.Instance.SetHackingInputState(true);
     }
 
     private IEnumerator OpeningAnimationCoroutine()
@@ -371,7 +363,7 @@ public class DroneHackingGame : MonoBehaviour
 
     private IEnumerator ClosingCoroutine()
     {
-        InputSystemManager.Instance.SetHackingInputState(false);
+        InputManager.Instance.SetHackingInputState(false);
 
         yield return ClosingAnimationCoroutine();
 

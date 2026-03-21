@@ -6,10 +6,6 @@ using UnityEngine.Pool;
 public class PlayerWeapon : MonoBehaviour
 {
     #region Inspector Fields
-    [Header("Input Actions References")]
-    [SerializeField] private InputActionReference IA_PlayerLook;
-    [SerializeField] private InputActionReference IA_PlayerShoot;
-
     [Header("Player Weapon Settings")]
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform projectileSpawnPoint;
@@ -64,24 +60,18 @@ public class PlayerWeapon : MonoBehaviour
 
     private void OnEnable()
     {
-        IA_PlayerLook.action.Enable();
-        IA_PlayerShoot.action.Enable();
-
-        IA_PlayerShoot.action.performed += OnPlayerShoot;
+        InputManager.Instance.PlayerAttack.performed += OnPlayerShoot;
     }
 
     private void OnDisable()
     {
-        IA_PlayerLook.action.Disable();
-        IA_PlayerShoot.action.Disable();
-
-        IA_PlayerShoot.action.performed -= OnPlayerShoot;
+        InputManager.Instance.PlayerAttack.performed -= OnPlayerShoot;
         PlayerMovement.Instance.OnPlayerAiming.RemoveAllListeners();
     }
 
     private void Update()
     {
-        Vector2 input = IA_PlayerLook.action.ReadValue<Vector2>();
+        Vector2 input = InputManager.Instance.PlayerMove.ReadValue<Vector2>();
 
         float angle = Vector2.Angle(playerWeaponDefaultRotation, input);
 

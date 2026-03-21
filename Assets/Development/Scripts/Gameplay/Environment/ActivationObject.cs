@@ -35,11 +35,11 @@ public class ActivationObject : MonoBehaviour
     {
         if (currentHacker == Hacker.Player)
         {
-            InputSystemManager.Instance.SetPlayerInputState(false);
+            InputManager.Instance.SetPlayerInputState(false);
         }
         else
         {
-            InputSystemManager.Instance.SetDroneInputState(false);
+            InputManager.Instance.SetDroneInputState(false);
         }
 
         yield return new WaitForSeconds(1.5f);
@@ -49,7 +49,7 @@ public class ActivationObject : MonoBehaviour
         lastCinemachineCamera.Priority = 0;
         objectCinemachineCamera.Priority = 1;
 
-        // Needs to wait for completion of object instead
+        //TODO : needs to wait for completion of object instead
         OnActivate.Invoke();
         yield return new WaitForSeconds(2f);
 
@@ -60,11 +60,11 @@ public class ActivationObject : MonoBehaviour
 
         if (currentHacker == Hacker.Player)
         {
-            InputSystemManager.Instance.SetPlayerInputState(true);
+            InputManager.Instance.SetPlayerInputState(true);
         }
         else
         {
-            InputSystemManager.Instance.SetDroneInputState(true);
+            InputManager.Instance.SetDroneInputState(true);
         }
     }
 }

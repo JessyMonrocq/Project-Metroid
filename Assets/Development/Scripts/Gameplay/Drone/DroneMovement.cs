@@ -6,9 +6,6 @@ public class DroneMovement : MonoBehaviour
     #region Inspector Fields
     [SerializeField] private Rigidbody droneRigidbody;
 
-    [Header("Input Action References")]
-    [SerializeField] private InputActionReference IA_DroneMove;
-
     [Header("Movement Settings")]
     [SerializeField] private float droneSpeed = 5f;
     [SerializeField] private float droneMaxSpeed = 8f;
@@ -19,22 +16,10 @@ public class DroneMovement : MonoBehaviour
     private Vector2 currentInput;
     #endregion
 
-    #region Unity Methods
-    private void OnEnable()
-    {
-        IA_DroneMove.action.Enable();
-    }
-
-    private void OnDisable()
-    {
-        IA_DroneMove.action.Disable();
-    }
-    #endregion
-
     #region Update Method
     private void Update()
     {
-        Vector2 input = IA_DroneMove.action.ReadValue<Vector2>();
+        Vector2 input = InputManager.Instance.DroneMove.ReadValue<Vector2>();
         if (Mathf.Abs(input.x) < movementOffset)
         {
             input = new Vector2(0, input.y);

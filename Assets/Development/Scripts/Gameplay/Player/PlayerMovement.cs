@@ -23,14 +23,6 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private CharacterController characterController;
 
-    [Header("Input Action References")]
-    [SerializeField] private InputActionReference IA_PlayerMove;
-    [SerializeField] private InputActionReference IA_PlayerAim;
-    [SerializeField] private InputActionReference IA_PlayerJump;
-    [SerializeField] private InputActionReference IA_PlayerDash;
-    [SerializeField] private InputActionReference IA_PlayerGrapple;
-    private bool enableInput = true;
-
     [Header("Movement Settings")]
     [SerializeField] private float playerSpeed = 10f;
     [SerializeField] private float acceleration = 50f;
@@ -120,7 +112,6 @@ public class PlayerMovement : MonoBehaviour
     private float initialGrappleDistance;
 
     private float fallSpeedYDampChangeThreshold;
-
     public int PlayerDirection => playerDirection;
     public bool IsPlayerGrounded => isPlayerGrounded;
     #endregion
@@ -128,13 +119,13 @@ public class PlayerMovement : MonoBehaviour
     #region Unity Methods
     private void Awake()
     {
-        if (Instance == null)
+        if (Instance != null && Instance != this)
         {
-            Instance = this;
+            Destroy(this.gameObject);
         }
         else
         {
-            Destroy(gameObject);
+            Instance = this;
         }
     }
 
@@ -160,34 +151,27 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        IA_PlayerMove.action.Enable();
-        IA_PlayerAim.action.Enable();
-        IA_PlayerJump.action.Enable();
-        IA_PlayerDash.action.Enable();
-        IA_PlayerGrapple.action.Enable();
-
-        IA_PlayerAim.action.performed += OnAimingPerformed;
-        IA_PlayerAim.action.canceled += OnAimingCanceled;
-        IA_PlayerJump.action.performed += OnJumpPerformed;
-        IA_PlayerJump.action.canceled += OnJumpCanceled;
-        IA_PlayerDash.action.performed += OnDashPerformed;
-        IA_PlayerGrapple.action.performed += OnGrapplePerformed;
+        InputManager.Instance.PlayerAim.performed += OnAimingPerformed;
+        InputManager.Instance.PlayerAim.canceled += OnAimingCanceled;
+        InputManager.Instance.PlayerJump.performed += OnJumpPerformed;
+        InputManager.Instance.PlayerJump.canceled += OnJumpCanceled;
+        InputManager.Instance.PlayerDash.performed += OnDashPerformed;
+        InputManager.Instance.PlayerGrapple.performed += OnGrapplePerformed;
     }
 
     private void OnDisable()
     {
-        IA_PlayerAim.action.performed -= OnAimingPerformed;
-        IA_PlayerAim.action.canceled -= OnAimingCanceled;
-        IA_PlayerJump.action.performed -= OnJumpPerformed;
-        IA_PlayerJump.action.canceled -= OnJumpCanceled;
-        IA_PlayerDash.action.performed -= OnDashPerformed;
-        IA_PlayerGrapple.action.performed -= OnGrapplePerformed;
+        if (InputManager.Instance == null)
+        {
+            return;
+        }
 
-        IA_PlayerMove.action.Disable();
-        IA_PlayerAim.action.Disable();
-        IA_PlayerJump.action.Disable();
-        IA_PlayerDash.action.Disable();
-        IA_PlayerGrapple.action.Disable();
+        InputManager.Instance.PlayerAim.performed -= OnAimingPerformed;
+        InputManager.Instance.PlayerAim.canceled -= OnAimingCanceled;
+        InputManager.Instance.PlayerJump.performed -= OnJumpPerformed;
+        InputManager.Instance.PlayerJump.canceled -= OnJumpCanceled;
+        InputManager.Instance.PlayerDash.performed -= OnDashPerformed;
+        InputManager.Instance.PlayerGrapple.performed -= OnGrapplePerformed;
     }
     #endregion
 
@@ -211,11 +195,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnJumpPerformed(InputAction.CallbackContext context)
     {
-        if (!enableInput)
-        {
-            return;
-        }
-
         isPlayerAiming = false;
         OnPlayerAiming?.Invoke(isPlayerAiming);
 
@@ -260,7 +239,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnDashPerformed(InputAction.CallbackContext context)
     {
-        if (!enableInput || !canDash || dashCooldownTimer > 0 || isOnWall || isSliding || currentState != PlayerState.Normal)
+        if (!canDash || dashCooldownTimer > 0 || isOnWall || isSliding || currentState != PlayerState.Normal)
         {
             return;
         }
@@ -273,7 +252,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnGrapplePerformed(InputAction.CallbackContext context)
     {
-        if (!enableInput || isPlayerAiming || !canGrapple || currentGrapplePoint == null || currentState == PlayerState.Grappling)
+        if (isPlayerAiming || !canGrapple || currentGrapplePoint == null || currentState == PlayerState.Grappling)
         {
             return;
         }
@@ -285,12 +264,7 @@ public class PlayerMovement : MonoBehaviour
     #region Update Method
     private void Update()
     {
-        if (!enableInput)
-        {
-            return;
-        }
-
-        currentInput = IA_PlayerMove.action.ReadValue<Vector2>();
+        currentInput = InputManager.Instance.PlayerMove.ReadValue<Vector2>();
 
         HandleDashCooldown();
         HandleWallJumpInputLock();
@@ -795,11 +769,6 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Public Methods
-    public void EnableInput(bool state)
-    {
-        enableInput = state;
-    }
-
     public void ForceJump()
     {
         if (currentState == PlayerState.Dashing)

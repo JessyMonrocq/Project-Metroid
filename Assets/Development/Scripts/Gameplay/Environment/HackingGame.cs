@@ -18,10 +18,6 @@ public class HackingGame : MonoBehaviour
     [SerializeField] private float gameDuration = 5;
     [SerializeField] private bool DEBUG_MODE = false;
 
-    [Header("Input Action References")]
-    [SerializeField] private InputActionReference IA_HackingMove;
-    [SerializeField] private InputActionReference IA_HackingCancel;
-
     [Header("Input Images References")]
     [SerializeField] private Image[] inputImages;
 
@@ -90,18 +86,18 @@ public class HackingGame : MonoBehaviour
 
     private void OnEnable()
     {
-        IA_HackingMove.action.performed += OnHackingMove;
-        IA_HackingMove.action.canceled += OnHackingMove;
-        IA_HackingCancel.action.performed += OnHackingCancel;
+        InputManager.Instance.HackingMove.performed += OnHackingMove;
+        InputManager.Instance.HackingMove.canceled += OnHackingMove;
+        InputManager.Instance.HackingCancel.performed += OnHackingCancel;
 
         StartCoroutine(OpeningCoroutine());
     }
 
     private void OnDisable()
     {
-        IA_HackingMove.action.performed -= OnHackingMove;
-        IA_HackingMove.action.canceled -= OnHackingMove;
-        IA_HackingCancel.action.performed -= OnHackingCancel;
+        InputManager.Instance.HackingMove.performed -= OnHackingMove;
+        InputManager.Instance.HackingMove.canceled -= OnHackingMove;
+        InputManager.Instance.HackingCancel.performed -= OnHackingCancel;
     }
     #endregion
 
@@ -171,7 +167,7 @@ public class HackingGame : MonoBehaviour
 
     private void RegisterInput()
     {
-        input = IA_HackingMove.action.ReadValue<Vector2>();
+        input = InputManager.Instance.HackingMove.ReadValue<Vector2>();
         input.Normalize();
 
         float magnitude = input.magnitude;
@@ -338,7 +334,7 @@ public class HackingGame : MonoBehaviour
         gameStarted = true;
         canRegisterInput = true;
 
-        InputSystemManager.Instance.SetHackingInputState(true);
+        InputManager.Instance.SetHackingInputState(true);
     }
 
     private IEnumerator OpeningAnimationCoroutine()
@@ -358,7 +354,7 @@ public class HackingGame : MonoBehaviour
 
     private IEnumerator ClosingCoroutine()
     {
-        InputSystemManager.Instance.SetHackingInputState(false);
+        InputManager.Instance.SetHackingInputState(false);
 
         yield return ClosingAnimationCoroutine();
 

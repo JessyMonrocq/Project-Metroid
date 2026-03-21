@@ -9,8 +9,6 @@ public class DroneManager : MonoBehaviour
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private PlayerWeapon playerWeapon;
     [SerializeField] private GameObject dronePrefab;
-    [SerializeField] private InputActionReference IA_SpawnDrone;
-    [SerializeField] private InputActionReference IA_DestroyDrone;
     [SerializeField] private float droneCameraDistanceDifference = 2f;
     [SerializeField] private float droneCameraZoomTime = 1f;
     [SerializeField] private bool canSpawnDrone;
@@ -34,14 +32,14 @@ public class DroneManager : MonoBehaviour
 
     private void OnEnable()
     {
-        IA_SpawnDrone.action.performed += OnSpawnDrone;
-        IA_DestroyDrone.action.performed += OnDestroyDrone;
+        InputManager.Instance.PlayerSpawnDrone.performed += OnSpawnDrone;
+        InputManager.Instance.DroneDestroy.performed += OnDestroyDrone;
     }
 
     private void OnDisable()
     {
-        IA_SpawnDrone.action.performed -= OnSpawnDrone;
-        IA_DestroyDrone.action.performed -= OnDestroyDrone;
+        InputManager.Instance.PlayerSpawnDrone.performed -= OnSpawnDrone;
+        InputManager.Instance.DroneDestroy.performed -= OnDestroyDrone;
     }
 
     private void Update()
@@ -85,8 +83,8 @@ public class DroneManager : MonoBehaviour
 
         drone = Instantiate(dronePrefab, this.transform.position, Quaternion.identity);
 
-        InputSystemManager.Instance.SetPlayerInputState(false);
-        InputSystemManager.Instance.SetDroneInputState(true);
+        InputManager.Instance.SetPlayerInputState(false);
+        InputManager.Instance.SetDroneInputState(true);
 
         CinemachineCamera cinemachineCamera = cinemachineBrain.ActiveVirtualCamera as CinemachineCamera;
         playerLastCinemachineCamera = cinemachineCamera;
@@ -109,8 +107,8 @@ public class DroneManager : MonoBehaviour
 
         Destroy(drone);
 
-        InputSystemManager.Instance.SetPlayerInputState(true);
-        InputSystemManager.Instance.SetDroneInputState(false);
+        InputManager.Instance.SetPlayerInputState(true);
+        InputManager.Instance.SetDroneInputState(false);
         
         CinemachineCamera cinemachineCamera = cinemachineBrain.ActiveVirtualCamera as CinemachineCamera;
         if (cinemachineCamera != playerLastCinemachineCamera)
