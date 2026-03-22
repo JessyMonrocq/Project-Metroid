@@ -1,0 +1,110 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3463508997385562535
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7097660697579851151}
+  - component: {fileID: 1225297984693335440}
+  m_Layer: 0
+  m_Name: InputManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7097660697579851151
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3463508997385562535}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3395811956001022458}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1225297984693335440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3463508997385562535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2628ded60731d84bb3c39e7a745fb8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputManager
+  movePlayerAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  jumpPlayerAction: {fileID: -2099379676528639254, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  interactPlayerAction: {fileID: 2501866947901617391, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  attackPlayerAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  grapplePlayerAction: {fileID: -4754453282654523504, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  aimPlayerAction: {fileID: -3477560973542569313, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  dashPlayerAction: {fileID: 1028943572358652848, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  spawnDronePlayerAction: {fileID: -6939159788102815691, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  moveDroneAction: {fileID: -1860754929644581819, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  interactDroneAction: {fileID: 1413050193454926329, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  destroyDroneAction: {fileID: -3587376799075789568, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  moveHackingAction: {fileID: 6314896070611516780, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  cancelHackingAction: {fileID: -4095302949865403566, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  inputAHackingAction: {fileID: 3436658398221037647, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  inputBHackingAction: {fileID: -3443747179172730150, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  inputCHackingAction: {fileID: -2967535990129543578, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  UINavigateAction: {fileID: -8784545083839296357, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  UISubmitAction: {fileID: 392368643174621059, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  UICancelAction: {fileID: 7727032971491509709, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+--- !u!1 &7809724423210622218
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3395811956001022458}
+  - component: {fileID: 1207157657672900961}
+  m_Layer: 0
+  m_Name: RumbleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3395811956001022458
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7809724423210622218}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7097660697579851151}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1207157657672900961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7809724423210622218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aa9087867fcd694faf0bf379ae0efa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RumbleManager

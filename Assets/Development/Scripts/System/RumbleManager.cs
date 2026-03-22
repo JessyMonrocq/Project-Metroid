@@ -16,7 +16,6 @@ public class RumbleManager : MonoBehaviour
         else
         {
             Instance = this;
-            DontDestroyOnLoad(this.gameObject);
         }
     }
 

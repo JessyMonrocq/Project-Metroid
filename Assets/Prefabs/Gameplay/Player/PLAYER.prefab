@@ -804,6 +804,7 @@ MonoBehaviour:
   IA_SpawnDrone: {fileID: -6939159788102815691, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   IA_DestroyDrone: {fileID: -3587376799075789568, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   droneCameraDistanceDifference: 3
+  droneCameraZoomTime: 1
   canSpawnDrone: 1
 --- !u!1 &6830078274084422413
 GameObject:
@@ -1141,6 +1142,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6926954907127275536}
   - component: {fileID: 5797733657091256291}
+  - component: {fileID: 4804132218724101114}
+  - component: {fileID: 4551376624918855049}
   - component: {fileID: 8569470164356123035}
   - component: {fileID: 156234981326712028}
   m_Layer: 9
@@ -1194,6 +1197,35 @@ CharacterController:
   m_SkinWidth: 0.01
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4804132218724101114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7621746287067575563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90cd8d838a9a99941915881e68816f44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  playerHealth: {fileID: 4551376624918855049}
+  playerMovement: {fileID: 8569470164356123035}
+  playerWeapon: {fileID: 6311997368287566434}
+  droneManager: {fileID: 9057566771669531460}
+--- !u!114 &4551376624918855049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7621746287067575563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 686937950af39d64085a2ff35830298b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  m_maxHealth: 10
 --- !u!114 &8569470164356123035
 MonoBehaviour:
   m_ObjectHideFlags: 0

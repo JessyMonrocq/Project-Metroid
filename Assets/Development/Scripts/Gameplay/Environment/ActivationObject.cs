@@ -16,14 +16,8 @@ public class ActivationObject : MonoBehaviour
 
     [SerializeField] private CinemachineCamera objectCinemachineCamera;
 
-    private CinemachineBrain cinemachineBrain;
     private CinemachineCamera lastCinemachineCamera;
     private Hacker currentHacker;
-
-    private void Start()
-    {
-        cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
-    }
 
     public void Activate(Hacker hacker)
     {
@@ -44,7 +38,8 @@ public class ActivationObject : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        CinemachineCamera cinemachineCamera = cinemachineBrain.ActiveVirtualCamera as CinemachineCamera;
+        CinemachineBrain brain = Camera.main.GetComponent<CinemachineBrain>();
+        CinemachineCamera cinemachineCamera = brain.ActiveVirtualCamera as CinemachineCamera;
         lastCinemachineCamera = cinemachineCamera;
         lastCinemachineCamera.Priority = 0;
         objectCinemachineCamera.Priority = 1;

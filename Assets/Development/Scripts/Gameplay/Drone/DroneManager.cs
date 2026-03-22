@@ -28,10 +28,7 @@ public class DroneManager : MonoBehaviour
         drone = null;
 
         cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
-    }
 
-    private void OnEnable()
-    {
         InputManager.Instance.PlayerSpawnDrone.performed += OnSpawnDrone;
         InputManager.Instance.DroneDestroy.performed += OnDestroyDrone;
     }

@@ -9,7 +9,8 @@ public class PlayerMovement : MonoBehaviour
     {
         Normal,
         Dashing,
-        Grappling
+        Grappling,
+        Locked
     }
 
     #region Inspector Fields
@@ -147,10 +148,7 @@ public class PlayerMovement : MonoBehaviour
         wallJumpInputLockTimer = 0;
 
         fallSpeedYDampChangeThreshold = CameraInterpolation.Instance.fallSpeedYDampingChangeThreshold;
-    }
 
-    private void OnEnable()
-    {
         InputManager.Instance.PlayerAim.performed += OnAimingPerformed;
         InputManager.Instance.PlayerAim.canceled += OnAimingCanceled;
         InputManager.Instance.PlayerJump.performed += OnJumpPerformed;
@@ -279,6 +277,8 @@ public class PlayerMovement : MonoBehaviour
                 return;
             case PlayerState.Normal:
                 HandleNormalMovement();
+                break;
+            case PlayerState.Locked:
                 break;
         }
     }
@@ -769,6 +769,43 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Public Methods
+    public void ResetPlayerMovement()
+    {
+        currentState = PlayerState.Normal;
+        playerVelocity = Vector3.zero;
+        horizontalVelocity = Vector3.zero;
+        dashDirection = Vector3.zero;
+        slideMomentum = Vector3.zero;
+        edgeSlideVelocity = Vector3.zero;
+        grappleVelocity = Vector3.zero;
+        isPlayerGrounded = false;
+        isPlayerAiming = false;
+        isPlayerJumping = false;
+        isOnWall = false;
+        isOnSlipperyWall = false;
+        isSliding = false;
+        isGrappleHolding = false;
+        hisHookedToGrapplePoint = false;
+        coyoteTimer = 0;
+        jumpBufferTimer = 0;
+        dashDurationTimer = 0;
+        dashCooldownTimer = 0;
+        wallJumpInputLockTimer = 0;
+        wallSlideMultiplier = 1f;
+        slideMomentumTimer = 0;
+        currentGrappleSpeed = 0;
+        grappleHoldTimer = 0;
+        if (canPhazeDash)
+        {
+            this.gameObject.layer = 9;
+        }
+    }
+
+    public void LockPlayerMovement(bool lockPlayer)
+    {
+        currentState = lockPlayer ? PlayerState.Locked : PlayerState.Normal;
+    }
+
     public void ForceJump()
     {
         if (currentState == PlayerState.Dashing)

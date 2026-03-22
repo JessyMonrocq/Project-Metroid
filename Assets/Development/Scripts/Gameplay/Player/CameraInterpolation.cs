@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CameraInterpolation : MonoBehaviour
 {
@@ -26,27 +27,43 @@ public class CameraInterpolation : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
         {
             Instance = this;
         }
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        StartCoroutine(RefreshCameraReferences());
+    }
+
     private void Start()
     {
-        brain = Camera.main.GetComponent<CinemachineBrain>();
-        virtualCamera = brain.ActiveVirtualCamera as CinemachineCamera;
-        if (virtualCamera != null)
-        {
-            composer = virtualCamera.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachinePositionComposer;
-        }
-
-        normYPanAmount = composer.Damping.y;
-        normYTargetOffset = composer.TargetOffset.y;
+        StartCoroutine(RefreshCameraReferences());
     }
 
     public void LerpYDamping(bool isPlayerFalling)
     {
+        if (composer == null)
+        {
+            return;
+        }
+
         lerpYPanCoroutine = StartCoroutine(LerpYPan(isPlayerFalling));
     }
 
@@ -90,5 +107,29 @@ public class CameraInterpolation : MonoBehaviour
         composer.TargetOffset.y = endOffsetAmount;
 
         IsLerpingYDamping = false;
+    }
+
+    private IEnumerator RefreshCameraReferences()
+    {
+        yield return new WaitForEndOfFrame();
+
+        if (Camera.main != null)
+        {
+            brain = Camera.main.GetComponent<CinemachineBrain>();
+            if (brain != null)
+            {
+                virtualCamera = brain.ActiveVirtualCamera as CinemachineCamera;
+                if (virtualCamera != null)
+                {
+                    composer = virtualCamera.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachinePositionComposer;
+
+                    if (composer != null)
+                    {
+                        normYPanAmount = composer.Damping.y;
+                        normYTargetOffset = composer.TargetOffset.y;
+                    }
+                }
+            }
+        }
     }
 }

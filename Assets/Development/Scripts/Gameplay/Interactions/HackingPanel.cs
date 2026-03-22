@@ -1,28 +1,25 @@
-using System.Collections;
 using DG.Tweening;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class DronePanel : MonoBehaviour
+public class HackingPanel : MonoBehaviour
 {
     #region Inspector Fields
     [Header("Activation Object")]
     [SerializeField] private ActivationObject activationObject;
 
     [Header("References")]
-    [SerializeField] private DroneHackingGame droneHackingGame;
+    [SerializeField] private HackingGame hackingGame;
     [SerializeField] private GameObject panelDeactivatedIndicator;
     [SerializeField] private GameObject panelActivatedIndicator;
     [SerializeField] private Image panelInteractionIndicator;
     [SerializeField] private float failureCooldownDuration = 1;
-    [SerializeField] private bool requiresHacking;
+    [SerializeField] private bool panelActivated = false;
 
-    private GameObject detectedDrone;
-    private bool droneDetected;
+    private bool playerDetected;
     private bool hackingComplete = false;
-    private bool panelActivated = false;
     private bool panelCooldown = false;
 
     public bool IsPanelActivated => panelActivated;
@@ -36,46 +33,26 @@ public class DronePanel : MonoBehaviour
             panelDeactivatedIndicator.SetActive(true);
             panelActivatedIndicator.SetActive(false);
             panelInteractionIndicator.DOFade(0f, 0f);
-            if (requiresHacking)
-            {
-                droneHackingGame.gameObject.SetActive(false);
-                droneHackingGame.OnHackingComplete.AddListener(HackingComplete);
-                droneHackingGame.OnHackingFailed.AddListener(PanelCooldown);
-            }
-        }
-        else
+
+            hackingGame.OnHackingComplete.AddListener(HackingComplete);
+            hackingGame.OnHackingFailed.AddListener(PanelCooldown);
+        } else
         {
             panelDeactivatedIndicator.SetActive(false);
             panelActivatedIndicator.SetActive(true);
             panelInteractionIndicator.DOFade(0f, 0f);
         }
 
-        droneDetected = false;
-        detectedDrone = null;
-    }
+        playerDetected = false;
+        hackingGame.gameObject.SetActive(false);
 
-    private void OnEnable()
-    {
-        InputManager.Instance.DroneInteract.performed += OnDroneInteract;
+        InputManager.Instance.PlayerInteract.performed += OnPlayerInteract;
+
     }
 
     private void OnDisable()
     {
-        InputManager.Instance.DroneInteract.performed -= OnDroneInteract;
-    }
-
-    private void Update()
-    {
-        if (panelActivated)
-        {
-            return;
-        }
-        if (droneDetected && detectedDrone == null)
-        {
-            panelInteractionIndicator.DOKill();
-            panelInteractionIndicator.DOFade(0f, 0.2f);
-            droneDetected = false;
-        }
+        InputManager.Instance.PlayerInteract.performed -= OnPlayerInteract;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -85,10 +62,9 @@ public class DronePanel : MonoBehaviour
             return;
         }
 
-        if (other.gameObject.GetComponent<DroneMovement>())
+        if (other.gameObject.GetComponent<PlayerMovement>())
         {
-            droneDetected = true;
-            detectedDrone = other.gameObject;
+            playerDetected = true;
 
             if (!hackingComplete && !panelActivated && !panelCooldown)
             {
@@ -105,18 +81,17 @@ public class DronePanel : MonoBehaviour
             return;
         }
 
-        if (other.gameObject.GetComponent<DroneMovement>())
+        if (other.gameObject.GetComponent<PlayerMovement>())
         {
+            playerDetected = false;
             panelInteractionIndicator.DOKill();
             panelInteractionIndicator.DOFade(0f, 0.2f);
-            droneDetected = false;
-            detectedDrone = null;
         }
     }
     #endregion
 
     #region Input Callbacks
-    private void OnDroneInteract(InputAction.CallbackContext context)
+    private void OnPlayerInteract(InputAction.CallbackContext context)
     {
         ActivatePanel();
     }
@@ -125,21 +100,16 @@ public class DronePanel : MonoBehaviour
     #region Custom Methods
     private void ActivatePanel()
     {
-        if (droneDetected)
+        if (playerDetected && PlayerMovement.Instance.IsPlayerGrounded)
         {
-            if (requiresHacking && !hackingComplete)
+            if (!hackingComplete && !panelCooldown)
             {
                 panelInteractionIndicator.DOKill();
                 panelInteractionIndicator.DOFade(0f, 0.2f);
 
-                InputManager.Instance.SetDroneInputState(false);
+                InputManager.Instance.SetPlayerInputState(false);
 
-                droneHackingGame.gameObject.SetActive(true);
-            }
-            else
-            {
-                activationObject.Activate(ActivationObject.Hacker.Drone);
-                panelActivatedIndicator.SetActive(true);
+                hackingGame.gameObject.SetActive(true);
             }
         }
     }
@@ -147,33 +117,32 @@ public class DronePanel : MonoBehaviour
     private void HackingComplete()
     {
         hackingComplete = true;
+        panelDeactivatedIndicator.SetActive(false);
         panelActivatedIndicator.SetActive(true);
-        panelInteractionIndicator.DOKill();
-        panelInteractionIndicator.DOFade(0f, 0.2f);
-        droneHackingGame.OnHackingComplete.RemoveListener(HackingComplete);
-        droneHackingGame.OnHackingFailed.RemoveListener(PanelCooldown);
+        hackingGame.OnHackingComplete.RemoveListener(HackingComplete);
+        hackingGame.OnHackingFailed.RemoveListener(PanelCooldown);
 
-        InputManager.Instance.SetDroneInputState(true);
+        InputManager.Instance.SetPlayerInputState(false);
 
-        activationObject.Activate(ActivationObject.Hacker.Drone);
+        activationObject.Activate(ActivationObject.Hacker.Player);
     }
 
     private void PanelCooldown()
     {
-        StartCoroutine(WaitForCooldown());
+        StartCoroutine(WaitForCooldownCoroutine());
     }
     #endregion
 
     #region Coroutine Methods
-    private IEnumerator WaitForCooldown()
+    private IEnumerator WaitForCooldownCoroutine()
     {
-        InputManager.Instance.SetDroneInputState(false);
+        InputManager.Instance.SetPlayerInputState(true);
 
         panelCooldown = true;
         yield return new WaitForSeconds(failureCooldownDuration);
         panelCooldown = false;
 
-        if (droneDetected)
+        if (playerDetected)
         {
             panelInteractionIndicator.DOKill();
             panelInteractionIndicator.DOFade(1f, 0.2f);
