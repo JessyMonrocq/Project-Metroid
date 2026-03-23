@@ -165,7 +165,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FirstSceneLoader
   destination:
     scene: {fileID: 11400000, guid: 581579caf5b35824790b3aa7278573a5, type: 2}
-    spawnPointId: Lower_East_Door
+    spawnPointId: Default_Spawn
 --- !u!1 &807388331
 GameObject:
   m_ObjectHideFlags: 0

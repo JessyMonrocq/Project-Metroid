@@ -1,4 +1,6 @@
+using DG.Tweening;
 using System.Collections;
+using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,7 +9,10 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [SerializeField] private CanvasGroup fadeCanvasGroup;
+    [SerializeField] private CanvasGroup fadeCG;
+    [SerializeField] private CanvasGroup UINotificationCG;
+    [SerializeField] private GameObject UINotificationParent;
+    [SerializeField] private TextMeshProUGUI UINotificationText;
 
     private void Awake()
     {
@@ -29,7 +34,20 @@ public class GameManager : MonoBehaviour
         InputManager.Instance.SetHackingInputState(false);
         InputManager.Instance.SetUIInputState(true);
 
-        fadeCanvasGroup.alpha = 0f;
+        fadeCG.alpha = 0f;
+        UINotificationCG.alpha = 0f;
+        UINotificationText.DOFade(0f, 0f).SetUpdate(true);
+    }
+
+    public void PauseGame(bool isPaused)
+    {
+        InputManager.Instance.SetPlayerInputState(!isPaused);
+        Time.timeScale = isPaused ? 0f : 1f;
+    }
+
+    public void UINotification(string message)
+    {
+        StartCoroutine(UINotificationCoroutine(message));
     }
 
     public Coroutine FadeScreen(bool fadeIn, float duration)
@@ -46,9 +64,43 @@ public class GameManager : MonoBehaviour
         {
             elapsedTime += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTime / duration);
-            fadeCanvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, t);
+            fadeCG.alpha = Mathf.Lerp(startAlpha, endAlpha, t);
             yield return null;
         }
-        fadeCanvasGroup.alpha = endAlpha;
+        fadeCG.alpha = endAlpha;
+    }
+
+    private IEnumerator UINotificationCoroutine(string message)
+    {
+        PauseGame(true);
+
+        UINotificationText.text = message;
+        UINotificationParent.transform.localScale = new Vector3(0.01f, 0.01f, 1f);
+        yield return UINotificationCG.DOFade(1f, 0.1f).SetUpdate(true).WaitForCompletion();
+
+        yield return new WaitForSecondsRealtime(0.1f);
+        
+        yield return UINotificationParent.transform.DOScaleY(1f, 0.2f).SetUpdate(true).WaitForCompletion();
+        yield return new WaitForSecondsRealtime(0.1f);
+
+        yield return UINotificationParent.transform.DOScaleX(1f, 0.2f).SetUpdate(true).WaitForCompletion();
+        yield return new WaitForSecondsRealtime(0.2f);
+
+        yield return UINotificationText.DOFade(1f, 0.25f).SetUpdate(true).WaitForCompletion();
+
+        yield return new WaitForSecondsRealtime(3f);
+
+        yield return UINotificationText.DOFade(0f, 0.25f).SetUpdate(true).WaitForCompletion();
+        yield return new WaitForSecondsRealtime(0.2f);
+        
+        yield return UINotificationParent.transform.DOScaleX(0.01f, 0.2f).From(1f).SetUpdate(true).WaitForCompletion();
+        yield return new WaitForSecondsRealtime(0.1f);
+
+        yield return UINotificationParent.transform.DOScaleY(0.01f, 0.2f).From(1f).SetUpdate(true).WaitForCompletion();
+        yield return new WaitForSecondsRealtime(0.1f);
+
+        UINotificationCG.alpha = 0f;
+
+        PauseGame(false);
     }
 }

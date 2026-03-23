@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54f781ab440279f43bc0fe0cc270e614, type: 3}
+  m_Name: Player Abilities
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAbilitiesSO
+  canDoubleJump: 0
+  canDash: 0
+  canPhazeDash: 0
+  canMultiDirectionDash: 0
+  canWallJump: 0
+  canStickToWalls: 0
+  canGrapple: 0
