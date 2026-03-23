@@ -70,13 +70,13 @@ public class PlayerWeapon : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
 
         InputManager.Instance.PlayerAttack.performed -= OnPlayerShoot;
-        PlayerMovement.Instance.OnPlayerAiming.RemoveListener(OnPlayerAimingChanged);
+        PlayerController.Instance.OnPlayerAiming.RemoveListener(OnPlayerAimingChanged);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         InputManager.Instance.PlayerAttack.performed += OnPlayerShoot;
-        PlayerMovement.Instance.OnPlayerAiming.AddListener(OnPlayerAimingChanged);
+        PlayerController.Instance.OnPlayerAiming.AddListener(OnPlayerAimingChanged);
 
         foreach (Projectile projectile in poolParent.GetComponentsInChildren<Projectile>())
         {

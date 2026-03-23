@@ -87,6 +87,22 @@ public class DroneManager : MonoBehaviour
         playerLastCinemachineCamera = cinemachineCamera;
         playerLastCinemachineCamera.Follow = drone.transform;
 
+        /*
+        CinemachineCamera[] cinemachineCameras = FindObjectsByType<CinemachineCamera>(UnityEngine.FindObjectsSortMode.None);
+        foreach (CinemachineCamera camera in cinemachineCameras)
+        {
+            if (camera.Follow != drone.transform)
+            {
+                continue;
+            }
+
+            CinemachinePositionComposer composer = camera.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachinePositionComposer;
+            composer.CameraDistance -= droneCameraDistanceDifference;
+        }
+
+        StartCoroutine(ZoomCamera(cinemachineCamera, -droneCameraDistanceDifference, droneCameraZoomTime));
+        */
+
         registerInput = false;
     }
 
@@ -119,7 +135,41 @@ public class DroneManager : MonoBehaviour
             cinemachineCamera.Follow = playerMovement.transform;
         }
 
+        /*
+        CinemachineCamera[] cinemachineCameras = FindObjectsByType<CinemachineCamera>(UnityEngine.FindObjectsSortMode.None);
+        foreach (CinemachineCamera camera in cinemachineCameras)
+        {
+            if (camera.Follow != playerMovement.transform)
+            {
+                continue;
+            }
+
+            CinemachinePositionComposer composer = camera.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachinePositionComposer;
+            composer.CameraDistance += droneCameraDistanceDifference;
+        }
+
+        StartCoroutine(ZoomCamera(cinemachineCamera, droneCameraDistanceDifference, droneCameraZoomTime));
+        */
+
         registerInput = false;
+    }
+    #endregion
+
+    #region Coroutine Methods
+    private IEnumerator ZoomCamera(CinemachineCamera cinemachineCamera, float targetOffset, float duration)
+    {
+        CinemachinePositionComposer composer = cinemachineCamera.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachinePositionComposer;
+        float startDistance = composer.CameraDistance;
+        float targetDistance = startDistance + targetOffset;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float newDistance = Mathf.Lerp(startDistance, targetDistance, elapsedTime / duration);
+            composer.CameraDistance = newDistance;
+            yield return null;
+        }
+        composer.CameraDistance = targetDistance;
     }
     #endregion
 }

@@ -13,14 +13,23 @@ public class PlayerMovement : MonoBehaviour
         Locked
     }
 
+    public enum PlayerAbility
+    {
+        DoubleJump,
+        Dash,
+        PhazeDash,
+        MultiDirectionDash,
+        WallJump,
+        StickToWalls,
+        Grapple
+    }
+
     #region Inspector Fields
     public UnityEvent<int> OnPlayerDirectionChanged;
     [HideInInspector]
     public UnityEvent OnPlayerCrouchJump;
     [HideInInspector]
     public UnityEvent<bool> OnPlayerAiming;
-
-    public static PlayerMovement Instance { get; private set; }
 
     [SerializeField] private CharacterController characterController;
 
@@ -67,7 +76,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float wallJumpInputLockDuration = 0.2f;
     [SerializeField] private LayerMask wallLayer;
 
-    [Header("Abilites Settings")]
+    [Header("DEBUG : Abilites Settings")]
     [SerializeField] private bool canDoubleJump;
     [SerializeField] private bool canDash;
     [SerializeField] private bool canPhazeDash;
@@ -118,18 +127,6 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Unity Methods
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(this.gameObject);
-        }
-        else
-        {
-            Instance = this;
-        }
-    }
-
     private void Start()
     {
         isPlayerGrounded = false;
@@ -769,6 +766,43 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Public Methods
+    public void SetPlayerAbility(PlayerAbility ability, bool value)
+    {
+        switch (ability)
+        {
+            case PlayerAbility.DoubleJump:
+                canDoubleJump = value;
+                break;
+            case PlayerAbility.Dash:
+                canDash = value;
+                break;
+            case PlayerAbility.PhazeDash:
+                canPhazeDash = value;
+                if (!canPhazeDash && currentState == PlayerState.Dashing)
+                {
+                    this.gameObject.layer = 9;
+                }
+                break;
+            case PlayerAbility.MultiDirectionDash:
+                canMultiDirectionDash = value;
+                break;
+            case PlayerAbility.WallJump:
+                canWallJump = value;
+                break;
+            case PlayerAbility.StickToWalls:
+                canStickToWalls = value;
+                if (!canStickToWalls && isOnWall)
+                {
+                    wallSlideMultiplier = 1f;
+                    isOnSlipperyWall = false;
+                }
+                break;
+            case PlayerAbility.Grapple:
+                canGrapple = value;
+                break;
+        }
+    }
+
     public void ResetPlayerMovement()
     {
         currentState = PlayerState.Normal;

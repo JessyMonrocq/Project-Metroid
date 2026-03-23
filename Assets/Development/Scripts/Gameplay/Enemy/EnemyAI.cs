@@ -60,9 +60,9 @@ public class EnemyAI : HealthComponent
 
     private void Update()
     {
-        if (PlayerMovement.Instance != null)
+        if (PlayerController.Instance != null)
         {
-            movementBehaviour.Move(transform, PlayerMovement.Instance.transform, speed);
+            movementBehaviour.Move(transform, PlayerController.Instance.playerTransform, speed);
         }
     }
 

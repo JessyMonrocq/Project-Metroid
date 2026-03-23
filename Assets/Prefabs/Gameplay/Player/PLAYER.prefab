@@ -801,8 +801,6 @@ MonoBehaviour:
   playerMovement: {fileID: 8569470164356123035}
   playerWeapon: {fileID: 6311997368287566434}
   dronePrefab: {fileID: 6519762377497071451, guid: e423cb3894ceafe45a15398380edcbb1, type: 3}
-  IA_SpawnDrone: {fileID: -6939159788102815691, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  IA_DestroyDrone: {fileID: -3587376799075789568, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   droneCameraDistanceDifference: 3
   droneCameraZoomTime: 1
   canSpawnDrone: 1
@@ -1002,8 +1000,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5c3a53e86c7a8b42a00454e3fdfbfc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerWeapon
-  IA_PlayerLook: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  IA_PlayerShoot: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   projectilePrefab: {fileID: 2030448479837522891, guid: bf7435234a1107f4b8ed21b01ed92c35, type: 3}
   projectileSpawnPoint: {fileID: 2870595551755681813}
   projectileSpeed: 50
@@ -1213,6 +1209,7 @@ MonoBehaviour:
   playerMovement: {fileID: 8569470164356123035}
   playerWeapon: {fileID: 6311997368287566434}
   droneManager: {fileID: 9057566771669531460}
+  playerAbilities: {fileID: 11400000, guid: 2c007b5f4ec14dd4794fd95c8cd17b96, type: 2}
 --- !u!114 &4551376624918855049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1260,11 +1257,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   characterController: {fileID: 5797733657091256291}
-  IA_PlayerMove: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  IA_PlayerAim: {fileID: -3477560973542569313, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  IA_PlayerJump: {fileID: -2099379676528639254, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  IA_PlayerDash: {fileID: 1028943572358652848, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  IA_PlayerGrapple: {fileID: -4754453282654523504, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   playerSpeed: 8
   acceleration: 55
   deceleration: 55

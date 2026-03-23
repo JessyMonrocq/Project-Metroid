@@ -17,9 +17,9 @@ public class JumpThroughPlatform : MonoBehaviour
     {
         playerOnPlatform = false;
         platformDisabled = false;
-        playerPosition = PlayerMovement.Instance.transform;
+        playerPosition = PlayerController.Instance.playerTransform;
         colliderTopPosition = platformTopPosition.position.y;
-        PlayerMovement.Instance.OnPlayerCrouchJump.AddListener(HandleCrouchJump);
+        PlayerController.Instance.OnPlayerCrouchJump.AddListener(HandleCrouchJump);
     }
 
     private void OnEnable()
@@ -29,7 +29,7 @@ public class JumpThroughPlatform : MonoBehaviour
 
     private void OnDisable()
     {
-        PlayerMovement.Instance.OnPlayerCrouchJump.RemoveListener(HandleCrouchJump);
+        PlayerController.Instance.OnPlayerCrouchJump.RemoveListener(HandleCrouchJump);
     }
 
     private void Update()
@@ -50,7 +50,7 @@ public class JumpThroughPlatform : MonoBehaviour
             platformCollider.gameObject.layer = 12; // Phaze layer, ignoring collision with player
         }
 
-        if (playerFeetPosition >= colliderTopPosition && (playerFeetPosition - colliderTopPosition) <= 0.1f && PlayerMovement.Instance.IsPlayerGrounded)
+        if (playerFeetPosition >= colliderTopPosition && (playerFeetPosition - colliderTopPosition) <= 0.1f && PlayerController.Instance.IsPlayerGrounded)
         {
             playerOnPlatform = true;
         }

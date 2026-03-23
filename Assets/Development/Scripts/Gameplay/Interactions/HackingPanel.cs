@@ -100,7 +100,7 @@ public class HackingPanel : MonoBehaviour
     #region Custom Methods
     private void ActivatePanel()
     {
-        if (playerDetected && PlayerMovement.Instance.IsPlayerGrounded)
+        if (playerDetected && PlayerController.Instance.IsPlayerGrounded)
         {
             if (!hackingComplete && !panelCooldown)
             {
