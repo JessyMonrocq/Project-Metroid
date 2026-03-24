@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class HackingPanel : MonoBehaviour
+public class HackingPanel : Interactable
 {
     #region Inspector Fields
     [Header("Activation Object")]
@@ -25,9 +25,16 @@ public class HackingPanel : MonoBehaviour
     public bool IsPanelActivated => panelActivated;
     #endregion
 
-    #region Unity Methods
-    private void Start()
+    #region Interactable overrides
+    public override void Interact()
     {
+        interactionState = true;
+        SceneManagement.Instance.UpdateInteractableState(InteractableID, interactionState);
+    }
+
+    public override void InitializeInteraction(bool interacted)
+    {
+        panelActivated = interacted;
         if (!panelActivated)
         {
             panelDeactivatedIndicator.SetActive(true);
@@ -36,7 +43,8 @@ public class HackingPanel : MonoBehaviour
 
             hackingGame.OnHackingComplete.AddListener(HackingComplete);
             hackingGame.OnHackingFailed.AddListener(PanelCooldown);
-        } else
+        }
+        else
         {
             panelDeactivatedIndicator.SetActive(false);
             panelActivatedIndicator.SetActive(true);
@@ -47,9 +55,10 @@ public class HackingPanel : MonoBehaviour
         hackingGame.gameObject.SetActive(false);
 
         InputManager.Instance.PlayerInteract.performed += OnPlayerInteract;
-
     }
+    #endregion
 
+    #region Unity Methods
     private void OnDisable()
     {
         InputManager.Instance.PlayerInteract.performed -= OnPlayerInteract;
@@ -121,6 +130,8 @@ public class HackingPanel : MonoBehaviour
         panelActivatedIndicator.SetActive(true);
         hackingGame.OnHackingComplete.RemoveListener(HackingComplete);
         hackingGame.OnHackingFailed.RemoveListener(PanelCooldown);
+
+        Interact();
 
         InputManager.Instance.SetPlayerInputState(false);
 
