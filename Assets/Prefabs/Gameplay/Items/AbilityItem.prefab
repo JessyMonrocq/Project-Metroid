@@ -47,7 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bc71d90592272b4c9b6c6c3aa9a18d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AbilityUpgradeItem
+  type: 0
   playerAbility: 0
+  droneAbility: 0
 --- !u!65 &5192373114557016110
 BoxCollider:
   m_ObjectHideFlags: 0

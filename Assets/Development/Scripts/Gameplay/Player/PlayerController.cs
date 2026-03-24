@@ -37,8 +37,14 @@ public class PlayerController : MonoBehaviour
 
     public void SetPlayerAbility(PlayerMovement.PlayerAbility ability, bool isEnabled)
     {
-        playerAbilities.SetAbility(ability, isEnabled);
+        playerAbilities.SetMovementAbility(ability, isEnabled);
         UpdatePlayerAbilities();
+    }
+
+    public void SetDroneAbility(DroneManager.DroneAbility ability, bool isEnabled)
+    {
+        playerAbilities.SetDroneAbility(ability, isEnabled);
+        UpdateDroneAbilities();
     }
 
     private void UpdatePlayerAbilities()
@@ -50,5 +56,12 @@ public class PlayerController : MonoBehaviour
         playerMovement.SetPlayerAbility(PlayerMovement.PlayerAbility.WallJump, playerAbilities.canWallJump);
         playerMovement.SetPlayerAbility(PlayerMovement.PlayerAbility.StickToWalls, playerAbilities.canStickToWalls);
         playerMovement.SetPlayerAbility(PlayerMovement.PlayerAbility.Grapple, playerAbilities.canGrapple);
+    }
+
+    private void UpdateDroneAbilities()
+    {
+        droneManager.SetDroneAbility(DroneManager.DroneAbility.Spawn, playerAbilities.canSpawnDrone);
+        //...
+        //...
     }
 }

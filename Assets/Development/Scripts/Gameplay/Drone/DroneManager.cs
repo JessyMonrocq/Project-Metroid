@@ -5,6 +5,13 @@ using UnityEngine.InputSystem;
 
 public class DroneManager : MonoBehaviour
 {
+    public enum DroneAbility
+    {
+        Spawn,
+        Hack,
+        Attack
+    }
+
     #region Inspector Fields
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private PlayerWeapon playerWeapon;
@@ -66,6 +73,22 @@ public class DroneManager : MonoBehaviour
     #endregion
 
     #region Custom Methods
+    public void SetDroneAbility(DroneAbility ability, bool isEnabled)
+    {
+        switch (ability)
+        {
+            case DroneAbility.Spawn:
+                canSpawnDrone = isEnabled;
+                break;
+            case DroneAbility.Hack:
+                // ...
+                break;
+            case DroneAbility.Attack:
+                // ...
+                break;
+        }
+    }
+
     private void SpawnDrone()
     {
         if (!registerInput)

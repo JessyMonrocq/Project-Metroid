@@ -2,7 +2,16 @@ using UnityEngine;
 
 public class AbilityUpgradeItem : Interactable
 {
-    public PlayerMovement.PlayerAbility playerAbility;
+    public enum AbilityType
+    {
+        Player,
+        Drone
+    }
+
+    public AbilityType type;
+
+    [SerializeField] private PlayerMovement.PlayerAbility playerAbility;
+    [SerializeField] private DroneManager.DroneAbility droneAbility;
 
     #region Interactable overrides
     public override void Interact()
@@ -28,9 +37,18 @@ public class AbilityUpgradeItem : Interactable
     {
         if (other.gameObject.GetComponent<PlayerController>())
         {
-            PlayerController.Instance.SetPlayerAbility(playerAbility, true);
-
-            string message = playerAbility.ToString() + " upgrade acquired!";
+            string message = "";
+            if (type == AbilityType.Player)
+            {
+                PlayerController.Instance.SetPlayerAbility(playerAbility, true);
+                message = playerAbility.ToString() + " upgrade acquired!";
+            }
+            else if (type == AbilityType.Drone)
+            {
+                PlayerController.Instance.SetDroneAbility(droneAbility, true);
+                message = "Drone " + droneAbility.ToString() + " upgrade acquired!";
+            }
+            
             GameManager.Instance.UINotification(message);
 
             Interact();
