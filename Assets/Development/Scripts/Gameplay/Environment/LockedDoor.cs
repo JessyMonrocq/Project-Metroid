@@ -2,7 +2,7 @@ using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 
-public class LockedDoor : MonoBehaviour, IInteraction
+public class LockedDoor : Interactable
 {
     #region Inspector Fields
     [SerializeField] private GameObject upperDoor;
@@ -10,22 +10,14 @@ public class LockedDoor : MonoBehaviour, IInteraction
     [SerializeField] private bool isLocked = true;
     #endregion
 
-    #region IInteraction interface
-    public Interactable interactable { get; set; }
-    public bool interactionState { get; set; }
-
-    private void Start()
-    {
-        interactable = GetComponent<Interactable>();
-    }
-
-    public void Interact()
+    #region Interactable overrides
+    public override void Interact()
     {
         interactionState = true;
-        interactable.OnObjectInteracted();
+        SceneManagement.Instance.UpdateInteractableState(InteractableID, interactionState);
     }
 
-    public void InitializeInteraction(bool interacted)
+    public override void InitializeInteraction(bool interacted)
     {
         isLocked = !interacted;
         if (isLocked)

@@ -1,25 +1,17 @@
 using UnityEngine;
 
-public class AbilityUpgradeItem : MonoBehaviour, IInteraction
+public class AbilityUpgradeItem : Interactable
 {
     public PlayerMovement.PlayerAbility playerAbility;
 
-    #region IInteraction interface
-    public Interactable interactable { get; set; }
-    public bool interactionState { get; set; }
-
-    private void Start()
-    {
-        interactable = GetComponent<Interactable>();
-    }
-
-    public void Interact()
+    #region Interactable overrides
+    public override void Interact()
     {
         interactionState = true;
-        interactable.OnObjectInteracted();
+        SceneManagement.Instance.UpdateInteractableState(InteractableID, interactionState);
     }
 
-    public void InitializeInteraction(bool interacted)
+    public override void InitializeInteraction(bool interacted)
     {
         if (interacted)
         {
@@ -41,6 +33,7 @@ public class AbilityUpgradeItem : MonoBehaviour, IInteraction
             string message = playerAbility.ToString() + " upgrade acquired!";
             GameManager.Instance.UINotification(message);
 
+            Interact();
             gameObject.SetActive(false);
         }
     }

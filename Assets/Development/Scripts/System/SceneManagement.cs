@@ -62,7 +62,7 @@ public class SceneManagement : MonoBehaviour
     {
         if (sceneReferenceAsset != null && sceneReferenceAsset.sceneData != null)
         {
-            if (sceneReferenceAsset.sceneData.interactables == null || sceneReferenceAsset.sceneData.interactables.Length == 0)
+            if (sceneReferenceAsset.sceneData.interactables == null || sceneReferenceAsset.sceneData.interactables.Length != interactables.Length)
             {
                 sceneReferenceAsset.sceneData.interactables = new InteractablesData[interactables.Length];
                 for (int i = 0; i < interactables.Length; i++)
@@ -72,6 +72,7 @@ public class SceneManagement : MonoBehaviour
                         id = i,
                         wasInteractedWith = false
                     };
+                    interactables[i].InteractableID = i;
                     interactables[i].InitializeObject(false);
                 }
             }
@@ -116,7 +117,8 @@ public class SceneManagement : MonoBehaviour
                 EditorUtility.SetDirty(sceneReferenceAsset);
             }
 
-            interactables = FindObjectsByType<Interactable>(FindObjectsSortMode.None);
+            interactables = FindObjectsByType<Interactable>(FindObjectsInactive.Include ,FindObjectsSortMode.None);
+            System.Array.Sort(interactables, (a, b) => string.Compare(a.name, b.name));
         }
     }
 #endif

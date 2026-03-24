@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEngine.Events;
 
-public class Interactable : MonoBehaviour
+public abstract class Interactable : MonoBehaviour
 {
     private int interactableID;
 
@@ -11,17 +10,14 @@ public class Interactable : MonoBehaviour
         set { interactableID = value; }
     }
 
+    protected bool interactionState;
+
     public void InitializeObject(bool interacted)
     {
-        IInteraction interactionComponent = GetComponent<IInteraction>();
-        if (interactionComponent != null)
-        {
-            interactionComponent.InitializeInteraction(interacted);
-        }
+        interactionState = interacted;
+        InitializeInteraction(interacted);
     }
 
-    public void OnObjectInteracted()
-    {
-        SceneManagement.Instance.UpdateInteractableState(interactableID, true);
-    }
+    public abstract void InitializeInteraction(bool interacted);
+    public abstract void Interact();
 }

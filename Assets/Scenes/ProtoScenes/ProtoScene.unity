@@ -544,6 +544,7 @@ Transform:
   - {fileID: 1314865322}
   - {fileID: 5796241193138254104}
   - {fileID: 1752364618559703976}
+  - {fileID: 2142984248}
   m_Father: {fileID: 1216889667}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &233188869 stripped
@@ -5031,7 +5032,8 @@ MonoBehaviour:
     spawnLocation: {fileID: 433657253}
     camera: {fileID: 1668960660}
   interactables:
-  - {fileID: 5796241193138254106}
+  - {fileID: 2142984249}
+  - {fileID: 2021343324}
 --- !u!1 &1239209871
 GameObject:
   m_ObjectHideFlags: 0
@@ -7924,6 +7926,79 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1199e4be0d0fdb4e9fc7d9a4d30e5f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LockedDoor
+--- !u!1001 &2142984247
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 177701243}
+    m_Modifications:
+    - target: {fileID: 382894684516209203, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 24.26489
+      objectReference: {fileID: 0}
+    - target: {fileID: 382894684516209203, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.05882001
+      objectReference: {fileID: 0}
+    - target: {fileID: 382894684516209203, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 382894684516209203, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 382894684516209203, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 382894684516209203, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 382894684516209203, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 382894684516209203, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 382894684516209203, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 382894684516209203, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1432826401188582042, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+      propertyPath: m_Name
+      value: AbilityItem
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+--- !u!4 &2142984248 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 382894684516209203, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+  m_PrefabInstance: {fileID: 2142984247}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2142984249 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6375847399266314170, guid: 1dea93fffdbd25244ab5172edc5e6826, type: 3}
+  m_PrefabInstance: {fileID: 2142984247}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bc71d90592272b4c9b6c6c3aa9a18d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AbilityUpgradeItem
 --- !u!1001 &1752364618559703975
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8409,6 +8484,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LockedDoor
       objectReference: {fileID: 0}
+    - target: {fileID: 8538692656959971050, guid: c2aaf1222d03f164eb4d492a373acdb5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8430,17 +8509,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e34d4143cb43824182dfc57bb7309b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ActivationObject
---- !u!114 &5796241193138254106 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7406964649352775699, guid: c2aaf1222d03f164eb4d492a373acdb5, type: 3}
-  m_PrefabInstance: {fileID: 5796241193138254103}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7e0103464211374e8e6da2026ad7d3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Interactable
 --- !u!1001 &6307166414198846800
 PrefabInstance:
   m_ObjectHideFlags: 0
