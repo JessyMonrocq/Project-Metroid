@@ -596,6 +596,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2009705072962586431}
+  - component: {fileID: 7406964649352775699}
   - component: {fileID: 4284133792315111414}
   - component: {fileID: 7920510222235074064}
   m_Layer: 0
@@ -625,6 +626,37 @@ Transform:
   - {fileID: 6891686616454214899}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7406964649352775699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8538692656959971050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7e0103464211374e8e6da2026ad7d3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactable
+  OnStart:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4284133792315111414}
+        m_TargetAssemblyTypeName: LockedDoor, Assembly-CSharp
+        m_MethodName: SetupDoor
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  interacted: 0
+  OnInteracted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &4284133792315111414
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -9,7 +9,7 @@ public class DronePanel : MonoBehaviour
 {
     #region Inspector Fields
     [Header("Activation Object")]
-    [SerializeField] private ActivationObject activationObject;
+    [SerializeField] private ActivationCamera activationObject;
 
     [Header("References")]
     [SerializeField] private DroneHackingGame droneHackingGame;
@@ -135,7 +135,7 @@ public class DronePanel : MonoBehaviour
             }
             else
             {
-                activationObject.Activate(ActivationObject.Hacker.Drone);
+                activationObject.Activate(ActivationCamera.Hacker.Drone);
                 panelActivatedIndicator.SetActive(true);
             }
         }
@@ -152,7 +152,7 @@ public class DronePanel : MonoBehaviour
 
         InputManager.Instance.SetDroneInputState(true);
 
-        activationObject.Activate(ActivationObject.Hacker.Drone);
+        activationObject.Activate(ActivationCamera.Hacker.Drone);
     }
 
     private void PanelCooldown()

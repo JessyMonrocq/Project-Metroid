@@ -1,10 +1,9 @@
-using DG.Tweening;
 using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class ActivationObject : MonoBehaviour
+public class ActivationCamera : MonoBehaviour
 {
     public UnityEvent OnActivate;
 

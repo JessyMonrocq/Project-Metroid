@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "SceneReferenceSO")]
@@ -10,7 +11,9 @@ public class SceneReferenceSO : ScriptableObject
     public string sceneName;
 
     [HideInInspector]
-    public string[] availableSpawnPoints;
+    public string[] sceneSpawnPoints;
+
+    public SceneDataSO sceneData;
 
 #if UNITY_EDITOR
     private void OnValidate()

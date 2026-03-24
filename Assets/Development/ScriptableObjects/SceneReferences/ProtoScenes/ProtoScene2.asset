@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneReferenceSO
   sceneAsset: {fileID: 102900000, guid: 884ae65261f725d41b9144dd12d59467, type: 3}
   sceneName: ProtoScene 2
-  availableSpawnPoints:
-  - Lower_West_Door
+  sceneSpawnPoints:
+  - Lower_Left_Door
+  sceneData: {fileID: 0}

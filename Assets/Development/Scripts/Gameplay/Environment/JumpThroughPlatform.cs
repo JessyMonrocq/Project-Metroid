@@ -22,11 +22,6 @@ public class JumpThroughPlatform : MonoBehaviour
         PlayerController.Instance.OnPlayerCrouchJump.AddListener(HandleCrouchJump);
     }
 
-    private void OnEnable()
-    {
-        
-    }
-
     private void OnDisable()
     {
         PlayerController.Instance.OnPlayerCrouchJump.RemoveListener(HandleCrouchJump);

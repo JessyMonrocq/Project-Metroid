@@ -20,9 +20,9 @@ public class SceneDestinationDrawer : PropertyDrawer
         {
             SceneReferenceSO sceneRef = sceneProp.objectReferenceValue as SceneReferenceSO;
             
-            if (sceneRef != null && sceneRef.availableSpawnPoints != null && sceneRef.availableSpawnPoints.Length > 0)
+            if (sceneRef != null && sceneRef.sceneSpawnPoints != null && sceneRef.sceneSpawnPoints.Length > 0)
             {
-                string[] options = sceneRef.availableSpawnPoints;
+                string[] options = sceneRef.sceneSpawnPoints;
                 
                 int currentIndex = Mathf.Max(0, System.Array.IndexOf(options, spawnIdProp.stringValue));
                 

@@ -15,7 +15,7 @@ public class SceneTransitionManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        
+
         Instance = this;
     }
 
@@ -27,17 +27,19 @@ public class SceneTransitionManager : MonoBehaviour
     private IEnumerator TransitionRoutine(SceneDestination destination, GameObject player)
     {
         InputManager.Instance.SetPlayerInputState(false);
-        
+
+        SceneManagement currentSceneSpawnPoints = FindAnyObjectByType<SceneManagement>();
+
         yield return GameManager.Instance.FadeScreen(true, fadeDuration);
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(destination.scene.sceneName);
-        
+
         while (!asyncLoad.isDone)
         {
             yield return null;
         }
 
-        SceneSpawnPoints spawnPoints = FindAnyObjectByType<SceneSpawnPoints>();
+        SceneManagement spawnPoints = FindAnyObjectByType<SceneManagement>();
 
         if (spawnPoints != null)
         {

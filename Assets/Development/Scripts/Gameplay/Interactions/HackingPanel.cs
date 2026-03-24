@@ -8,7 +8,7 @@ public class HackingPanel : MonoBehaviour
 {
     #region Inspector Fields
     [Header("Activation Object")]
-    [SerializeField] private ActivationObject activationObject;
+    [SerializeField] private ActivationCamera activationObject;
 
     [Header("References")]
     [SerializeField] private HackingGame hackingGame;
@@ -124,7 +124,7 @@ public class HackingPanel : MonoBehaviour
 
         InputManager.Instance.SetPlayerInputState(false);
 
-        activationObject.Activate(ActivationObject.Hacker.Player);
+        activationObject.Activate(ActivationCamera.Hacker.Player);
     }
 
     private void PanelCooldown()
