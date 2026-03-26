@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirstSceneLoader
   destination:
-    scene: {fileID: 11400000, guid: 581579caf5b35824790b3aa7278573a5, type: 2}
+    scene: {fileID: 11400000, guid: 37d29d3c4e68c474e8d3b79612f79abc, type: 2}
     spawnPointId: Default_SpawnPoint
 --- !u!1 &807388331
 GameObject:

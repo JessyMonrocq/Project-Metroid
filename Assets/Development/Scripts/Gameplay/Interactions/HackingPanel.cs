@@ -26,7 +26,7 @@ public class HackingPanel : Interactable
     #endregion
 
     #region Interactable overrides
-    public override void Interact()
+    public override void Interact(bool state)
     {
         interactionState = true;
         SceneManagement.Instance.UpdateInteractableState(InteractableID, interactionState);
@@ -131,7 +131,7 @@ public class HackingPanel : Interactable
         hackingGame.OnHackingComplete.RemoveListener(HackingComplete);
         hackingGame.OnHackingFailed.RemoveListener(PanelCooldown);
 
-        Interact();
+        Interact(true);
 
         InputManager.Instance.SetPlayerInputState(false);
 

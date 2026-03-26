@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     public bool IsPlayerGrounded => playerMovement.IsPlayerGrounded;
     public UnityEvent OnPlayerCrouchJump => playerMovement.OnPlayerCrouchJump;
     public UnityEvent<bool> OnPlayerAiming => playerMovement.OnPlayerAiming;
+    public bool CanDroneHack => playerAbilities.canDroneHack;
 
     private void Awake()
     {
@@ -61,7 +62,6 @@ public class PlayerController : MonoBehaviour
     private void UpdateDroneAbilities()
     {
         droneManager.SetDroneAbility(DroneManager.DroneAbility.Spawn, playerAbilities.canSpawnDrone);
-        //...
-        //...
+        droneManager.SetDroneAbility(DroneManager.DroneAbility.Hack, playerAbilities.canDroneHack);
     }
 }

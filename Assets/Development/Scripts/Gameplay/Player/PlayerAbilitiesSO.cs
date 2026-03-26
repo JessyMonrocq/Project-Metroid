@@ -11,6 +11,7 @@ public class PlayerAbilitiesSO : ScriptableObject
     public bool canStickToWalls;
     public bool canGrapple;
     public bool canSpawnDrone;
+    public bool canDroneHack;
 
     public void SetMovementAbility(PlayerMovement.PlayerAbility ability, bool isEnabled)
     {
@@ -47,7 +48,9 @@ public class PlayerAbilitiesSO : ScriptableObject
             case DroneManager.DroneAbility.Spawn:
                 canSpawnDrone = isEnabled;
                 break;
-            //...
+            case DroneManager.DroneAbility.Hack:
+                canDroneHack = isEnabled;
+                break;
         }
     }
 }

@@ -21,11 +21,11 @@ EditorBuildSettings:
     path: Assets/Scenes/ProtoScenes/TutorialLevel/Level/Tutorial_StartingArea_03.unity
     guid: ad09a1305160d4c43a8276010f80cdb8
   - enabled: 1
-    path: Assets/Scenes/ProtoScenes/ProtoScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Scenes/ProtoScenes/TutorialLevel/Level/Tutorial_StartingArea_04.unity
+    guid: eeb9507506331144ca517679ccea267a
   - enabled: 1
-    path: Assets/Scenes/ProtoScenes/ProtoScene 2.unity
-    guid: 884ae65261f725d41b9144dd12d59467
+    path: Assets/Scenes/ProtoScenes/TutorialLevel/Level/Tutorial_SecondFloor_01.unity
+    guid: c3bed48023ac3d442a84cf26ed95e0cb
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

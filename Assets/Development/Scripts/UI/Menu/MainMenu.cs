@@ -10,7 +10,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private float rotationSpeed = 1f;
 
     [Header("Scene Settings")]
-    [SerializeField] private string sceneToLoad = "MainScene";
+    [SerializeField] private SceneReferenceSO scene;
     [SerializeField] private SceneDataManagementSO sceneDataManagement;
 
     [Header("Main Menu")]
@@ -109,6 +109,6 @@ public class MainMenu : MonoBehaviour
         
         yield return new WaitForSeconds(0.5f);
 
-        SceneManager.LoadScene(sceneToLoad);
+        SceneManager.LoadScene(scene.sceneName);
     }
 }

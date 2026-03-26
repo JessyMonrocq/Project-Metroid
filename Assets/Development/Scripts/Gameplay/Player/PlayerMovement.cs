@@ -3,6 +3,11 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// YES, this is a god class and YES it is a bit of a mess
+/// YES, I should have split it into multiple components so it would be more readable and maintainable
+/// NO, I won't do it because it just works #Bethesda and I as I say in my language "flemme".
+/// </summary>
 public class PlayerMovement : MonoBehaviour
 {
     public enum PlayerState
@@ -360,7 +365,23 @@ public class PlayerMovement : MonoBehaviour
         finalMove.z = 0;
         characterController.Move(finalMove * Time.deltaTime);
 
-        if ((characterController.collisionFlags & CollisionFlags.Above) != 0)
+        bool hitCeiling = (characterController.collisionFlags & CollisionFlags.Above) != 0;
+
+        if (!hitCeiling && playerVelocity.y > 0)
+        {
+            Vector3 topPosition = transform.position + characterController.center + Vector3.up * (characterController.height / 2f - characterController.radius);
+            LayerMask ceilingLayerMask = LayerMask.GetMask("Default");
+
+            if (Physics.SphereCast(topPosition, characterController.radius * 0.9f, Vector3.up, out RaycastHit hit, 0.15f, ceilingLayerMask))
+            {
+                if (!hit.collider.isTrigger)
+                {
+                    hitCeiling = true;
+                }
+            }
+        }
+
+        if (hitCeiling)
         {
             playerVelocity.y = 0;
         }

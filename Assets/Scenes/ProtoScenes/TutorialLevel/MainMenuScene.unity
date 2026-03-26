@@ -1014,7 +1014,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MainMenu
   cameraTransform: {fileID: 2081079553}
   rotationSpeed: 1
-  sceneToLoad: PlayerStartupScene
+  scene: {fileID: 11400000, guid: 3e94399ecd6ab39408ec19148d3fa4c2, type: 2}
   sceneDataManagement: {fileID: 11400000, guid: bf12b87155ba03a4ea4d120be36e7525, type: 2}
   mainMenuCG: {fileID: 809687448}
   mainMenuPanel: {fileID: 578590501}

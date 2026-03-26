@@ -19,5 +19,5 @@ public abstract class Interactable : MonoBehaviour
     }
 
     public abstract void InitializeInteraction(bool interacted);
-    public abstract void Interact();
+    public abstract void Interact(bool state);
 }

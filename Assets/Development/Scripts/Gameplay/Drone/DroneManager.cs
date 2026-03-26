@@ -13,12 +13,16 @@ public class DroneManager : MonoBehaviour
     }
 
     #region Inspector Fields
+    [Header("Drone References")]
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private PlayerWeapon playerWeapon;
     [SerializeField] private GameObject dronePrefab;
     [SerializeField] private float droneCameraDistanceDifference = 2f;
     [SerializeField] private float droneCameraZoomTime = 1f;
+
+    [Header("DEBUG : Drone Abilities")]
     [SerializeField] private bool canSpawnDrone;
+    [SerializeField] private bool canDroneHack;
 
     private GameObject drone;
     private CinemachineBrain cinemachineBrain;

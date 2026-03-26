@@ -14,7 +14,7 @@ public class AbilityUpgradeItem : Interactable
     [SerializeField] private DroneManager.DroneAbility droneAbility;
 
     #region Interactable overrides
-    public override void Interact()
+    public override void Interact(bool state)
     {
         interactionState = true;
         SceneManagement.Instance.UpdateInteractableState(InteractableID, interactionState);
@@ -51,7 +51,7 @@ public class AbilityUpgradeItem : Interactable
             
             GameManager.Instance.UINotification(message);
 
-            Interact();
+            Interact(true);
             gameObject.SetActive(false);
         }
     }

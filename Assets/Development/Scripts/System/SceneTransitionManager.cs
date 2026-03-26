@@ -63,6 +63,7 @@ public class SceneTransitionManager : MonoBehaviour
             if (spawnCamera != null)
             {
                 spawnCamera.Follow = player.transform;
+                spawnCamera.Priority = 1;
             }
         }
         else

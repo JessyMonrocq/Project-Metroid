@@ -325,7 +325,7 @@ Transform:
   m_GameObject: {fileID: 1763134552787654278}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.052105904, y: 2.09569, z: -12}
+  m_LocalPosition: {x: 22.14, y: 2.09569, z: -12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -803,7 +803,8 @@ MonoBehaviour:
   dronePrefab: {fileID: 6519762377497071451, guid: e423cb3894ceafe45a15398380edcbb1, type: 3}
   droneCameraDistanceDifference: 3
   droneCameraZoomTime: 1
-  canSpawnDrone: 1
+  canSpawnDrone: 0
+  canDroneHack: 0
 --- !u!1 &6830078274084422413
 GameObject:
   m_ObjectHideFlags: 0
@@ -1189,7 +1190,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.01
+  m_StepOffset: 0.3
   m_SkinWidth: 0.01
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
@@ -1283,7 +1284,7 @@ MonoBehaviour:
   wallCheckDistance: 0.6
   wallSlideSpeed: -5
   wallJumpHeight: 4
-  wallJumpHorizontalForce: 10
+  wallJumpHorizontalForce: 25
   wallJumpInputLockDuration: 0
   wallLayer:
     serializedVersion: 2

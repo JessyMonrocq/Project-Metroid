@@ -11,9 +11,9 @@ public class LockedDoor : Interactable
     #endregion
 
     #region Interactable overrides
-    public override void Interact()
+    public override void Interact(bool state)
     {
-        interactionState = true;
+        interactionState = state;
         SceneManagement.Instance.UpdateInteractableState(InteractableID, interactionState);
     }
 
@@ -37,8 +37,15 @@ public class LockedDoor : Interactable
     public void UnlockDoor()
     {
         isLocked = false;
-        Interact();
+        Interact(true);
         StartCoroutine(OpenDoorCoroutine());
+    }
+
+    public void LockDoor()
+    {
+        isLocked = true;
+        Interact(false);
+        StartCoroutine(CloseDoorCoroutine());
     }
     #endregion
 
@@ -48,6 +55,13 @@ public class LockedDoor : Interactable
         yield return new WaitForSeconds(1f);
         upperDoor.transform.DOScaleY(0f, 0.75f).SetEase(Ease.InOutSine);
         lowerDoor.transform.DOScaleY(0f, 0.75f).SetEase(Ease.InOutSine);
+    }
+
+    private IEnumerator CloseDoorCoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        upperDoor.transform.DOScaleY(1f, 0.66f).SetEase(Ease.InOutSine);
+        lowerDoor.transform.DOScaleY(1f, 0.66f).SetEase(Ease.InOutSine);
     }
     #endregion
 }

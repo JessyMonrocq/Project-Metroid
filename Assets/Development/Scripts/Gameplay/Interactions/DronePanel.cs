@@ -1,11 +1,10 @@
 using System.Collections;
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class DronePanel : MonoBehaviour
+public class DronePanel : Interactable
 {
     #region Inspector Fields
     [Header("Activation Object")]
@@ -28,20 +27,24 @@ public class DronePanel : MonoBehaviour
     public bool IsPanelActivated => panelActivated;
     #endregion
 
-    #region Unity Methods
-    private void Start()
+    #region Interactable overrides
+    public override void Interact(bool state)
     {
+        interactionState = true;
+        SceneManagement.Instance.UpdateInteractableState(InteractableID, interactionState);
+    }
+
+    public override void InitializeInteraction(bool interacted)
+    {
+        panelActivated = interacted;
         if (!panelActivated)
         {
             panelDeactivatedIndicator.SetActive(true);
             panelActivatedIndicator.SetActive(false);
             panelInteractionIndicator.DOFade(0f, 0f);
-            if (requiresHacking)
-            {
-                droneHackingGame.gameObject.SetActive(false);
-                droneHackingGame.OnHackingComplete.AddListener(HackingComplete);
-                droneHackingGame.OnHackingFailed.AddListener(PanelCooldown);
-            }
+
+            droneHackingGame.OnHackingComplete.AddListener(HackingComplete);
+            droneHackingGame.OnHackingFailed.AddListener(PanelCooldown);
         }
         else
         {
@@ -51,11 +54,13 @@ public class DronePanel : MonoBehaviour
         }
 
         droneDetected = false;
-        detectedDrone = null;
+        droneHackingGame.gameObject.SetActive(false);
 
         InputManager.Instance.DroneInteract.performed += OnDroneInteract;
     }
+    #endregion
 
+    #region Unity Methods
     private void OnDisable()
     {
         InputManager.Instance.DroneInteract.performed -= OnDroneInteract;
@@ -81,6 +86,10 @@ public class DronePanel : MonoBehaviour
         {
             return;
         }
+        if (requiresHacking && !PlayerController.Instance.CanDroneHack)
+        {
+            return;
+        }
 
         if (other.gameObject.GetComponent<DroneMovement>())
         {
@@ -98,6 +107,10 @@ public class DronePanel : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         if (panelActivated)
+        {
+            return;
+        }
+        if (requiresHacking && !PlayerController.Instance.CanDroneHack)
         {
             return;
         }
@@ -149,6 +162,8 @@ public class DronePanel : MonoBehaviour
         panelInteractionIndicator.DOFade(0f, 0.2f);
         droneHackingGame.OnHackingComplete.RemoveListener(HackingComplete);
         droneHackingGame.OnHackingFailed.RemoveListener(PanelCooldown);
+
+        Interact(true);
 
         InputManager.Instance.SetDroneInputState(true);
 

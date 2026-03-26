@@ -24,6 +24,14 @@ public class ActivationCamera : MonoBehaviour
         StartCoroutine(ActivationCoroutine());
     }
 
+    public void ActivateByName(string name)
+    {
+        if (System.Enum.TryParse(name, out Hacker hacker))
+        {
+            Activate(hacker);
+        }
+    }
+
     private IEnumerator ActivationCoroutine()
     {
         if (currentHacker == Hacker.Player)
