@@ -10,7 +10,7 @@ public class CameraInterpolation : MonoBehaviour
     [Header("Camera Lerping Settings")]
     [SerializeField] private float fallPanAmount = 0.25f;
     [SerializeField] private float fallYPanTime = 0.35f;
-    public float fallSpeedYDampingChangeThreshold = -15f;
+    public float fallDistanceThreshold = 15f;
 
     public bool IsLerpingYDamping { get; private set; }
 

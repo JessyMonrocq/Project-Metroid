@@ -325,7 +325,7 @@ Transform:
   m_GameObject: {fileID: 1763134552787654278}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 22.14, y: 2.09569, z: -12}
+  m_LocalPosition: {x: -0.052105904, y: 2.0956903, z: -12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1261,6 +1261,9 @@ MonoBehaviour:
   playerSpeed: 8
   acceleration: 55
   deceleration: 55
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 36865
   slopeForce: 8
   slopeForceRayLength: 1.33
   slideSpeed: 15
@@ -1308,9 +1311,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af7d85544075a0a4cb52715c85f8451c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraInterpolation
-  fallPanAmount: 0.33
-  fallYPanTime: 0.15
-  fallSpeedYDampingChangeThreshold: -10
+  fallPanAmount: 0
+  fallYPanTime: 0.4
+  fallDistanceThreshold: 10
 --- !u!1 &8039529963171410227
 GameObject:
   m_ObjectHideFlags: 0

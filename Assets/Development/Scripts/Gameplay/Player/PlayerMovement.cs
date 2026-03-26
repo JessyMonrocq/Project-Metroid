@@ -42,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float playerSpeed = 10f;
     [SerializeField] private float acceleration = 50f;
     [SerializeField] private float deceleration = 50f;
+    [SerializeField] private LayerMask groundLayerMask;
 
     [Header("Slope Settings")]
     [SerializeField] private float slopeForce = 8f;
@@ -126,7 +127,7 @@ public class PlayerMovement : MonoBehaviour
     private float grappleHoldTimer;
     private float initialGrappleDistance;
 
-    private float fallSpeedYDampChangeThreshold;
+    private float fallDistanceThreshold;
     public int PlayerDirection => playerDirection;
     public bool IsPlayerGrounded => isPlayerGrounded;
     #endregion
@@ -149,7 +150,7 @@ public class PlayerMovement : MonoBehaviour
         dashCooldownTimer = 0;
         wallJumpInputLockTimer = 0;
 
-        fallSpeedYDampChangeThreshold = CameraInterpolation.Instance.fallSpeedYDampingChangeThreshold;
+        fallDistanceThreshold = CameraInterpolation.Instance.fallDistanceThreshold;
 
         InputManager.Instance.PlayerAim.performed += OnAimingPerformed;
         InputManager.Instance.PlayerAim.canceled += OnAimingCanceled;
@@ -291,9 +292,13 @@ public class PlayerMovement : MonoBehaviour
 
         if (!isPlayerGrounded)
         {
-            if (playerVelocity.y < fallSpeedYDampChangeThreshold && !CameraInterpolation.Instance.IsLerpingYDamping && !CameraInterpolation.Instance.LerpedFromPlayerFalling)
+            if (playerVelocity.y < 0 && !CameraInterpolation.Instance.IsLerpingYDamping && !CameraInterpolation.Instance.LerpedFromPlayerFalling)
             {
-                CameraInterpolation.Instance.LerpYDamping(true);
+                bool isFallingFromHigh = Physics.Raycast(transform.position, Vector3.down, fallDistanceThreshold, groundLayerMask);
+                if (!isFallingFromHigh)
+                {
+                    CameraInterpolation.Instance.LerpYDamping(true);
+                }
             }
         }
         else
