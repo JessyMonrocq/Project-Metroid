@@ -106,7 +106,7 @@ MonoBehaviour:
   Lookahead:
     Enabled: 1
     Time: 0.5
-    Smoothing: 1
+    Smoothing: 5
     IgnoreY: 1
 --- !u!114 &3605815464033855872
 MonoBehaviour:

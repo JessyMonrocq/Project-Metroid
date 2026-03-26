@@ -12,6 +12,7 @@ public class MainMenu : MonoBehaviour
     [Header("Scene Settings")]
     [SerializeField] private SceneReferenceSO scene;
     [SerializeField] private SceneDataManagementSO sceneDataManagement;
+    [SerializeField] private PlayerAbilitiesSO playerAbilities;
 
     [Header("Main Menu")]
     [SerializeField] private CanvasGroup mainMenuCG;
@@ -74,6 +75,7 @@ public class MainMenu : MonoBehaviour
     private void EraseAllData()
     {
         sceneDataManagement.EraseAllData();
+        playerAbilities.ResetAllAbilities();
     }
 
     private IEnumerator FadeInMenu()

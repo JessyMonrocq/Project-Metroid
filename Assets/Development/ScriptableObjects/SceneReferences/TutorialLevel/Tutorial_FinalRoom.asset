@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 351af88a08692d847b520b42957158f4, type: 3}
-  m_Name: Tutorial_ThirdFloor_01
+  m_Name: Tutorial_FinalRoom
   m_EditorClassIdentifier: Assembly-CSharp::SceneReferenceSO
-  sceneAsset: {fileID: 102900000, guid: fd37e103708c61d4ca52b555d3cfe6f5, type: 3}
-  sceneName: Tutorial_ThirdFloor_01
+  sceneAsset: {fileID: 102900000, guid: e1fef9a7b6430964bba3af61b20d291e, type: 3}
+  sceneName: Tutorial_FinalRoom
   sceneSpawnPoints:
-  - Left_Door
-  sceneData: {fileID: 11400000, guid: d720e34ed01c9c04189af7d0c81fce61, type: 2}
+  - Main_Door
+  sceneData: {fileID: 0}

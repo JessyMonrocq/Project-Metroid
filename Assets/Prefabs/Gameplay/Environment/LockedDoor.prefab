@@ -598,7 +598,6 @@ GameObject:
   - component: {fileID: 2009705072962586431}
   - component: {fileID: 4284133792315111414}
   - component: {fileID: 7920510222235074064}
-  - component: {fileID: 9171848462766999767}
   m_Layer: 0
   m_Name: LockedDoor
   m_TagString: Untagged
@@ -659,34 +658,6 @@ MonoBehaviour:
       - m_Target: {fileID: 4284133792315111414}
         m_TargetAssemblyTypeName: LockedDoor, Assembly-CSharp
         m_MethodName: UnlockDoor
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  objectCinemachineCamera: {fileID: 3520403519423459315}
---- !u!114 &9171848462766999767
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8538692656959971050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e34d4143cb43824182dfc57bb7309b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ActivationCamera
-  OnActivate:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4284133792315111414}
-        m_TargetAssemblyTypeName: LockedDoor, Assembly-CSharp
-        m_MethodName: LockDoor
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

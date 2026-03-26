@@ -36,11 +36,6 @@ public class TriggerEvent : Interactable
         }
 
         OnTriggerEnterEvent?.Invoke();
-
-        if (oneTimeEvent)
-        {
-            Interact(true);
-        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -51,5 +46,11 @@ public class TriggerEvent : Interactable
         }
 
         OnTriggerExitEvent?.Invoke();
+
+        if (oneTimeEvent)
+        {
+            Interact(true);
+            this.gameObject.SetActive(false);
+        }
     }
 }

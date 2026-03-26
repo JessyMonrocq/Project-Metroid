@@ -27,6 +27,7 @@ public class SceneTransitionManager : MonoBehaviour
     private IEnumerator TransitionRoutine(SceneDestination destination, GameObject player)
     {
         InputManager.Instance.SetPlayerInputState(false);
+        PlayerController.Instance.GetComponent<CharacterController>().enabled = false;
 
         SceneManagement currentSceneSpawnPoints = FindAnyObjectByType<SceneManagement>();
 
@@ -73,6 +74,7 @@ public class SceneTransitionManager : MonoBehaviour
 
         yield return GameManager.Instance.FadeScreen(false, fadeDuration);
 
+        PlayerController.Instance.GetComponent<CharacterController>().enabled = true;
         InputManager.Instance.SetPlayerInputState(true);
     }
 }

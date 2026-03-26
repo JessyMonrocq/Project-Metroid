@@ -1016,6 +1016,7 @@ MonoBehaviour:
   rotationSpeed: 1
   scene: {fileID: 11400000, guid: 3e94399ecd6ab39408ec19148d3fa4c2, type: 2}
   sceneDataManagement: {fileID: 11400000, guid: bf12b87155ba03a4ea4d120be36e7525, type: 2}
+  playerAbilities: {fileID: 11400000, guid: 2c007b5f4ec14dd4794fd95c8cd17b96, type: 2}
   mainMenuCG: {fileID: 809687448}
   mainMenuPanel: {fileID: 578590501}
   playMenuPanel: {fileID: 1235735249}

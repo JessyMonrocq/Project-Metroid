@@ -16,10 +16,14 @@ public class RoomCameraSwitch : MonoBehaviour
 
         CinemachineBrain brain = Camera.main.GetComponent<CinemachineBrain>();
         CinemachineCamera currentCamera = brain.ActiveVirtualCamera as CinemachineCamera;
+
+        Transform followTarget = currentCamera.Follow;
+
         if (currentCamera != null && currentCamera != roomCamera)
         {
             currentCamera.Priority = 0;
         }
         roomCamera.Priority = 1;
+        roomCamera.Follow = followTarget;        
     }
 }

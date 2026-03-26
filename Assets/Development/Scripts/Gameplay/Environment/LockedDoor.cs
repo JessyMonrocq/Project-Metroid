@@ -59,7 +59,7 @@ public class LockedDoor : Interactable
 
     private IEnumerator CloseDoorCoroutine()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         upperDoor.transform.DOScaleY(1f, 0.66f).SetEase(Ease.InOutSine);
         lowerDoor.transform.DOScaleY(1f, 0.66f).SetEase(Ease.InOutSine);
     }

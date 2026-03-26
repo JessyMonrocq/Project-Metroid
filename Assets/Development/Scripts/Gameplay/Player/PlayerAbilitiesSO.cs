@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "PlayerAbilitiesSO")]
@@ -52,5 +53,18 @@ public class PlayerAbilitiesSO : ScriptableObject
                 canDroneHack = isEnabled;
                 break;
         }
+    }
+
+    internal void ResetAllAbilities()
+    {
+        canDoubleJump = false;
+        canDash = false;
+        canPhazeDash = false;
+        canMultiDirectionDash = false;
+        canWallJump = false;
+        canStickToWalls = false;
+        canGrapple = false;
+        canSpawnDrone = false;
+        canDroneHack = false;
     }
 }

@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
 
     public Transform playerTransform => transform;
     public bool IsPlayerGrounded => playerMovement.IsPlayerGrounded;
+    public bool IsPlayerDashing => playerMovement.IsPlayerDashing;
     public UnityEvent OnPlayerCrouchJump => playerMovement.OnPlayerCrouchJump;
     public UnityEvent<bool> OnPlayerAiming => playerMovement.OnPlayerAiming;
     public bool CanDroneHack => playerAbilities.canDroneHack;

@@ -110,6 +110,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isPlayerGrounded;
     private bool isPlayerAiming;
     private bool isPlayerJumping;
+    private bool isPlayerDashing;
     private bool isOnWall;
     private bool isOnSlipperyWall;
     private bool isSliding;
@@ -130,6 +131,7 @@ public class PlayerMovement : MonoBehaviour
     private float fallDistanceThreshold;
     public int PlayerDirection => playerDirection;
     public bool IsPlayerGrounded => isPlayerGrounded;
+    public bool IsPlayerDashing => isPlayerDashing;
     #endregion
 
     #region Unity Methods
@@ -138,6 +140,7 @@ public class PlayerMovement : MonoBehaviour
         isPlayerGrounded = false;
         isPlayerAiming = false;
         isPlayerJumping = false;
+        isPlayerDashing = false;
         isOnWall = false;
         isOnSlipperyWall = false;
         isSliding = false;
@@ -245,6 +248,7 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        isPlayerDashing = true;
         isPlayerAiming = false;
         OnPlayerAiming?.Invoke(isPlayerAiming);
 
@@ -744,6 +748,7 @@ public class PlayerMovement : MonoBehaviour
         if (dashDurationTimer <= 0)
         {
             currentState = PlayerState.Normal;
+            isPlayerDashing = false;
             if (canPhazeDash)
             {
                 this.gameObject.layer = 9;

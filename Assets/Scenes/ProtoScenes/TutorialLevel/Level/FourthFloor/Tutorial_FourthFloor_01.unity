@@ -342,7 +342,7 @@ GameObject:
   - component: {fileID: 13659412}
   - component: {fileID: 13659411}
   - component: {fileID: 13659410}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1419,6 +1419,10 @@ PrefabInstance:
       propertyPath: activationObject
       value: 
       objectReference: {fileID: 616213157}
+    - target: {fileID: 7337941497793417980, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
+      propertyPath: numberOfSequences
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8684895095411947610, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
       propertyPath: m_Name
       value: DronePanel
@@ -1433,6 +1437,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 484443799260683655, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
   m_PrefabInstance: {fileID: 330140912}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &330140914 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6326346830600375591, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
+  m_PrefabInstance: {fileID: 330140912}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2e95820e37019c43bacb9f9d10836f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DronePanel
 --- !u!43 &382680397
 Mesh:
   m_ObjectHideFlags: 0
@@ -2365,7 +2380,7 @@ GameObject:
   - component: {fileID: 519166717}
   - component: {fileID: 519166716}
   - component: {fileID: 519166715}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3365,15 +3380,15 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &616213159 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 9171848462766999767, guid: c2aaf1222d03f164eb4d492a373acdb5, type: 3}
+  m_CorrespondingSourceObject: {fileID: 3520403519423459315, guid: c2aaf1222d03f164eb4d492a373acdb5, type: 3}
   m_PrefabInstance: {fileID: 616213154}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 616213158}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e34d4143cb43824182dfc57bb7309b2, type: 3}
+  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ActivationCamera
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
 --- !u!43 &626808091
 Mesh:
   m_ObjectHideFlags: 0
@@ -3569,6 +3584,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7974466806901700095, guid: 6e3be96d209869e4b955cfb17eb14ffa, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7974466806901700095, guid: 6e3be96d209869e4b955cfb17eb14ffa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 32.6
       objectReference: {fileID: 0}
@@ -3640,6 +3659,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7974466806901700095, guid: 6e3be96d209869e4b955cfb17eb14ffa, type: 3}
       propertyPath: m_LocalScale.y
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7974466806901700095, guid: 6e3be96d209869e4b955cfb17eb14ffa, type: 3}
+      propertyPath: m_LocalScale.z
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 7974466806901700095, guid: 6e3be96d209869e4b955cfb17eb14ffa, type: 3}
@@ -4646,7 +4669,7 @@ GameObject:
   - component: {fileID: 761436524}
   - component: {fileID: 761436523}
   - component: {fileID: 761436522}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6991,7 +7014,7 @@ GameObject:
   - component: {fileID: 879381172}
   - component: {fileID: 879381171}
   - component: {fileID: 879381170}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7460,7 +7483,7 @@ GameObject:
   - component: {fileID: 888844463}
   - component: {fileID: 888844462}
   - component: {fileID: 888844461}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7816,7 +7839,7 @@ GameObject:
   - component: {fileID: 896557847}
   - component: {fileID: 896557846}
   - component: {fileID: 896557845}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8749,6 +8772,7 @@ MonoBehaviour:
     camera: {fileID: 1668960660}
   interactables:
   - {fileID: 1483035304}
+  - {fileID: 330140914}
   - {fileID: 47969374}
   - {fileID: 616213156}
   - {fileID: 2109658036}
@@ -8766,7 +8790,7 @@ GameObject:
   - component: {fileID: 1377922264}
   - component: {fileID: 1377922263}
   - component: {fileID: 1377922262}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9644,7 +9668,7 @@ GameObject:
   - component: {fileID: 1461322530}
   - component: {fileID: 1461322529}
   - component: {fileID: 1461322528}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10263,7 +10287,7 @@ GameObject:
   - component: {fileID: 1586499914}
   - component: {fileID: 1586499913}
   - component: {fileID: 1586499912}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10668,10 +10692,10 @@ PrefabInstance:
     - target: {fileID: 7582004940298435359, guid: bae6c7e79925de447bf042e668843e12, type: 3}
       propertyPath: destination.scene
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 11400000, guid: 1af11decb9611904cbeaabffe9d50bdc, type: 2}
     - target: {fileID: 7582004940298435359, guid: bae6c7e79925de447bf042e668843e12, type: 3}
       propertyPath: destination.spawnPointId
-      value: FourthFloor_Right_Door
+      value: Left_Door
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11537,7 +11561,7 @@ GameObject:
   - component: {fileID: 1935679034}
   - component: {fileID: 1935679033}
   - component: {fileID: 1935679032}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12314,7 +12338,7 @@ PrefabInstance:
     - target: {fileID: 4929092401868415370, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
       propertyPath: OnTriggerExitEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 616213159}
+      objectReference: {fileID: 2109658038}
     - target: {fileID: 4929092401868415370, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
       propertyPath: OnTriggerEnterEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -12345,16 +12369,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7036121858689239127, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
       propertyPath: m_Size.x
-      value: 2
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 7036121858689239127, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
       propertyPath: m_Size.y
-      value: 2
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7036121858689239127, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
+      propertyPath: m_Size.z
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3125881057095258808, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 2109658038}
   m_SourcePrefab: {fileID: 100100000, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
 --- !u!4 &2109658035 stripped
 Transform:
@@ -12366,12 +12397,45 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4929092401868415370, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
   m_PrefabInstance: {fileID: 2109658034}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2109658037}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29c997b3cec151b448a998e7d3d09ebe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TriggerEvent
+--- !u!1 &2109658037 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3125881057095258808, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
+  m_PrefabInstance: {fileID: 2109658034}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2109658038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2109658037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e34d4143cb43824182dfc57bb7309b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ActivationCamera
+  OnActivate:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 616213156}
+        m_TargetAssemblyTypeName: LockedDoor, Assembly-CSharp
+        m_MethodName: LockDoor
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  objectCinemachineCamera: {fileID: 616213159}
 --- !u!1001 &4708416762741397207
 PrefabInstance:
   m_ObjectHideFlags: 0
