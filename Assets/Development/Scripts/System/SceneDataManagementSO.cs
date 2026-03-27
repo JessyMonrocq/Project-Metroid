@@ -1,6 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
-
+using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
 using System.IO;
@@ -9,53 +8,70 @@ using System.IO;
 [CreateAssetMenu(menuName = "SceneDataManagementSO")]
 public class SceneDataManagementSO : ScriptableObject
 {
-    public List<SceneDataSO> sceneDataList = new List<SceneDataSO>();
+    public List<string> sceneDataFileList = new List<string>();
 
     public void EraseAllData()
     {
-        foreach (SceneDataSO sceneData in sceneDataList)
+        RefreshFileList();
+
+        foreach (string filename in sceneDataFileList)
         {
-            if (sceneData != null)
+            if (string.IsNullOrEmpty(filename))
             {
-#if UNITY_EDITOR
-                Undo.RecordObject(sceneData, "Erase Scene Data");
-#endif
-                sceneData.interactables = null;
-#if UNITY_EDITOR
-                EditorUtility.SetDirty(sceneData);
-#endif
+                continue;
+            }
+
+            string sceneName = Path.GetFileNameWithoutExtension(filename);
+            if (sceneName.EndsWith("_scenedata"))
+            {
+                sceneName = sceneName.Substring(0, sceneName.Length - "_scenedata".Length);
+            }
+
+            SceneDataPersistence.DeletePersistentSceneData(sceneName);
+
+            string streamingPath = Path.Combine(Application.dataPath, "StreamingAssets", filename);
+            if (File.Exists(streamingPath))
+            {
+                File.Delete(streamingPath);
             }
         }
 
-#if UNITY_EDITOR
-        AssetDatabase.SaveAssets();
-#endif
+        Debug.Log("Deleted persistent scene data for all known scene JSONs.");
+    }
+
+    private void RefreshFileList()
+    {
+        sceneDataFileList.Clear();
+
+        string persistentFolder = Application.persistentDataPath;
+        if (Directory.Exists(persistentFolder))
+        {
+            string[] persistentFiles = Directory.GetFiles(persistentFolder, "*_scenedata.json", SearchOption.TopDirectoryOnly);
+            foreach (string file in persistentFiles)
+            {
+                sceneDataFileList.Add(Path.GetFileName(file));
+            }
+        }
+
+        string streamingFolder = Path.Combine(Application.dataPath, "StreamingAssets");
+        if (Directory.Exists(streamingFolder))
+        {
+            string[] streamingFiles = Directory.GetFiles(streamingFolder, "*_scenedata.json", SearchOption.TopDirectoryOnly);
+            foreach (string file in streamingFiles)
+            {
+                string fn = Path.GetFileName(file);
+                if (!sceneDataFileList.Contains(fn))
+                {
+                    sceneDataFileList.Add(fn);
+                }
+            }
+        }
     }
 
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        string path = AssetDatabase.GetAssetPath(this);
-        if (string.IsNullOrEmpty(path))
-        {
-            return;
-        }
-
-        sceneDataList.Clear();
-        string folderPath = Path.GetDirectoryName(path);
-
-        string[] guids = AssetDatabase.FindAssets("t:SceneDataSO", new[] { folderPath });
-
-        foreach (string guid in guids)
-        {
-            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-            SceneDataSO sceneData = AssetDatabase.LoadAssetAtPath<SceneDataSO>(assetPath);
-
-            if (sceneData != null)
-            {
-                sceneDataList.Add(sceneData);
-            }
-        }
+        RefreshFileList();
     }
 #endif
 }
@@ -72,12 +88,12 @@ public class SceneDataManagementSOEditor : Editor
 
         GUILayout.Space(15);
 
-        if (GUILayout.Button("Erase All Scene Data", GUILayout.Height(30)))
+        if (GUILayout.Button("Erase All Scene Data (persistent)", GUILayout.Height(30)))
         {
-            if (EditorUtility.DisplayDialog("Warning", "This will erase all SceneData", "Yes", "Cancel"))
+            if (EditorUtility.DisplayDialog("Warning", "This will erase all persistent Scene JSON data", "Yes", "Cancel"))
             {
                 manager.EraseAllData();
-                Debug.Log("All SceneData has been erased.");
+                Debug.Log("All persistent Scene JSON data erased.");
             }
         }
     }

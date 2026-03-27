@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "SceneReferenceSO")]
@@ -13,7 +12,8 @@ public class SceneReferenceSO : ScriptableObject
     [HideInInspector]
     public string[] sceneSpawnPoints;
 
-    public SceneDataSO sceneData;
+    [Header("Scene Data (JSON)")]
+    public string sceneDataFileName;
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -21,6 +21,11 @@ public class SceneReferenceSO : ScriptableObject
         if (sceneAsset != null)
         {
             sceneName = sceneAsset.name;
+        }
+
+        if (string.IsNullOrEmpty(sceneDataFileName) && !string.IsNullOrEmpty(sceneName))
+        {
+            sceneDataFileName = sceneName + "_scenedata.json";
         }
     }
 #endif

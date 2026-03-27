@@ -4274,7 +4274,7 @@ MonoBehaviour:
         m_CallState: 2
   layer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 16896
   oneTimeEvent: 0
 --- !u!114 &1668960660 stripped
 MonoBehaviour:

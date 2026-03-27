@@ -21,20 +21,17 @@ public class SceneTransitionManager : MonoBehaviour
 
     public void LoadSceneAndSpawn(SceneDestination destination, GameObject playerOrRoot)
     {
-        StartCoroutine(TransitionRoutine(destination, playerOrRoot));
+        StartCoroutine(TransitionCoroutine(destination, playerOrRoot));
     }
 
-    private IEnumerator TransitionRoutine(SceneDestination destination, GameObject player)
+    private IEnumerator TransitionCoroutine(SceneDestination destination, GameObject player)
     {
         InputManager.Instance.SetPlayerInputState(false);
         PlayerController.Instance.GetComponent<CharacterController>().enabled = false;
 
-        SceneManagement currentSceneSpawnPoints = FindAnyObjectByType<SceneManagement>();
-
         yield return GameManager.Instance.FadeScreen(true, fadeDuration);
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(destination.scene.sceneName);
-
         while (!asyncLoad.isDone)
         {
             yield return null;

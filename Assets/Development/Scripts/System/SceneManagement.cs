@@ -1,6 +1,5 @@
-using UnityEngine;
-using System.Collections.Generic;
 using Unity.Cinemachine;
+using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -25,6 +24,8 @@ public class SceneManagement : MonoBehaviour
     public SpawnPointData[] spawnPoints;
     public Interactable[] interactables;
 
+    private SceneData runtimeSceneData;
+
     public Transform GetSpawnPoint(string id)
     {
         foreach (var sp in spawnPoints)
@@ -36,6 +37,7 @@ public class SceneManagement : MonoBehaviour
         }
         return null;
     }
+
     public CinemachineCamera GetSpawnCamera(string id)
     {
         foreach (var sp in spawnPoints)
@@ -60,27 +62,36 @@ public class SceneManagement : MonoBehaviour
 
     private void Start()
     {
-        if (sceneReferenceAsset != null && sceneReferenceAsset.sceneData != null)
+        if (sceneReferenceAsset != null && !string.IsNullOrEmpty(sceneReferenceAsset.sceneName))
         {
-            if (sceneReferenceAsset.sceneData.interactables == null || sceneReferenceAsset.sceneData.interactables.Length != interactables.Length)
+            runtimeSceneData = SceneDataPersistence.LoadSceneData(sceneReferenceAsset.sceneName);
+
+            if (runtimeSceneData == null || runtimeSceneData.interactables == null || runtimeSceneData.interactables.Length != interactables.Length)
             {
-                sceneReferenceAsset.sceneData.interactables = new InteractablesData[interactables.Length];
+                runtimeSceneData = new SceneData
+                {
+                    interactables = new InteractableData[interactables.Length]
+                };
+
                 for (int i = 0; i < interactables.Length; i++)
                 {
-                    sceneReferenceAsset.sceneData.interactables[i] = new InteractablesData
+                    runtimeSceneData.interactables[i] = new InteractableData
                     {
                         id = i,
                         wasInteractedWith = false
                     };
+
                     interactables[i].InteractableID = i;
                     interactables[i].InitializeObject(false);
                 }
+
+                SceneDataPersistence.SaveSceneData(runtimeSceneData, sceneReferenceAsset.sceneName);
             }
             else
             {
                 for (int i = 0; i < interactables.Length; i++)
                 {
-                    InteractablesData data = sceneReferenceAsset.sceneData.interactables[i];
+                    InteractableData data = runtimeSceneData.interactables[i];
                     interactables[i].InteractableID = data.id;
                     interactables[i].InitializeObject(data.wasInteractedWith);
                 }
@@ -90,10 +101,10 @@ public class SceneManagement : MonoBehaviour
 
     public void UpdateInteractableState(int interactableID, bool interacted)
     {
-        if (sceneReferenceAsset != null && sceneReferenceAsset.sceneData != null)
+        if (runtimeSceneData != null && runtimeSceneData.interactables != null)
         {
             int id = interactableID;
-            InteractablesData[] data = sceneReferenceAsset.sceneData.interactables;
+            InteractableData[] data = runtimeSceneData.interactables;
             for (int i = 0; i < data.Length; i++)
             {
                 if (data[i].id == id)
@@ -101,6 +112,11 @@ public class SceneManagement : MonoBehaviour
                     data[i].wasInteractedWith = interacted;
                     break;
                 }
+            }
+
+            if (sceneReferenceAsset != null && !string.IsNullOrEmpty(sceneReferenceAsset.sceneName))
+            {
+                SceneDataPersistence.SaveSceneData(runtimeSceneData, sceneReferenceAsset.sceneName);
             }
         }
     }
@@ -118,7 +134,7 @@ public class SceneManagement : MonoBehaviour
                 EditorUtility.SetDirty(sceneReferenceAsset);
             }
 
-            interactables = FindObjectsByType<Interactable>(FindObjectsInactive.Include ,FindObjectsSortMode.None);
+            interactables = FindObjectsByType<Interactable>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             System.Array.Sort(interactables, (a, b) => string.Compare(a.name, b.name));
         }
     }
