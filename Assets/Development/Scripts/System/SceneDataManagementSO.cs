@@ -11,6 +11,27 @@ public class SceneDataManagementSO : ScriptableObject
 {
     public List<SceneDataSO> sceneDataList = new List<SceneDataSO>();
 
+    public void EraseAllData()
+    {
+        foreach (SceneDataSO sceneData in sceneDataList)
+        {
+            if (sceneData != null)
+            {
+#if UNITY_EDITOR
+                Undo.RecordObject(sceneData, "Erase Scene Data");
+#endif
+                sceneData.interactables = null;
+#if UNITY_EDITOR
+                EditorUtility.SetDirty(sceneData);
+#endif
+            }
+        }
+
+#if UNITY_EDITOR
+        AssetDatabase.SaveAssets();
+#endif
+    }
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -22,36 +43,19 @@ public class SceneDataManagementSO : ScriptableObject
 
         sceneDataList.Clear();
         string folderPath = Path.GetDirectoryName(path);
-        
+
         string[] guids = AssetDatabase.FindAssets("t:SceneDataSO", new[] { folderPath });
-        
+
         foreach (string guid in guids)
         {
             string assetPath = AssetDatabase.GUIDToAssetPath(guid);
             SceneDataSO sceneData = AssetDatabase.LoadAssetAtPath<SceneDataSO>(assetPath);
-            
+
             if (sceneData != null)
             {
                 sceneDataList.Add(sceneData);
             }
         }
-    }
-
-    public void EraseAllData()
-    {
-        foreach (SceneDataSO sceneData in sceneDataList)
-        {
-            if (sceneData != null)
-            {
-                Undo.RecordObject(sceneData, "Erase Scene Data");
-                
-                sceneData.interactables = null; 
-                
-                EditorUtility.SetDirty(sceneData);
-            }
-        }
-        
-        AssetDatabase.SaveAssets();
     }
 #endif
 }
