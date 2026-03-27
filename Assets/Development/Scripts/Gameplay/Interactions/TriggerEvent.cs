@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class TriggerEvent : Interactable
 {
