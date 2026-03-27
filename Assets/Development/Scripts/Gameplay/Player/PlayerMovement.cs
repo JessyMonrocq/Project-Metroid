@@ -67,6 +67,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dashSpeed = 20f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 1f;
+    [SerializeField] private GameObject phazeDashVisuals;
 
     [Header("Grapple Settings")]
     [SerializeField] private float grappleHoldDuration = 0.3f;
@@ -146,6 +147,8 @@ public class PlayerMovement : MonoBehaviour
         isSliding = false;
         isGrappleHolding = false;
         hisHookedToGrapplePoint = false;
+
+        phazeDashVisuals.SetActive(false);
 
         coyoteTimer = 0;
         jumpBufferTimer = 0;
@@ -392,7 +395,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (hitCeiling)
         {
-            playerVelocity.y = 0;
+            playerVelocity.y = -0.5f;
         }
 
         if (Mathf.Abs(transform.position.z) > 0.001f)
@@ -711,6 +714,7 @@ public class PlayerMovement : MonoBehaviour
         if (canPhazeDash)
         {
             this.gameObject.layer = 14;
+            phazeDashVisuals.SetActive(true);
         }
 
         if (input.x != 0)
@@ -752,6 +756,7 @@ public class PlayerMovement : MonoBehaviour
             if (canPhazeDash)
             {
                 this.gameObject.layer = 9;
+                phazeDashVisuals.SetActive(false);
             }
             return;
         }

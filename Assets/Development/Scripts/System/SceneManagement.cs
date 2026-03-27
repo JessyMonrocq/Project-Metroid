@@ -81,6 +81,7 @@ public class SceneManagement : MonoBehaviour
                 for (int i = 0; i < interactables.Length; i++)
                 {
                     InteractablesData data = sceneReferenceAsset.sceneData.interactables[i];
+                    interactables[i].InteractableID = data.id;
                     interactables[i].InitializeObject(data.wasInteractedWith);
                 }
             }

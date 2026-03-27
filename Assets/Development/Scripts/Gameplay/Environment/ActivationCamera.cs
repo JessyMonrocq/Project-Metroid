@@ -43,7 +43,7 @@ public class ActivationCamera : MonoBehaviour
             InputManager.Instance.SetDroneInputState(false);
         }
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1f);
 
         CinemachineBrain brain = Camera.main.GetComponent<CinemachineBrain>();
         CinemachineCamera cinemachineCamera = brain.ActiveVirtualCamera as CinemachineCamera;

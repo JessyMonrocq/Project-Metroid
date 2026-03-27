@@ -14,6 +14,7 @@ public class DronePanel : Interactable
     [SerializeField] private DroneHackingGame droneHackingGame;
     [SerializeField] private GameObject panelDeactivatedIndicator;
     [SerializeField] private GameObject panelActivatedIndicator;
+    [SerializeField] private GameObject hackingRequiredIndicator;
     [SerializeField] private Image panelInteractionIndicator;
     [SerializeField] private float failureCooldownDuration = 1;
     [SerializeField] private bool requiresHacking;
@@ -51,6 +52,15 @@ public class DronePanel : Interactable
             panelDeactivatedIndicator.SetActive(false);
             panelActivatedIndicator.SetActive(true);
             panelInteractionIndicator.DOFade(0f, 0f);
+        }
+
+        if (requiresHacking)
+        {
+            hackingRequiredIndicator.SetActive(true);
+        }
+        else
+        {
+            hackingRequiredIndicator.SetActive(false);
         }
 
         droneDetected = false;
@@ -148,6 +158,8 @@ public class DronePanel : Interactable
             }
             else
             {
+                Interact(true);
+
                 activationObject.Activate(ActivationCamera.Hacker.Drone);
                 panelActivatedIndicator.SetActive(true);
             }

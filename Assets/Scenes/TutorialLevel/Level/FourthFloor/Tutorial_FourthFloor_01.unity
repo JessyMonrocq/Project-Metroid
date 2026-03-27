@@ -761,6 +761,66 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a09b4fcb2555684db7a7cba36dd6334, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HackingPanel
+--- !u!1 &51185021
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 51185022}
+  - component: {fileID: 51185023}
+  m_Layer: 0
+  m_Name: ActivationCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &51185022
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51185021}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 13, y: 4, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 177701243}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &51185023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51185021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e34d4143cb43824182dfc57bb7309b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ActivationCamera
+  OnActivate:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 616213156}
+        m_TargetAssemblyTypeName: LockedDoor, Assembly-CSharp
+        m_MethodName: LockDoor
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  objectCinemachineCamera: {fileID: 616213159}
 --- !u!1 &60762817
 GameObject:
   m_ObjectHideFlags: 0
@@ -1365,6 +1425,7 @@ Transform:
   - {fileID: 330140913}
   - {fileID: 641941828}
   - {fileID: 633996835}
+  - {fileID: 51185022}
   m_Father: {fileID: 1216889667}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &330140912
@@ -12269,11 +12330,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1242941347212915914, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 27
+      value: 15.37
       objectReference: {fileID: 0}
     - target: {fileID: 1242941347212915914, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.28
       objectReference: {fileID: 0}
     - target: {fileID: 1242941347212915914, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
       propertyPath: m_LocalPosition.z
@@ -12311,6 +12372,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TriggerEvent
       objectReference: {fileID: 0}
+    - target: {fileID: 3125881057095258808, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4929092401868415370, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
       propertyPath: layer.m_Bits
       value: 512
@@ -12338,7 +12403,7 @@ PrefabInstance:
     - target: {fileID: 4929092401868415370, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
       propertyPath: OnTriggerExitEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2109658038}
+      objectReference: {fileID: 51185023}
     - target: {fileID: 4929092401868415370, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
       propertyPath: OnTriggerEnterEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -12369,11 +12434,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7036121858689239127, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
       propertyPath: m_Size.x
-      value: 1.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7036121858689239127, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
       propertyPath: m_Size.y
-      value: 1.5
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7036121858689239127, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
       propertyPath: m_Size.z
@@ -12382,10 +12447,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3125881057095258808, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
-      insertIndex: 2
-      addedObject: {fileID: 2109658038}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
 --- !u!4 &2109658035 stripped
 Transform:
@@ -12397,45 +12459,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4929092401868415370, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
   m_PrefabInstance: {fileID: 2109658034}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2109658037}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29c997b3cec151b448a998e7d3d09ebe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TriggerEvent
---- !u!1 &2109658037 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3125881057095258808, guid: d93ab973fecde1a428d1175a4b4e5b14, type: 3}
-  m_PrefabInstance: {fileID: 2109658034}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2109658038
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2109658037}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e34d4143cb43824182dfc57bb7309b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ActivationCamera
-  OnActivate:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 616213156}
-        m_TargetAssemblyTypeName: LockedDoor, Assembly-CSharp
-        m_MethodName: LockDoor
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  objectCinemachineCamera: {fileID: 616213159}
 --- !u!1001 &4708416762741397207
 PrefabInstance:
   m_ObjectHideFlags: 0

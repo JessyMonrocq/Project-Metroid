@@ -1,7 +1,10 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class AbilityUpgradeItem : Interactable
 {
+    public UnityEvent OnAbilityAcquired;
+
     public enum AbilityType
     {
         Player,
@@ -52,6 +55,7 @@ public class AbilityUpgradeItem : Interactable
             GameManager.Instance.UINotification(message);
 
             Interact(true);
+            OnAbilityAcquired?.Invoke();
             gameObject.SetActive(false);
         }
     }
