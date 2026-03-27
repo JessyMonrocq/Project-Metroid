@@ -2549,7 +2549,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6209597042126923720, guid: 20ec6335c6500c3449fe67a082a7db01, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 8
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6209597042126923720, guid: 20ec6335c6500c3449fe67a082a7db01, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5377,11 +5377,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6209597042126923720, guid: 20ec6335c6500c3449fe67a082a7db01, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: 6209597042126923720, guid: 20ec6335c6500c3449fe67a082a7db01, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6209597042126923720, guid: 20ec6335c6500c3449fe67a082a7db01, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7949,11 +7949,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6209597042126923720, guid: 20ec6335c6500c3449fe67a082a7db01, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: 6209597042126923720, guid: 20ec6335c6500c3449fe67a082a7db01, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6209597042126923720, guid: 20ec6335c6500c3449fe67a082a7db01, type: 3}
       propertyPath: m_LocalRotation.w
@@ -8015,7 +8015,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6209597042126923720, guid: 20ec6335c6500c3449fe67a082a7db01, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 8
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6209597042126923720, guid: 20ec6335c6500c3449fe67a082a7db01, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10772,6 +10772,10 @@ PrefabInstance:
       propertyPath: activationObject
       value: 
       objectReference: {fileID: 1687784177}
+    - target: {fileID: 7337941497793417980, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
+      propertyPath: numberOfSequences
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8684895095411947610, guid: ac9ec753abeebcd49bf0d34df005c9f3, type: 3}
       propertyPath: m_Name
       value: DronePanel

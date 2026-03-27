@@ -17,6 +17,7 @@ public class InputManager : MonoBehaviour
     [SerializeField] private InputActionReference aimPlayerAction;
     [SerializeField] private InputActionReference dashPlayerAction;
     [SerializeField] private InputActionReference spawnDronePlayerAction;
+    [SerializeField] private InputActionReference pauseGame;
 
     public InputAction PlayerMove => movePlayerAction.action;
     public InputAction PlayerJump => jumpPlayerAction.action;
@@ -26,6 +27,7 @@ public class InputManager : MonoBehaviour
     public InputAction PlayerAim => aimPlayerAction.action;
     public InputAction PlayerDash => dashPlayerAction.action;
     public InputAction PlayerSpawnDrone => spawnDronePlayerAction.action;
+    public InputAction PauseGame => pauseGame.action;
     #endregion
 
     #region Drone Input
@@ -59,10 +61,12 @@ public class InputManager : MonoBehaviour
     [SerializeField] private InputActionReference UINavigateAction;
     [SerializeField] private InputActionReference UISubmitAction;
     [SerializeField] private InputActionReference UICancelAction;
+    [SerializeField] private InputActionReference UIPauseAction;
     // ...
     public InputAction UINavigate => UINavigateAction.action;
     public InputAction UISubmit => UISubmitAction.action;
     public InputAction UICancel => UICancelAction.action;
+    public InputAction UIPause => UIPauseAction.action;
     #endregion
 
     #endregion
@@ -93,6 +97,7 @@ public class InputManager : MonoBehaviour
         SetInputState(PlayerAim, state);
         SetInputState(PlayerDash, state);
         SetInputState(PlayerSpawnDrone, state);
+        SetInputState(PauseGame, state);
     }
 
     public void SetDroneInputState(bool state)
@@ -116,6 +121,7 @@ public class InputManager : MonoBehaviour
         SetInputState(UINavigate, state);
         SetInputState(UISubmit, state);
         SetInputState(UICancel, state);
+        SetInputState(UIPause, state);
     }
     #endregion
 

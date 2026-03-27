@@ -53,6 +53,7 @@ MonoBehaviour:
   aimPlayerAction: {fileID: -3477560973542569313, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   dashPlayerAction: {fileID: 1028943572358652848, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   spawnDronePlayerAction: {fileID: -6939159788102815691, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  pauseGame: {fileID: 5746026518767327592, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   moveDroneAction: {fileID: -1860754929644581819, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   interactDroneAction: {fileID: 1413050193454926329, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   destroyDroneAction: {fileID: -3587376799075789568, guid: 052faaac586de48259a63d0c4782560b, type: 3}
@@ -64,6 +65,7 @@ MonoBehaviour:
   UINavigateAction: {fileID: -8784545083839296357, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   UISubmitAction: {fileID: 392368643174621059, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   UICancelAction: {fileID: 7727032971491509709, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  UIPauseAction: {fileID: -4531949069700283784, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!1 &7809724423210622218
 GameObject:
   m_ObjectHideFlags: 0

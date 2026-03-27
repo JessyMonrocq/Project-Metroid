@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -35,6 +36,13 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         UpdatePlayerAbilities();
+
+        InputManager.Instance.PauseGame.performed += OnPlayerPause;
+    }
+
+    private void OnPlayerPause(InputAction.CallbackContext context)
+    {
+        GameManager.Instance.PauseGame(true);
     }
 
     public void SetPlayerAbility(PlayerMovement.PlayerAbility ability, bool isEnabled)

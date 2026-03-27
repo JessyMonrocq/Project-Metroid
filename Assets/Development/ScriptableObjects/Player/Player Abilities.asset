@@ -19,4 +19,5 @@ MonoBehaviour:
   canWallJump: 0
   canStickToWalls: 0
   canGrapple: 0
-  canSpawnDrone: 0
+  canSpawnDrone: 1
+  canDroneHack: 1

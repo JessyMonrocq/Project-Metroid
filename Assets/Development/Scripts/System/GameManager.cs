@@ -13,6 +13,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CanvasGroup UINotificationCG;
     [SerializeField] private GameObject UINotificationParent;
     [SerializeField] private TextMeshProUGUI UINotificationText;
+    [SerializeField] private PauseMenu pauseMenu;
+
+    private const string MAINMENUSCENE = "MainMenuScene";
 
     private void Awake()
     {
@@ -32,7 +35,7 @@ public class GameManager : MonoBehaviour
         InputManager.Instance.SetPlayerInputState(true);
         InputManager.Instance.SetDroneInputState(false);
         InputManager.Instance.SetHackingInputState(false);
-        InputManager.Instance.SetUIInputState(true);
+        InputManager.Instance.SetUIInputState(false);
 
         fadeCG.alpha = 0f;
         UINotificationCG.alpha = 0f;
@@ -48,6 +51,11 @@ public class GameManager : MonoBehaviour
     public void UINotification(string message)
     {
         StartCoroutine(UINotificationCoroutine(message));
+    }
+
+    public void BackToMenu()
+    {
+        StartCoroutine(BackToMenuCoroutine());
     }
 
     public Coroutine FadeScreen(bool fadeIn, float duration)
@@ -102,5 +110,30 @@ public class GameManager : MonoBehaviour
         UINotificationCG.alpha = 0f;
 
         PauseGame(false);
+    }
+
+    private IEnumerator BackToMenuCoroutine()
+    {
+        Time.timeScale = 1f;
+
+        InputManager.Instance.SetUIInputState(false);
+        yield return FadeScreen(true, 1f);
+
+        ClearDontDestroyOnLoad();
+
+        SceneManager.LoadScene(MAINMENUSCENE);
+        InputManager.Instance.SetUIInputState(true);
+    }
+
+    private void ClearDontDestroyOnLoad()
+    {
+        var allGameObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+        foreach (var go in allGameObjects)
+        {
+            if (go.hideFlags == HideFlags.None && go.scene.name == "DontDestroyOnLoad")
+            {
+                Destroy(go);
+            }
+        }
     }
 }
