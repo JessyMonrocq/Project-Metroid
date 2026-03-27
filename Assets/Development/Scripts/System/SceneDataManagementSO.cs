@@ -1,9 +1,10 @@
-using UnityEngine;
-using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
-using System.IO;
 #endif
+
+using UnityEngine;
+using System.Collections.Generic;
+using System.IO;
 
 [CreateAssetMenu(menuName = "SceneDataManagementSO")]
 public class SceneDataManagementSO : ScriptableObject
@@ -29,11 +30,13 @@ public class SceneDataManagementSO : ScriptableObject
 
             SceneDataPersistence.DeletePersistentSceneData(sceneName);
 
+#if UNITY_EDITOR
             string streamingPath = Path.Combine(Application.dataPath, "StreamingAssets", filename);
             if (File.Exists(streamingPath))
             {
                 File.Delete(streamingPath);
             }
+#endif
         }
 
         Debug.Log("Deleted persistent scene data for all known scene JSONs.");
@@ -53,6 +56,7 @@ public class SceneDataManagementSO : ScriptableObject
             }
         }
 
+#if UNITY_EDITOR
         string streamingFolder = Path.Combine(Application.dataPath, "StreamingAssets");
         if (Directory.Exists(streamingFolder))
         {
@@ -66,6 +70,7 @@ public class SceneDataManagementSO : ScriptableObject
                 }
             }
         }
+#endif
     }
 
 #if UNITY_EDITOR

@@ -12,5 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bec9030a728619c4aa911bc0a865c93c, type: 3}
   m_Name: Scene Data Management SO
   m_EditorClassIdentifier: Assembly-CSharp::SceneDataManagementSO
-  sceneDataList:
-  - {fileID: 11400000, guid: 03b46d32ad7d257458898bc80262891d, type: 2}
+  sceneDataFileList: []
