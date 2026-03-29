@@ -25,4 +25,4 @@ MonoBehaviour:
   - FourthFloor_Left_Door
   - FourthFloor_Right_Door
   - TowerTop_SpawnPoint
-  sceneData: {fileID: 11400000, guid: b47be297247695647bb07657514a24cd, type: 2}
+  sceneDataFileName: Tutorial_Tower_scenedata.json

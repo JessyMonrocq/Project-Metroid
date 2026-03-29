@@ -12003,10 +12003,10 @@ PrefabInstance:
     - target: {fileID: 7582004940298435359, guid: bae6c7e79925de447bf042e668843e12, type: 3}
       propertyPath: destination.scene
       value: 
-      objectReference: {fileID: 11400000, guid: 1b7da40a944f4a64e9f2d413174a4d29, type: 2}
+      objectReference: {fileID: 11400000, guid: 20aaf00c58bce364bbb23d7a2adbfe93, type: 2}
     - target: {fileID: 7582004940298435359, guid: bae6c7e79925de447bf042e668843e12, type: 3}
       propertyPath: destination.spawnPointId
-      value: Main_Door
+      value: Bottom_Door
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -22939,6 +22939,7 @@ MonoBehaviour:
     spawnLocation: {fileID: 353809370}
     camera: {fileID: 949910433}
   interactables:
+  - {fileID: 0}
   - {fileID: 1513618908}
   - {fileID: 1303948155}
 --- !u!1001 &1270809460

@@ -3767,7 +3767,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 14, y: 4}
+  m_Offset: {x: 9.5, y: 4}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3777,7 +3777,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 41, y: 15}
+  m_Size: {x: 32, y: 15}
   m_EdgeRadius: 0
 --- !u!43 &1441694543
 Mesh:
@@ -10040,10 +10040,10 @@ PrefabInstance:
     - target: {fileID: 7582004940298435359, guid: bae6c7e79925de447bf042e668843e12, type: 3}
       propertyPath: destination.scene
       value: 
-      objectReference: {fileID: 11400000, guid: 8905cbbfa2b6eda48b70f8572cb5a17d, type: 2}
+      objectReference: {fileID: 11400000, guid: 20aaf00c58bce364bbb23d7a2adbfe93, type: 2}
     - target: {fileID: 7582004940298435359, guid: bae6c7e79925de447bf042e668843e12, type: 3}
       propertyPath: destination.spawnPointId
-      value: TowerTop_SpawnPoint
+      value: Top_Door
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

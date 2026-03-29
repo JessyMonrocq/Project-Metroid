@@ -63,6 +63,9 @@ EditorBuildSettings:
     path: Assets/Scenes/TutorialLevel/Level/FourthFloor/Tutorial_FourthFloor_04.unity
     guid: 7b2b503bf91599341bd71548ec9fce53
   - enabled: 1
+    path: Assets/Scenes/TutorialLevel/Level/Tutorial_TowerTop.unity
+    guid: c5f1bc11ac926f844b3746a366d1205a
+  - enabled: 1
     path: Assets/Scenes/TutorialLevel/Level/Tutorial_FinalRoom.unity
     guid: e1fef9a7b6430964bba3af61b20d291e
   m_configObjects:

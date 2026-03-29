@@ -376,7 +376,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         finalMove.z = 0;
-        characterController.Move(finalMove * Time.deltaTime);
+        if (characterController.enabled)
+        {
+            characterController.Move(finalMove * Time.deltaTime);
+        }
 
         bool hitCeiling = (characterController.collisionFlags & CollisionFlags.Above) != 0;
 
