@@ -14,7 +14,6 @@ public class DroneManager : MonoBehaviour
 
     #region Inspector Fields
     [Header("Drone References")]
-    [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private PlayerWeapon playerWeapon;
     [SerializeField] private GameObject dronePrefab;
     [SerializeField] private float droneCameraDistanceDifference = 2f;
@@ -85,7 +84,7 @@ public class DroneManager : MonoBehaviour
                 canSpawnDrone = isEnabled;
                 break;
             case DroneAbility.Hack:
-                // ...
+                canDroneHack = isEnabled;
                 break;
             case DroneAbility.Attack:
                 // ...
@@ -95,12 +94,12 @@ public class DroneManager : MonoBehaviour
 
     private void SpawnDrone()
     {
-        if (!registerInput)
+        if (!registerInput || !canSpawnDrone)
         {
             return;
         }
 
-        if (!canSpawnDrone || !playerMovement.IsPlayerGrounded)
+        if (!PlayerController.Instance.IsPlayerGrounded && !PlayerController.Instance.IsHookedToGrapplePoint)
         {
             return;
         }
@@ -149,17 +148,17 @@ public class DroneManager : MonoBehaviour
 
         InputManager.Instance.SetPlayerInputState(true);
         InputManager.Instance.SetDroneInputState(false);
-        
+
         CinemachineCamera cinemachineCamera = cinemachineBrain.ActiveVirtualCamera as CinemachineCamera;
         if (cinemachineCamera != playerLastCinemachineCamera)
         {
             cinemachineCamera.Priority = 0;
             playerLastCinemachineCamera.Priority = 1;
-            playerLastCinemachineCamera.Follow = playerMovement.transform;
+            playerLastCinemachineCamera.Follow = PlayerController.Instance.playerTransform;
         }
         else
         {
-            cinemachineCamera.Follow = playerMovement.transform;
+            cinemachineCamera.Follow = PlayerController.Instance.playerTransform;
         }
 
         /*

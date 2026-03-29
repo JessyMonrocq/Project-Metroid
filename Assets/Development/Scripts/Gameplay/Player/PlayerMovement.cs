@@ -133,6 +133,7 @@ public class PlayerMovement : MonoBehaviour
     public int PlayerDirection => playerDirection;
     public bool IsPlayerGrounded => isPlayerGrounded;
     public bool IsPlayerDashing => isPlayerDashing;
+    public bool IsHookedToGrapplePoint => hisHookedToGrapplePoint;
     #endregion
 
     #region Unity Methods
